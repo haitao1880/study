@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+{literal}
+<script type="text/javascript">
+	$(function(){
+		$(".del").click(function(){
+			var id = $(this).attr('id');
+			if(confirm('确认删除该条数据？'))
+			{
+				if(confirm('是否同步删除？'))
+				{
+					$.ajax({
+						url: '/res/syncdel',
+						type: 'POST',
+						data:{'id':id,'ajax':1,'ispost':1},
+						dataType: 'json',
+						error: function()
+							{
+							alert('Error loading PHP document');
+							},
+						success: function(data)
+							{
+								if(data.result == 'SUCCESS')
+								{
+									window.location.href = '/res/gdelete?page={/literal}'+{$page}+'{literal}&id=' + id;
+								}
+							}
+						});
+				}
+				else
+				{
+					window.location.href = '/res/gdelete?page={/literal}'+{$page}+'{literal}&id=' + id;
+				}
+				
+			}
+			else
+			{
+				return false;
+			}
+			});
+		$(".but").click(function(){
+			var len = $("input[name^=id]:checked").length;
+			if(len == 0)
+			{
+				alert("请选择需要删除数据");
+				return false;
+			}
+			else
+			{
+				if(confirm('确定要删除选中数据？'))
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			});
+		 $(".confirm").click(function(){
+			var id = $(this).attr('id');
+			if(confirm('确定将该数据同步？'))
+			{
+				$.ajax({
+					url: '/res/syncupdate',
+					type: 'POST',
+					data:{'id':id,'ajax':1,'ispost':1},
+					dataType: 'json',
+					error: function()
+						{
+						alert('Error loading PHP document');
+						},
+					success: function(data)
+						{
+							if(data.result == 'SUCCESS')
+							{
+								$(".confirm").filter("#"+id).text('已审核');
+								$(".confirm").filter("#"+id).removeAttr("href");
+								$(".confirm").filter("#"+id).unbind("click");
+							}
+						}
+					});
+			}
+			else
+			{
+				return false;
+			}
+			 });
+		});
+</script>
+{/literal}
+</head>
+<body>
+<form action="/res/gdelete" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>游戏列表</h4></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>ID</th>
+    <th>运营商编号</th>
+    <th>APP名称</th>
+    <th>单价</th>
+    <th>下载次数</th>
+    <th>是否推荐</th>
+   <th>版本号</th>
+   <th>状态</th>
+    <th>操作</th> 
+</tr>
+{foreach $list as $v}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><input name="id[]" type="checkbox"  value="{$v.id}">{$v.id}</td>
+    <td>{$v.appid}</td>
+    <td>{$v.appname}</td>
+    <td>{intval($v.price)}</td>
+    <td>{$v.downcount}</td>
+    <td>{if $v.iftj eq 1}是{else}否{/if}</td>
+     <td>{$v.ver}</td>
+     <td>{if $v.flag eq 1}是{else}否{/if}</td>
+    <td><a href="/res/gedit?id={$v.id}">编辑</a> <a href="#" class="del" id="{$v.id}">删除</a>　{if $v.unconfirm}<a href="#" class="confirm" id="{$v.id}">待审核</a>{else}<a>已审核</a>{/if}</td>
+</tr>
+{/foreach}
+</table>
+
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+    <li class="del">
+   		<button class="but">DELETE</button>
+    </li>    
+  </ul>
+</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Rockhippo-Train-Statis-admin v1.0 beta</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+
+    <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-font"></i> SQL查询</a>
+                <a class="current" href="javascript:;"><i class=" icon-wrench"></i> SQL查询管理</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div id="containerTable">
+                <div class="row-fluid">
+                <div class="span12">
+                    <div class="widget-box">
+                        <div class="widget-content nopadding">
+                            <table class="table form-horizontal">
+                                <thead>
+                                    <tr>
+                                        <th width="15%">编 码</th><th width="55%">编码说明</th><th width="15%">ACTION</th><th width="15%">操 作</th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{foreach $data as $k=>$v}}
+                                    <tr id="tr_{{$v.id}}">
+                                        <td style="text-align:center;">{{$v.code}}</td>
+                                        <td style="text-align:left;">{{$v.description}}</td>
+                                        <td style="text-align:left;">{{$v.action}}</td>
+                                        <td style="text-align:center;">
+                                        <i class="icon-plus"></i>&nbsp;<span style="cursor:pointer" onclick="add({{$v.id}})">添加</span>&nbsp;&nbsp;
+                                        <i class="icon-pencil"></i>&nbsp;<span style="cursor:pointer" onclick="edit({{$v.id}})">编辑</span>&nbsp;&nbsp; 
+                                        </td>  
+                                    </tr>
+                                    {{/foreach}}   
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            </div>
+            
+            
+        </div>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+    <script type="text/javascript">
+    function add(id){
+        $("#tr_error").remove();
+        var timestamp = Date.parse(new Date());
+        var html = '<tr id="tr_'+timestamp+'"><td><input type="text" style="width:90%" class="form-control" id="code_'+timestamp+'" name="code_'+timestamp+'" placeholder="code"></td><td><input type="text" style="width:90%;" class="form-control" id="description_'+timestamp+'" name="description_'+timestamp+'" placeholder="description"></td><td><input type="text" style="width:90%;" class="form-control" id="action_'+timestamp+'" name="action_'+timestamp+'" placeholder="action"></td><td style="width:90%; text-align:center;"><button type="button" onclick="doSubmit(\''+timestamp+'\')" class="btn btn-success">提交</button> <button type="button" class="btn btn-warning" onclick="doCancel(\''+timestamp+'\')">取消</button></td></tr>';
+        $("#tr_"+id).after(html);
+    }
+    function doCancel(id){
+       $("#tr_"+id).remove();
+    }
+    function doSubmit(id){
+        var code = $('#code_'+id).val();
+        var description = $('#description_'+id).val();
+        var action = $('#action_'+id).val();
+        if(!code || !description || !action){
+            return false;
+        }
+        $.ajax({
+            type:"POST",
+            url:"/codesearch/ajaxInsert",
+            data:{code:code,description:description,action:action},
+            dataType: "html",        
+            success:function(data){
+                $("#tr_"+id).after(data);
+                $("#tr_"+id).remove();
+            }       
+        });
+    } 
+    function edit(id){
+        $.ajax({
+            type:"POST",
+            url:"/codesearch/ajaxEdit",
+            data:{id:id,type:1},
+            dataType: "html",        
+            success:function(data){
+                $("#tr_"+id).html(data);
+            }       
+        });
+    }
+    function doEidtCancel(id){
+        $.ajax({
+            type:"POST",
+            url:"/codesearch/ajaxEdit",
+            data:{id:id,type:2},
+            dataType: "html",        
+            success:function(data){
+                $("#tr_"+id).html(data);
+            }       
+        });
+    }
+
+    function doEidtSubmit(id){
+        var code = $('#code_'+id).val();
+        var description = $('#description_'+id).val();
+        var action = $('#action_'+id).val();
+        if(!code || !description || !action){
+            return false;
+        }
+        $.ajax({
+            type:"POST",
+            url:"/codesearch/submitEdit",
+            data:{id:id,code:code,description:description,action:action},
+            dataType: "html",        
+            success:function(data){
+                $("#tr_"+id).html(data);
+            }       
+        });
+    } 
+
+
+    </script>
+    </body>
+</html>
+  

@@ -1,0 +1,126 @@
+{{include file="public_header.html"}}
+<!--sidebar-menu-->
+  <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/main" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-user"></i> 同步数据</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i>SQL语句列表</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <p><b>说 明: </b></p>
+            <p>列表可以按条件进行筛选。</p>  
+           		<div class="span" style="width:255px">
+                    <select name="dateSearch" id="sqltype">
+                      <option value="0">SQL语句类型</option>
+                      		<option value="UPDATE">&nbsp;UPDATE</option>
+					      	<option value="INSERT">&nbsp;INSERT</option>
+                    </select>
+                </div>
+                
+                <div class="span" style="width:255px">
+                    <select name="dateSearch" id="updatetype">
+                      <option value="0">SQL执行表名</option>
+                      {{foreach $tbNames as $v}}
+                      		<option value="{{$v.updatetype}}">&nbsp;{{$v.updatetype}}</option>
+                      {{/foreach}}
+                    </select>
+                </div>
+                
+                <div class="span" style="float:left;">
+                <span>
+                  
+                </span>
+                </div>
+                <div style="float:left;">
+                    <span>&nbsp;&nbsp;<input type="button" onclick="searchMember(1)" value="查 询" /></span>
+                </div>
+                <div style="clear:both;"></div>
+                
+            <p></p>   
+            <div style="float:left;">
+                <div class="btn-group">
+                	<a href="#choice2" data-toggle="modal" onclick="tableChoice();" class="btn btn-group">表同步选择</a>
+    	        </div>
+            </div>
+            <hr/>
+            <div id="containerTable">  
+
+            </div>
+            
+            <a id="loading" href="#myModal" data-toggle="modal" class="hide"></a> 
+            <div id="myModal" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><img src="{{$psys_img}}loading.gif" /></p>
+                <p style="text-align:center;">加载中...</p>
+                <a id="loading_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div id="choice2" class="modal hide" style="display: none;" aria-hidden="true">
+		<div class="modal-header">
+		    <h3>表同步选择</h3>
+		</div>
+		<div class="modal-body" id="AddStation">
+		    
+		</div>
+		<div class="modal-footer">
+		    <a class="btn" href="javascript:;" onclick="AddPost()" data-dismiss="modal">同步</a>
+		    <a class="btn" href="javascript:;" id="Cancel" data-dismiss="modal">关 闭</a>
+		</div>
+	</div>
+<!--Footer-part-->
+{{include file="public_footer.html"}}
+<!--end-Footer-part--> 
+    <script type="text/javascript">
+        function AddPost(){
+        	$("#AddStation form").submit();
+        }
+
+        $(function(){
+            searchMember(1);
+        })
+		
+        function searchMember(page){
+            var sqltype = $("#sqltype").val();
+            var updatetype = $("#updatetype").val();
+            $.ajax({
+                type: "POST",
+                url: "/syn/sqlList",
+                data: {
+            		sqltype:sqltype,
+                    page:page,
+                    updatetype:updatetype
+                },
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){
+                    loading_func(1);
+                },
+                success: function(data){
+                    loading_func();
+                    $("#containerTable").html(data);
+                    $("#currentpage").html(page + "　");
+                }
+            });
+            
+        }        
+        function loading_func(s){
+            s == 1 ? $("#loading").click() : $("#loading_c").click();
+        }
+
+
+        function tableChoice(){
+            $.ajax({
+                type: "POST",
+                url: "/syn/tableChoice",
+                data: {},
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){},
+                success: function(data){
+                    $("#AddStation").html(data);
+                }
+            });  
+        }
+    </script>

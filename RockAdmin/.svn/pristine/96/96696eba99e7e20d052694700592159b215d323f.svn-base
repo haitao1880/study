@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>新流程3</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/WdatePicker.js"></script>
+<script type="text/javascript" src="{$psys_js}echarts/echarts.js"></script>
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+<style>
+    
+.search {
+    background: none repeat scroll 0 0 #e9e9e9;
+    border-bottom: 1px solid #d1d1d1;
+    padding: 6px;
+    width: 100%;
+}
+.select2 {
+    border: 1px solid #ccc;
+    color: #696969;
+    font: 12px arial,helvetica,sans-serif;
+    height: 22px;
+    width: 122px;
+}
+
+.Wdate {
+    background: url("datePicker.gif") no-repeat scroll right center #fff;
+    border: 1px solid #ccc;
+    color: #696969;
+    font: 12px arial,helvetica,sans-serif;
+    height: 22px;
+    text-indent: 2px;
+    width: 200px;
+}
+
+.button2 {
+    background: none repeat scroll 0 0 #b74141;
+    border: 1px solid #881010;
+    color: white;
+    cursor: pointer;
+    font: 12px arial,helvetica,sans-serif;
+    height: 24px;
+    padding: 0 5px;
+}    
+</style>
+
+<script type="text/javascript">
+          function Trend(divid,list){
+        require.config({
+            paths: {
+                echarts: '{$psys_js}echarts'
+            }
+        });
+         require(
+            [
+                'echarts',
+                 'echarts/chart/line',
+                'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
+            ],
+            function (ec) {
+              var myChart = ec.init(document.getElementById(divid)); 
+              var option = {
+                  title: list.title,
+                    tooltip: {
+                        show: true
+                    },
+                    legend:  list.legend,
+                    xAxis : list.xaxis,
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                 "series": list.series
+                 };
+             myChart.setOption(option); 
+            }
+        );
+       }
+    
+</script>

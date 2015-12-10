@@ -1,0 +1,202 @@
+<div class="content container-fluid sidebarRight animated fadeInUp">
+   <div class="row">
+                
+        <div class="col-md-6" style="width:40%;">
+            <div class="panel panel-purple">
+                <div class="panel-heading">
+                    <h3 class="panel-title">游戏广告流程统计</h3>
+                </div>
+                <div class="panel-body" style="min-height: 500px;">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                {foreach $alladuvlist.legend.data as $v}
+                                  <th>{$v}</th>
+                                {/foreach}
+                                <th>详细</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                          
+                           {foreach $alladuvlist.xaxis.data  as $k=>$v}
+                            <tr>
+                                <td>{$v}</td>
+                                  {foreach $alladuvlist.series as $k2=>$v2}
+                                    <td>{$v2['data'][$k]}</td>
+                                {/foreach}
+                                <td style="cursor:pointer;" data-toggle="modal" data-target="#myModal"  onclick="getdetail(this)" date='{$v}' stationid="{$stationid}" class="detail">详情</td>
+                            </tr>
+                              {/foreach}
+                        </tbody>
+                    </table>
+                   <div class="btn-toolbar" role="toolbar" aria-label="..." id="paging">
+                      
+                  </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-md-6" style="width:60%;">
+            <div class="panel panel-light-orange">
+                <div class="panel-heading">
+                    <h3 class="panel-title"></h3>
+                </div>
+                  
+                <div class="panel-body" style="min-height: 500px;" id="graph"> 
+                   
+                </div>
+            </div>
+        </div>
+    
+    </div>
+</div>
+    <!-- 模态框（Modal） -->
+<div class="modal fade home " id="myModalu" >
+   <div class="modal-dialog">
+      <div class="modal-content">
+         
+         <div class="modal-body">
+            <div style="min-height: 400px;text-align:center;margin:0 auto;border:1px solid #ccc;" id="wifinum">ddddddddddddd</div>
+           
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" 
+               data-dismiss="modal">关闭
+            </button>
+         </div>
+      </div>
+     
+   </div>
+</div>
+
+ <div id="alladuv" style="height:400px"></div>
+    
+     <style>
+  .home {
+    opacity: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    
+}
+.modal-dialog {
+    margin: 30px auto;
+    width: 850px;
+}
+.hiddenbody{
+    
+    overflow:  hidden;
+}
+.modal.fade .modal-dialog {
+    transform: translate(0px,0px);
+    transition: transform 0.3s ease-out 0s;
+}
+    </style>
+      <script type="text/javascript">
+           //加载 曲线 
+            Trend("graph",{$alladuv});
+           //查询 每日详细
+           function getdetail(mythis){
+            var postdata={}; //post 数据
+           postdata.edate=  $(mythis).attr("date");
+           postdata.stationid=  $(mythis).attr("stationid");
+           $.post("/pagerecord/adLogDay",postdata, //获取 每日详细 页面数据 
+               function(data){
+                 $("#myModalu").slideDown("10000"); //弹出 div层 
+                 $("body").addClass("hiddenbody"); //设置 遮罩效果 
+                   Trend("wifinum",data);
+               }
+             );
+         }
+         //关闭弹出层
+     $(function(){
+        $(".btn-primary").click( function () {  
+            $("#myModalu").hide(); //隐藏弹出层
+            $("body").removeClass("hiddenbody");//删除 遮罩效果 
+        });
+     });
+     
+     
+     
+      //js 分页方法      
+    function fenye(thepage=1){
+       var num=5; //每页显示的条数
+        var allnum=$("#tbody tr").length; //总数
+        var addpage=3; //左右相对当前页增加量
+        paginate(num,allnum,thepage,addpage);
+        
+        var begin_line=(thepage-1)*num;
+        var end_line=thepage*num;
+        $.each($("#tbody tr"), function(i){  
+         this.style.display = 'none';   
+        if( begin_line<=i&&i<=end_line){   
+           this.style.display = '';    
+         }   
+       });  
+    }
+  
+fenye(1); //默认 为第一页 
+//fenye(1);
+// 分页 点击事件
+function patingButton(){
+      $("#paging div").click( function () {  
+          var pageid=$(this).attr("page");
+          
+           fenye(pageid);
+        });
+      }
+      patingButton();
+    
+    /** 完全利用 js 进行分页 **/
+    function paginate(num1,allnum1,thepage1,addpage1){
+        var show="";
+        var indexpage=1;
+        var num=parseInt(num1);
+        var allnum=parseInt(allnum1);
+        var thepage=parseInt(thepage1);
+        var addpage=parseInt(addpage1);
+        var  allpage= Math.ceil((allnum + num - 1) / num);
+        thepage=thepage > allpage ? allpage : (thepage < 0 ? 1 : thepage);
+        var   uppage = (thepage - 1) <= 1 ? false : (thepage - 1);                      //上一页 
+        var    addfirstpage = (thepage - addpage) < 1 ? 1 : (thepage - addpage); //循环第一页
+        var   addendpage = (thepage + addpage) > allpage ? allpage : (thepage + addpage); //循环最后一页
+        if(thepage==1){ addendpage=(thepage + addpage) > allpage ? allpage : (thepage + addpage*2)};
+        var   nextpage = (thepage + 1) >= allpage ? false : (thepage + 1);   //下一页
+        var   endpage = (indexpage == allpage) ? false : allpage;
+       
+        //生成首页  
+        if (indexpage) {
+            if(thepage==1){
+          show +="<div class='btn btn-default tooltips btn-group active' page='1'>首页</div>";
+          }else{
+               show +="<div class='btn btn-default tooltips btn-group' page='1'>首页</div>";
+          }
+        }
+        //生成上一页  
+        if (uppage) {
+            show+=" <div page='"+uppage+"' style='margin:0;float: left;' aria-label='...' role='group' class='btn btn-default tooltips btn-group'>上一页</div>";
+        }
+        for (i = addfirstpage; i <= addendpage; i++) {
+            var b = "<div page='"+i+"' style='margin:0;float: left;' aria-label='...' role='group' class='btn btn-default tooltips btn-group'>"+i+"</div> ";  //数字页 
+            if (i == thepage) {
+              b = " <div page='"+i+"' style='margin:0;float: left;' aria-label='...' role='group' class='btn btn-default tooltips btn-group active'>"+i+"</div> "; //本页 
+            }
+            if (i == indexpage || i == allpage) {
+              } else {
+                show+= b;
+            }
+        }
+        //生成下一页
+        if (nextpage) {
+            show+=" <div page='"+nextpage+"' style='margin:0;float: left;' aria-label='...' role='group' class='btn btn-default tooltips btn-group'>下一页</div>";
+        }
+        //生成尾页
+        if (endpage) {
+         //   show+=" ";
+        }
+    $("#paging").html(show);
+     patingButton();
+  }
+ 
+  
+ </script>

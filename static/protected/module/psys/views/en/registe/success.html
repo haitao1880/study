@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Rockhippo-Train-Statis-admin v1.0 beta</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+
+    <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-bar-chart"></i> 注册统计</a>
+                <a class="current" href="javascript:;"><i class="icon-user"></i> 成功注册数据</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+
+            <div class="alert alert-info" id="pr">
+            <strong>成功注册数据</strong>
+            通过输入手机号获取验证码，并成功连接wifi的用户数量
+            </div>
+            
+        
+            <!--<p>说明: </p>
+            <p>1.日期选择分为日、周、月，其中“日”的选择范围为1-31天，“周”的选择范围为1周-12周，“月”的选择范围为1月-24月。</p>
+            <p>2.“合并按钮”是指所有选择中的站，数据累加，有且只有一条数据线；“比较按钮”是指所有选择中的站，数据比较，数据线条数与所选站点对等。</p>
+            <p>3.“详细查询”和“快速查询”是两个独立的查询体系不能混合使用。</p>-->
+            <p><code>详细查询 ：</code></p> 
+            
+                        <div class="span1">
+                            <select name="dateSearch">
+                              <option value="manyday">多日</option>
+                              <option value="oneweek">单周</option>
+                              <option value="manyweek">多周</option>
+                              <option value="onemonth">单月</option>
+                              <option value="manymonth">多月</option>
+                            </select>
+                        </div>
+                        <span class="manyday dateSpan">
+                            <input id="d5221" name="bmanyday" class="Wdate" type="text" onFocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},maxDate:'#F{$dp.$D(\'d5222\',{d:-1})}'})"/> -
+ <input id="d5222" name="emanyday" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:1})}',onpicked:function(){detailSearch('manyday')}})"/>
+                        </span>
+                        <span class="oneweek dateSpan hide">
+                            <input type="text" value="" name="oneweek" class="Wdate" onclick="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd',onpicked:function(){detailSearch('oneweek')}});"/>
+                        </span>
+                        <span class="manyweek dateSpan hide">
+                            <input id="d5223" name="bmanyweek" class="Wdate" type="text" onFocus="var d5224=$dp.$('d5224');WdatePicker({onpicked:function(){d5224.focus();},maxDate:'#F{$dp.$D(\'d5224\',{d:-1})}'})"/> -
+ <input id="d5224" name="emanyweek" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5223\',{d:1})}',onpicked:function(){detailSearch('manyweek')}})"/>
+                        </span>
+                        <span class="onemonth dateSpan hide">
+                            <input type="text" value="" name="onemonth" class="Wdate" onclick="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM',onpicked:function(){detailSearch('onemonth')}})"/>
+                        </span>
+                        <span class="manymonth dateSpan hide">
+                            <input id="d5225" name="bmanymonth" class="Wdate" type="text" onFocus="var d5226=$dp.$('d5226');WdatePicker({onpicked:function(){d5226.focus();},maxDate:'#F{$dp.$D(\'d5226\',{d:0})}',dateFmt:'yyyy-MM'})"/> -
+ <input id="d5226" name="emanymonth" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5225\',{M:1})}',dateFmt:'yyyy-MM',onpicked:function(){detailSearch('manymonth')}})"/>
+                        </span>
+            <div class="btn-group">
+              <a href="#choice" data-toggle="modal" class="btn btn-group">站点选择 <span class="caret"></span></a>
+              
+              <div id="choice" class="modal hide" style="display: none;" aria-hidden="true">
+                <div class="modal-header">
+                <button class="close" type="button" data-dismiss="modal">×</button>
+                <h3>站点选择</h3>
+                </div>
+                <div class="modal-body">
+                  <ul id="stationCheckbox">
+                    {{foreach $station as $key=>$val}}
+                        <li><label><input type="checkbox" name="stationCheckboxS[]" value="{{$val.id}}" />{{$val.stationname}}</label></li>
+                    {{/foreach}}
+                  </ul>
+                </div>
+                <div class="modal-footer">
+                <a href="javascript:checkAll('stationCheckbox');" class="btn btn-danger" style="font-size:12px;">全选</a>
+                <a href="javascript:checkReverse('stationCheckbox');" class="btn btn-danger" style="font-size:12px;">反选</a>&nbsp;&nbsp;
+                <a class="btn btn-success" onclick="station2Search();">确定</a>
+                <a class="btn" href="javascript:;" id="station2SearchCancel" data-dismiss="modal">取消</a>
+                </div>
+              </div>
+            
+            </div>
+            
+            <label style="display:inline"><input type="radio" name="datastatus" checked="checked" value="1" />合并</label>&nbsp;&nbsp;&nbsp;<label style="display:inline"><input type="radio" name="datastatus" value="2" />比较</label>
+
+            <p></p>
+            
+            展现形式: <label style="display:inline"><input type="radio" name="show" checked="checked" value="pic" />仅图</label> &nbsp;&nbsp;&nbsp;&nbsp;
+                  <!--<label style="display:inline"><input type="radio" name="show" value="form" />仅表</label> &nbsp;&nbsp;&nbsp;&nbsp;-->
+                  <label style="display:inline"><input type="radio" name="show" value="pic_form" />图表综合</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            
+            <p></p>
+            
+            <p>筛选条件：<span id="screening"></span></p>
+            
+            <hr/>  
+            
+            <div id="dateError" class="alert alert-error alert-block hide">
+                <h4 class="alert-heading">提示</h4>
+                查询时间设置错误，请重新设置。
+            </div>
+            <div id="firstDayOfWeekAlert" class="alert alert-error alert-block hide">
+                <h4 class="alert-heading">提示</h4>
+                快速查询中的“本周”，在本周的第一天将暂无数据。
+            </div>
+            <div id="firstDayOfMonthAlert" class="alert alert-error alert-block hide">
+                <h4 class="alert-heading">提示</h4>
+                快速查询中的“本月”，在本月的第一天将暂无数据。
+            </div>
+            <div id="dataError" class="alert alert-error alert-block hide">
+                <h4 class="alert-heading">提示</h4>
+                数据异常或数据不存在，请重新选择。
+            </div>
+            <p id="checkType">查看方式 : <a class="icon-random btn btn-success tip-bottom" data-original-title="曲线图" check-value="spline"></a> <a class="icon-bar-chart btn btn-primary tip-bottom" data-original-title="柱状图" check-value="column"></a></p>
+            <input type="hidden" name="check" value="spline" />
+            <div id="container" style="min-width: 310px; width:98%; height: 400px; margin: 0 auto"></div>
+            
+            <div id="fastDiv">
+                <p><code>快速查询 ：</code></p>
+                <a class="btn btn-success" onclick="javascript:fastSearchButton(2,this);">本周</a>&nbsp;&nbsp;&nbsp;
+                <a class="btn btn-primary" onclick="javascript:fastSearchButton(3,this);">本月</a>&nbsp;&nbsp;&nbsp;
+                <label style="display:inline"><input type="radio" name="datastatusFS" checked="checked" value="1" />合并</label>&nbsp;&nbsp;&nbsp;
+                <label style="display:inline"><input type="radio" name="datastatusFS" value="2" />比较</label>
+            </div>
+            <input type="hidden" value="2" id="fastHidden" />
+            <input type="hidden" value="manyday" id="dataSearchHidden" />
+            
+            <br />
+            
+            <p>导出报表：<a class="icon-list-ul btn btn-danger tip-bottom" href="javascript:output();" data-original-title="导出当前信息"></a></p>
+            
+            <div id="containerTable"></div>
+            
+            <a id="loading" href="#myModal" data-toggle="modal" class="hide"></a>
+            
+            <div id="myModal" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><img src="{{$psys_img}}loading.gif" /></p>
+                <p style="text-align:center;">加载中,Hold住...</p>
+                <a id="loading_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+            
+            <!--比较图生成-->
+            <a id="loading2" href="#chainDiag" data-toggle="modal" class="hide"></a>
+            
+            <div id="chainDiag" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><div id="container2" style="width:830px; height: 500px; margin: 0 auto"></div></p>
+                <a id="chainDiag_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+
+        </div>      
+
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+    <script src="{{$psys_js}}highcharts.js"></script>
+    <script src="{{$psys_js}}highcharts-reg-success.js"></script>
+    <script src="{{$psys_js}}exporting.js"></script>
+    
+    <script type="text/javascript">
+    
+        $(function(){
+            
+             ajaxAD(2);
+             
+             $("input[name='datastatusFS']").change(function(){
+            
+                ajaxAD($("#fastHidden").val());
+                
+             })
+             
+             $("select[name='dateSearch']").change(function(){
+
+                $("span[class*='dateSpan']").addClass("hide");
+                $("span[class*='"+$(this).val()+"']").removeClass("hide");
+                $("#dataSearchHidden").val($(this).val());
+                                
+             })
+             
+             $("input[name='show']").change(function(){
+                if($("#fastHidden").val() == 0){
+                    //图表开关
+                    if($("input[name='show']:checked").val() == 'pic'){
+                        $("#container").show();
+                        $("#containerTable").hide();
+                    }else if($("input[name='show']:checked").val() == 'form'){
+                        $("#container").hide();
+                        $("#containerTable").show();
+                    }else if($("input[name='show']:checked").val() == 'pic_form'){
+                        $("#container").show();
+                        $("#containerTable").show();
+                    }
+                }
+             })
+             
+             $("input[name='datastatus']").change(function(){
+                if($("#fastHidden").val() == 0){
+                    ajaxADDetail($("input[name='dateSearch']").val(),1);
+                }
+             })
+             
+             $("#checkType a").click(function(){
+                
+                $("#checkType a").removeClass("btn-success").addClass("btn-primary");
+                $(this).removeClass("btn-primary").addClass("btn-success");
+                $("input[name='check']").val($(this).attr("check-value"));
+                
+                //更新查看方式
+                if($("#fastHidden").val() == 0){
+                    ajaxADDetail($("input[name='dateSearch']").val(),1);
+                }else{
+                    ajaxAD($("#fastHidden").val());
+                }
+                
+                
+             })
+             
+             $("#pr").show();
+             
+        })
+        
+        function fastSearchButton(fastSearch,e){
+            
+            $(".Wdate").val("");
+            
+            $("#fastDiv a").removeClass("btn-success").addClass("btn-primary");
+            
+            $(e).removeClass("btn-primary").addClass("btn-success");
+            
+            $("#fastHidden").val(fastSearch);
+            ajaxAD(fastSearch);
+            
+        }
+        
+        function ajaxAD(fastSearch){
+            
+            //防止上下混点出错
+            if(fastSearch == 0){
+                $("#fastDiv a:first").removeClass("btn-primary").addClass("btn-success");
+                fastSearch = 1;
+                $("#fastHidden").val(1);
+            }else{
+                fastSearch = fastSearch;
+                $("#fastHidden").val(fastSearch);
+            }
+            $(".Wdate").val("");
+            //防止上下混点出错 --END--
+            
+            $(".alert").hide();
+            
+            loading_func(1);
+            
+            //清空详细查询
+            $("#screening").html("");
+            
+            $("input[name='stationCheckboxS[]']").each(function(){
+                $(this).attr("checked",true);
+                $(this).parent("span").addClass("checked");
+            })
+            
+            $.ajax({
+
+             type: "POST",
+
+             url: "/registe/ajaxREG",
+
+             data: {
+                    fastSearch:fastSearch,
+                    datastatusFS:$("input[name='datastatusFS']:checked").val(),
+                    distinguish:2
+                    },
+
+             dataType: "json",
+
+             success: function(data){
+
+                if(data.error){
+                    
+                    data.error == 'WEEKNODATA' ? $("#firstDayOfWeekAlert").show() : "";
+                    data.error == 'MONTHNODATA' ? $("#firstDayOfMonthAlert").show() : "";
+                    
+                }
+                
+                var labels = $("input[name='datastatusFS']:checked").val() == 1? true : false;
+                
+                makeChart($("input[name='check']").val(),"container","注册人数统计",data.xv,"人数(个)",data.data,labels);
+                makeTable(data,data.data.num);
+                $("#container").show();
+                $("#containerTable").show();
+                $("#container").show();
+                
+                loading_func();
+                    
+                    
+             }
+
+            });
+            
+        }
+        
+        function detailSearch(d){
+
+            ajaxADDetail(d,1);
+            
+        }
+        
+        function loading_func(s){
+            
+            s == 1 ? $("#loading").click() : $("#loading_c").click();
+            
+        }
+        
+        function ajaxADDetail(date,n){
+            
+            $(".alert").hide();
+            
+            var d = "";
+            var beginTime = "2014-11-10";//第一条数据
+            beginTime = (new Date(beginTime)).getTime()/1000;
+            var dates = new Date();
+            var year = dates.getFullYear();
+            var month = dates.getMonth()+1 < 10 ? "0"+Number(dates.getMonth()+1) : dates.getMonth()+1;
+            var day = dates.getDate();
+            var endTime = year+"-"+month+"-"+day;
+            endTime = (new Date(endTime)).getTime()/1000;
+
+            //判断时间是否合法
+            switch(date){
+                
+                case 'oneday':
+                    d = (new Date($("input[name='oneday']").val())).getTime()/1000;
+                    if(d < beginTime || d > endTime){
+                        $("#dateError").show();
+                        return false;
+                    }
+                break;
+            
+                case 'manyday':
+                    d = (new Date($("input[name='bmanyday']").val())).getTime()/1000;
+                    d2 = (new Date($("input[name='emanyday']").val())).getTime()/1000;
+                    if(d < beginTime || d > endTime || d2 < beginTime || d2 > endTime){
+                        $("#dateError").show();
+                        return false;
+                    }
+                break;
+                
+                case 'oneweek':
+                    d = (new Date($("input[name='oneweek']").val())).getTime()/1000;
+                    if(d < beginTime || d > endTime){
+                        $("#dateError").show();
+                        return false;
+                    }
+                break;
+                
+                case 'manyweek':
+                    d = (new Date($("input[name='bmanyweek']").val())).getTime()/1000;
+                    d2 = (new Date($("input[name='emanyweek']").val())).getTime()/1000;
+                    if(d < beginTime || d > endTime || d2 < beginTime || d2 > endTime){
+                        $("#dateError").show();
+                        return false;
+                    }
+                break;
+                
+                case 'onemonth':
+                    d = (new Date($("input[name='onemonth']").val())).getTime()/1000;
+                    if(d < beginTime || d > endTime){
+                        $("#dateError").show();
+                        return false;
+                    }
+                break;
+                
+                case 'manymonth':
+                    d = (new Date($("input[name='bmanymonth']").val())).getTime()/1000;
+                    d2 = (new Date($("input[name='bmanymonth']").val())).getTime()/1000;
+                    if(d < beginTime || d > endTime || d2 < beginTime || d2 > endTime){
+                        $("#dateError").show();
+                        return false;
+                    }
+                break;
+                    
+            }
+                    
+            $("#fastHidden").val(0);
+
+            if(n == 1){
+                loading_func(1);
+            }
+            //清空快速查询
+            $("#fastDiv a").removeClass("btn-success").addClass("btn-primary");
+            
+            var s = new Array();
+            $("input[name='stationCheckboxS[]']:checked").each(function(){
+                
+                s.push($(this).val());
+            })
+            
+            if(s.length == 0){
+                $("input[name='stationCheck[]']").each(function(){  
+                    s.push($(this).val());
+                }); 
+            }
+            
+            $.ajax({
+
+             type: "POST",
+
+             url: "/registe/ajaxREG",
+
+             data: {
+                    fastSearch:0,
+                    dateSearch:date,
+                    oneday:$("input[name='oneday']").val(),
+                    bmanyday:$("input[name='bmanyday']").val(),
+                    emanyday:$("input[name='emanyday']").val(),
+                    oneweek:$("input[name='oneweek']").val(),
+                    bmanyweek:$("input[name='bmanyweek']").val(),
+                    emanyweek:$("input[name='emanyweek']").val(),
+                    onemonth:$("input[name='onemonth']").val(),
+                    bmanymonth:$("input[name='bmanymonth']").val(),
+                    emanymonth:$("input[name='emanymonth']").val(),
+                    datastatus:$("input[name='datastatus']:checked").val(),
+                    stationC:s,
+                    distinguish:2
+                    },
+
+             dataType: "json",
+
+             success: function(data){
+                
+                if(data.error){
+                    
+                    data.error == 'WEEKNODATA' ? $("#firstDayOfWeekAlert").show() : "";
+                    data.error == 'MONTHNODATA' ? $("#firstDayOfMonthAlert").show() : "";
+                    
+                }
+                
+                $("#screening").html("");
+                
+                var labels = $("input[name='datastatus']:checked").val() == 1? true : false;
+
+                makeChart($("input[name='check']").val(),"container","注册人数统计",data.xv,"人数(个)",data.data,labels);
+                makeTable(data,data.data.num);
+                $("#screening").html(data.screening.date);
+                $("#screening").append(data.screening.station);
+                
+                //图表开关
+                if($("input[name='show']:checked").val() == 'pic'){
+                    $("#container").show();
+                    $("#containerTable").hide();
+                }else if($("input[name='show']:checked").val() == 'form'){
+                    $("#container").hide();
+                    $("#containerTable").show();
+                }else if($("input[name='show']:checked").val() == 'pic_form'){
+                    $("#container").show();
+                    $("#containerTable").show();
+                }
+                
+                $("input[name='stationCheck[]']").each(function(){
+                    $("input[name='stationCheckboxS[]'][value='"+$(this).val()+"']").attr("checked",true);
+                    $("input[name='stationCheckboxS[]'][value='"+$(this).val()+"']").parent("span").addClass("checked");
+                })
+                
+                if(n == 1){
+                    loading_func();
+                }
+                         
+             }
+
+            });
+            
+        }
+        
+        function screeningSpan(s,r){
+            
+            //若时间已经被清除 则清除所有筛选条件 并默认为快速查询当日
+            if(s == 'close-date'){
+                $("#screening").html("");
+                fastSearchButton(2);
+                $("#fastDiv a:first").removeClass("btn-primary").addClass("btn-success");
+            }else if(s == 'close-station'){
+                $("#close-station-"+r).remove();
+                $("input[name='stationCheckboxS[]'][value='"+r+"']").attr("checked",false);
+                $("input[name='stationCheckboxS[]'][value='"+r+"']").parent("span").removeClass("checked");
+                ajaxADDetail($("input[name='dateSearch']").val(),1);
+            }
+            
+        }
+        
+        function station2Search(){
+            
+            if($("#fastHidden").val() == 0){
+                ajaxADDetail($("input[name='dateSearch']").val(),0);
+            }
+            
+            $("#station2SearchCancel").click();
+            
+        }
+        
+		</script>
+    
+    </body>
+</html>
+  

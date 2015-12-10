@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+{literal}
+<script type="text/javascript">
+$(document).ready(function(){
+	
+});
+</script>
+{/literal}
+</head>
+<body>
+<div style="display: none;" id="isadd">{$isadd}</div>
+<form method="post">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>短信设置</h3>
+  </caption>
+
+   <tr>
+    <td align="right">电信短信－报警上限：</td>
+    <td align="left"><input type="text" name="type1" value="{$smsc.msms.max}"/></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right">漫道短信－(铁路)报警上限：</td>
+    <td align="left"><input type="text" name="type2" value="{$smsc.mdsms.max}"/></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right">漫道短信－(交运)报警上限：</td>
+    <td align="left"><input type="text" name="type3" value="{$smsc.busmdsms.max}"/></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right">接收邮件地址：</td>
+    <td align="left"  colspan="2"><textarea cols="65" rows="3" name="email">{$smsc.msms.email}</textarea><font color="red" style="font-size:12px;">&nbsp;&nbsp;*多人接收邮件地址，提示邮件地址之间用英文逗号隔开</font></td>
+  </tr>
+  <tr>
+    <td colspan="3" align="center"><input type="submit" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

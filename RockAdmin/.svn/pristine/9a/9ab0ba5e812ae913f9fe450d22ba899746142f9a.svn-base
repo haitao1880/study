@@ -1,0 +1,319 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-23 11:02:50
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//res/vadd.html" */ ?>
+<?php /*%%SmartyHeaderCode:14641925155498db5a49b8b4-60965337%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'aee9aebe9d12457dee648b935f6c389f998d33f4' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//res/vadd.html',
+      1 => 1409710721,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '14641925155498db5a49b8b4-60965337',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>后台视频添加</title>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.11.1.js"></script>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<script language="javascript" type="text/javascript">
+
+$(document).ready(function(){
+	for(var i=2014;i>1980;i--)
+		{
+		$('#vyear').append("<option value="+i+">"+i+"</option>");
+		}
+      
+    });
+
+
+</script>
+<style type="text/css">
+.file-box {
+	position: relative;
+	width: 340px
+}
+
+.txt {
+	height: 22px;
+	border: 1px solid #cdcdcd;
+	width: 180px;
+}
+
+.btn {
+	background-color: #FFF;
+	border: 1px solid #CDCDCD;
+	height: 24px;
+	width: 70px;
+}
+
+.file {
+	position: absolute;
+	top: 0;
+	right: 80px;
+	height: 24px;
+	filter: alpha(opacity : 0);
+	opacity: 0;
+	width: 260px
+}
+</style>
+</head>
+<body>
+	<form class="add" id="addfrom" action="/res/uploadv" method="POST" enctype="multipart/form-data">
+		<table class="add-table" width="100%" border="0" cellpadding="0">
+			<caption>
+				<h3>新增视频信息</h3>
+			</caption>
+			<tr>
+				<td width="30%" align="right">电影名称：</td>
+				<td width="70%" align="left"><input type="text" name="vname" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">主演：</td>
+				<td width="70%" align="left"><input type="text" name="cast" /></td>
+			</tr>
+
+			<tr>
+				<td width="30%" align="right">导演：</td>
+				<td width="70%" align="left"><input type="text" name="direcotr" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">播放时间：</td>
+				<td width="70%" align="left"><input type="text" name="runtimes" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">点击次数：</td>
+				<td width="70%" align="left"><input type="text" name="hits" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">单价：</td>
+				<td width="70%" align="left"><input type="text" name="price" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">集数：</td>
+				<td width="70%" align="left"><input type="text"
+					name="sectionnum" /></td>
+			</tr>
+			<tr>
+				<td align="right">电影路径：</td>
+				<td align="left"><div class="file-box">
+						<input type='text' name='vpath' id='textfield' class='txt' /> <input
+							type='button' class='btn' value='浏览...' /> <input type="file"
+							name="vpath" class="file" id="fileField" size="28"
+							onchange="document.getElementById('textfield').value=this.value" />
+					</div></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">电影封面：</td>
+				<td width="70%" align="left"><div class="file-box">
+						<input type='text' name='vimg' id='textfield1' class='txt' /> <input
+							type='button' class='btn' value='浏览...' /> <input type="file"
+							name="vimg" class="file" id="fileField" size="28"
+							onchange="document.getElementById('textfield1').value=this.value" />
+					</div></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">合作商名称：</td>
+				<td width="70%" align="left"><input type="text" name="parter" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">排序：</td>
+				<td width="70%" align="left"><input type="text" name="sortid" /></td>
+			</tr>
+			<tr>
+				<td align="right">电影类型：</td>
+				<td align="left"><input name="colstr" type="checkbox" id="aa"
+					value="31" />爱情 <input name="colstr" type="checkbox" id="aa"
+					value="32" />战争<input name="colstr" type="checkbox" id="aa"
+					value="33" />喜剧<input name="colstr" type="checkbox" id="aa"
+					value="34" />科幻 <input name="colstr" type="checkbox" id="aa"
+					value="35" />恐怖<input name="colstr" type="checkbox" id="aa"
+					value="36" />动作<input name="colstr" type="checkbox" id="aa"
+					value="37" />动画 <input name="colstr" type="checkbox" id="aa"
+					value="38" />灾难<input name="colstr" type="checkbox" id="aa"
+					value="39" />剧情<input name="colstr" type="checkbox" id="aa"
+					value="40" />传记<input name="colstr" type="checkbox" id="aa"
+					value="41" />惊悚 <input name="colstr" type="checkbox" id="aa"
+					value="42" />犯罪  
+			</tr>
+			<tr>
+				<td align="right">所属年代：</td>
+				<td align="left"><select id="vyear">
+						
+				</select></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">所属地区：</td>
+				<td width="70%" align="left"><select id="area" name="area">
+						<option value="21">内地</option>
+						<option value="22">港台</option>
+						<option value="23">欧美</option>
+						<option value="24">韩国</option>
+						<option value="25">日本</option>
+						<option value="26">其他</option>
+				</select></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">排序：</td>
+				<td width="70%" align="left"><input id="state"
+					class="check-box" name="zrhp" type="radio" value="12" checked><label>综艺</label>
+					<input id="state" class="check-box" name="zrhp" type="radio"
+					value="11"><label>电影</label></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">是否推荐：</td>
+				<td width="70%" align="left"><input id="state"
+					class="check-box" name="iftj" type="radio" value="1" checked><label>是</label>
+					<input id="state" class="check-box" name="iftj" type="radio"
+					value="0"><label>否</label></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+				<td width="70%" align="left"><input id="state"
+					class="check-box" name="flag" type="radio" value="1" checked><label>正常</label>
+					<input id="state" class="check-box" name="flag" type="radio"
+					value="0"><label>停用</label></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">描述：</td>
+				<td width="70%" align="left"><textarea cols="20" id="vdesc"
+						rows="2" style="width: 565px; height: 88px;"></textarea></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">详情：</td>
+				<td width="70%" align="left"><textarea cols="20" id="vdetail"
+						rows="2" style="width: 565px; height: 88px;"></textarea></td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center"><input type="hidden" name="id" /><input
+					type="button" id="btnSave" value="保 存" /></td>
+			</tr>
+		</table>
+	</form>
+	
+	<script type="text/javascript">
+		$(function() {
+			$('#btnSave').click(function() {
+				
+				var vname = $.trim($("input[name='vname']").val());
+				var cast = $.trim($("input[name='cast']").val());
+				var direcotr = $.trim($("input[name='direcotr']").val());
+				var runtimes = $.trim($("input[name='runtimes']").val());
+				var hits = $.trim($("input[name='hits']").val());
+				var price = $.trim($("input[name='price']").val());
+				var sectionnum = $.trim($("input[name='sectionnum']").val());
+				var vpath = $.trim($("input[name='vpath']").val());
+				var vimg = $.trim($("input[name='vimg']").val());
+				var parter = $.trim($("input[name='parter']").val());
+				var sortid=$.trim($("input[name='sortid']").val());
+				var vyear = $("#vyear ").val();			
+				var iftj = $('input[name="iftj"]:checked').val();
+				var flag = $('input[name="flag"]:checked').val();				 
+				var colstr = [];				  
+				$('input:checkbox:checked').each(function() {
+				colstr.push($(this).val());
+				});	
+				colstr.push($("#area").val());	
+				colstr.push($('input:radio:checked').val());
+				//alert(colstr);	
+				var vdesc = $('#vdesc').val();
+				var vdetail = $('#vdetail').val();
+				var id = $.trim($("input[name='id']").val());
+				if (vname == '') {
+					alert('请输入电影名称！');
+					return;
+				}
+
+				if (runtimes == '') {
+					alert('请输入播放时间！');
+					return;
+				}
+				if (sectionnum == '') {
+					alert('请输入视频集数！');
+					return;
+				}
+				if (vpath == '') {
+					alert('请选择视频路径！');
+					return;
+				}		    
+				checkisnum(price);
+				checkisnum(hits);
+				checkisnum(sectionnum);				
+				//其他验证
+				$('#addfrom').submit();
+				$.post('/res/vupdate', {
+					'ispost' : 1,
+					'ajax' : 1,
+					'vname' : vname,
+					'cast' : cast,
+					'direcotr' : direcotr,
+					'runtimes' : runtimes,
+					'hits' : hits,
+					'price' : price,
+					'sectionnum' : sectionnum,
+					'vpath' : vpath,
+					'vimg' : vimg,
+					'parter' : parter,
+					'sortid' : sortid,
+					'vyear' : vyear,				
+					'iftj' : iftj,
+					'flag' : flag,
+					'colstr':colstr,
+					'vdesc' : vdesc,
+					'vdetail' : vdetail,
+					'id' : id
+				}, function(res) {
+					if (res.result == 'SUCCESS') {
+						if (confirm('添加成功，点击确定继续添加，点击取消返回列表')) {
+							$("input[name='vname']").val('');
+							$("input[name='cast']").val('');
+							$("input[name='direcotr']").val('');
+							$("input[name='runtimes']").val('');
+							$("input[name='hits']").val('');
+							$("input[name='price']").val('');
+							$("input[name='sectionnum']").val('');
+							$("input[name='vpath']").val('');
+							$("input[name='vimg']").val('');
+							$("input[name='parter']").val('');
+							$("input[name='sortid']").val('');
+							$('#vdesc').val('');
+							$('#vdetail').val('');
+						} else {
+							document.location.href = '/res/vlist';
+						}
+					} else {
+						alert(res.msg + '(' + res.msgcode + ')');
+					}
+				}, 'json');
+
+			});
+		});
+		//检测是否为数字
+		function checkisnum(value)
+		{
+			var code;  
+            for (var i = 0; i < value.length; i++) {                     
+                var code = value.charAt(i).charCodeAt(0);  
+                if (code < 48 || code > 57) {  
+               	 alert('请输入数字！');
+               	 return;
+                  
+                }  
+               
+            } 
+		}
+	</script>
+	
+
+</body>
+</html>

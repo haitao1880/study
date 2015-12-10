@@ -1,0 +1,183 @@
+<?php
+class resourceController extends Psys_AbstractController
+{
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	/**
+	 * app或者游戏下载概况页面
+	 * @return 
+	 */
+	public function downappAction(){
+		$nt = new Psys_StationModel();
+		$stations = $nt->station();
+		$this->smarty->assign('stations',$stations);
+		$this->forward = 'downapp';
+	}
+
+	/**
+	 * app或者游戏下载概况数据
+	 * @return json
+	 */
+	public function downappdataAction(){
+		$data = reqstr('data');
+		if (!$data) {
+			return;
+		}
+		$page = reqnum('page',1);
+		$pagesize = 10;
+		$data = urldecode($data);
+		$info = array();
+		parse_str($data,$info);
+
+		$date = (int)$info['date']?(int)$info['date']:7; //默认是查出7天的数据
+		$sdate = trim($info['sdate'])?trim($info['sdate']):''; 
+		$edate = trim($info['edate'])?trim($info['edate']):'';
+		$station = (int)$info['station']?(int)$info['station']:0; // 0 表示查询出所有车站
+		$type = (int)$info['type']?(int)$info['type']:1; //默认是游戏
+
+		if (!$sdate || !$edate) {
+			$edate = date('Y-m-d');
+			$sdate = date('Y-m-d',strtotime("-$date day"));
+		}
+
+		//如果时间区间大于30天则按照30天计算
+		$date_area = abs(strtotime($edate) - strtotime($sdate)) / 86400;
+		
+		if ($date_area > 30) {
+			$sdate = date('Y-m-d',strtotime("-30 day"));
+		}
+		$sdate = str_replace('-','_',$sdate);
+		$edate = str_replace('-','_',$edate);
+
+		$nt = new Psys_ResourceModel();
+
+		$data = $nt -> DownAppData($sdate,$edate,$station,$type,$page,$pagesize);
+		$data_graph = $nt -> DownAppData($sdate,$edate,$station,$type,$page,$pagesize,1);
+		
+		$paging = $this->paging($data['allnum'],$page,$pagesize,count($data['allrow']));
+
+		$stations = $nt->station();
+
+		$total = 0;
+		foreach($data['allrow'] as &$v){			
+			if ($station) {
+				$v['stationname'] = $this -> getstationname($stations,$v['stationid']);
+			}else{
+				$v['stationname'] = 'ALL';
+			}
+			$total += $v['num'];
+		}
+		
+		$datas[0]['type'] = 'pie';
+		$datas[0]['name'] = '下载占比';
+		foreach($data_graph['allrow'] as $v1){
+			$datas[0]['data'][] = array($v1['appname'],(float)round(($v1['num']/$total)*100,2));			
+		}
+		
+		$result['y_cat'] = $datas;
+		return array('table'=>$data['allrow'],'paging'=>$paging,'graph'=>$result);
+
+	}
+
+	/**
+	 * 下载详情
+	 * 
+	 */
+	public function downappinfoAction(){
+		$data = reqstr('data');
+		$appid = reqnum('appid',12);
+		if (!$appid) {
+			return;
+		}
+		
+		$data = urldecode($data);
+		$info = array();
+		parse_str($data,$info);
+
+		$date = (int)$info['date']?(int)$info['date']:7; //默认是查出7天的数据
+		$sdate = trim($info['sdate'])?trim($info['sdate']):''; 
+		$edate = trim($info['edate'])?trim($info['edate']):'';
+		$station = (int)$info['station']?(int)$info['station']:0; // 0 表示查询出所有车站
+
+		if (!$sdate || !$edate) {
+			$edate = date('Y-m-d',strtotime("-1 day"));
+			$sdate = date('Y-m-d',strtotime("-$date day"));
+		}
+
+		//如果时间区间大于30天则按照30天计算
+		$date_area = abs(strtotime($edate) - strtotime($sdate)) / 86400;
+		
+		if ($date_area > 30) {
+			$sdate = date('Y-m-d',strtotime("-30 day"));
+		}
+		$sdate = str_replace('-','_',$sdate);
+		$edate = str_replace('-','_',$edate);
+
+		$nt = new Psys_ResourceModel();
+
+		$data = $nt -> DwonAppInfo($appid,$station,$sdate,$edate);
+		
+		foreach($data['allrow'] as $v){
+			$x_date = $result['x_cat'][] = date('m/d',strtotime(str_replace('_','-',$v['date'])));
+
+			$datas[0]['name'] = $v['appname'];
+
+			$eventrecordinfo = $nt -> EventRecordInfo($v['date'],$v['type'],$v['stationid']);
+
+			//返回特殊点的提示信息
+			if (!empty($eventrecordinfo)) {
+				
+				$title = $eventrecordinfo['title'];
+				$descript = $eventrecordinfo['descript'];
+			}else{			
+				$title = '';
+				$descript = '';
+			}
+			$datas[0]['infos']['date'.$x_date]['title'] = $title;
+			$datas[0]['infos']['date'.$x_date]['descript'] = $descript;
+
+			if (empty($eventrecordinfo)) {
+				$datas[0]['data'][] = (int)$v['num'];
+			}else{
+				$datas[0]['data'][] = array('y'=>(int)$v['num'],
+											'marker'=>array('fillColor'=>'#FF0000','lineColor'=>'#FF0000',//设置当前点的颜色
+											'states'=>array('hover'=>array('fillColor'=>'#FF0000','lineColor'=>'#FF0000'))));//设置当前点鼠标经过的颜色
+			}
+			
+		}
+		
+		$result['y_data'] = $datas;
+
+		$stations = $nt->station();
+		if ($station) {
+				$stationname = $this -> getstationname($stations,$station);
+			}else{
+				$stationname = ' 所有车站 ';
+			}
+		$result['title'] = $result['x_cat'][0].'-'.end($result['x_cat']).$stationname.'下载趋势图';
+		return $result;
+	}
+
+
+	/**
+	 * 根据id获取车站名
+	 * @param  int $stationid 车站id
+	 * @param  array $stations 车站信息
+	 * @return string     车站名
+	 */
+	private function getstationname($stations,$stationid){
+		foreach($stations as $v){
+			if ($v['id'] == $stationid) {
+				$curstation = $v['stationname'];
+			}
+		}
+
+		return $curstation;
+	}
+
+
+
+}

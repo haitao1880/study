@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>TriangulumCMS v1.0 beta</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+{{include file="header.html"}}
+<!--sidebar-menu-->
+{{include file="menu.html"}}
+<!--close-left-menu-stats-sidebar-->
+
+    <div id="content">
+        {{include file="breadcrumb.html"}}
+        <div class="container-fluid">
+        
+            <p>This system covers the background all the basis of the statistics, if you need to develop other new functions, please contact the developer. </p>
+
+            <hr/>  
+            
+                <p><a class="btn btn-mini btn-danger" href="/statistics/operatelogs">Operate Logs</a> (<i style="color:#aaaaaa;">Statistics operation log statistics: this covers the background all operations personnel movement track, just in time to query and search related log. </i>)</p>
+                
+    
+        </div>
+    </div>
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+    </body>
+</html>
+  

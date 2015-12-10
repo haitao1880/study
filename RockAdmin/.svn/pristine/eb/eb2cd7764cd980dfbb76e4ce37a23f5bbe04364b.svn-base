@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>广告后台添加</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<script type="text/javascript" src="{$psys_js}swfupload/swfupload.js"></script>
+<script type="text/javascript" src="{$psys_js}swfuploadjs/swfupload.queue.js"></script>
+<script type="text/javascript" src="{$psys_js}swfuploadjs/fileprogress.js"></script>
+<script type="text/javascript" src="{$psys_js}swfuploadjs/handlers.js"></script>
+
+
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}swfupload.css">
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+
+<style type="text/css">
+body {
+	font-size: 14px;
+}
+
+input {
+	vertical-align: middle;
+	margin: 0;
+	padding: 0
+}
+
+.file-box {
+	position: relative;
+	width: 340px
+}
+
+.txt {
+	height: 22px;
+	border: 1px solid #cdcdcd;
+	width: 180px;
+}
+
+.btn {
+	background-color: #FFF;
+	border: 1px solid #CDCDCD;
+	height: 24px;
+	width: 70px;
+}
+
+.file {
+	position: absolute;
+	top: 0;
+	right: 80px;
+	height: 24px;
+	filter: alpha(opacity : 0);
+	opacity: 0;
+	width: 260px
+}
+.ios{
+	display:none;
+}
+button, input, select, textarea {
+border-width: 1px;
+margin-bottom: 10px;
+padding: 2px 3px;
+}
+
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+    $(".datepicker").datePicker({
+        inline:true,
+        selectMultiple:false
+    });
+    
+    $("#datepicker").datePicker({
+        clickInput:true
+    });
+     $("#datepicker1").datePicker({
+        clickInput:true
+    });
+
+ 	$("input[name='systerm']").click(function(){
+		if($(this).val() == 1)
+		{
+			$(".ios").show();
+		}
+		else
+		{
+			$(".ios").hide();
+		}
+ 	 }); 	
+});
+</script>
+</head>
+<body>
+	<form class="add" id="addfrom" action="/ads/uploadadds" method="POST" enctype="multipart/form-data">
+		<table class="add-table" width="100%" border="0" cellpadding="0">
+			<caption>
+				<h3>新增广告位信息</h3>
+			</caption>
+			<tr>
+				<td width="30%" align="right">广告位名称：</td>
+				<td width="70%" align="left"><input type="text" name="adname" /></td>
+			</tr>
+			<tr>
+				<td align="right">系统所属：</td>
+				<td align="left">android</td>
+			</tr>
+			<tr style="font-size:12px;"><td align="right"  style="font-size:12px"><span>提示：&nbsp;</span></td><td align="left"  style="font-size:12px"><span style="margin-buttom:10px">请以选择528*390或者等比例规格图片上传</span></td></tr>
+			<tr>
+				<td align="right">图片路径：</td>
+				<td align="left">
+					<div class="file-box" style="position:relative">
+						<input type="text" name="androidimg" id="androidimg" readonly style="height:24px"/>
+						<div class="fieldset flash" id="androidProgress">
+							<span class="legend">快速上传</span>
+						</div>
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="androidPlaceHolder"></span>
+							<input id="androidCancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+						</div>
+					</div>
+				</td>
+			</tr>
+		
+			<tr>
+				<td align="right">IOS上显示：</td>
+				<td align="left">
+					<div class="file-box">
+						<input type="radio" name="systerm" value="1" />是
+						<input type="radio" name="systerm" value="0" checked="checked" />否						
+					</div>
+				</td>
+			</tr>
+			<tr class="ios" style="font-size:12px;"><td align="right"  style="font-size:12px"><span>提示：&nbsp;</span></td><td align="left"  style="font-size:12px"><span style="margin-buttom:10px">以下图片请以规定规格或者等比例规格图片上传</span></td></tr>
+			
+			<tr class="ios">
+				<td align="right">471*390：</td>
+				<td align="left" >
+					<div class="file-box" style="position:relative">
+						<input type="text" name="ios1img" id="ios1img" readonly style="height:24px"/>
+						<div class="fieldset flash" id="ios1Progress">
+							<span class="legend">快速上传</span>
+						</div>
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="ios1PlaceHolder"></span>
+							<input id="ios1Cancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr class="ios">
+				<td align="right">471*258：</td>
+				<td align="left" >
+					<div class="file-box" style="position:relative">
+						<input type="text" name="ios2img" id="ios2img" readonly style="height:24px"/>
+						<div class="fieldset flash" id="ios2Progress">
+							<span class="legend">快速上传</span>
+						</div>
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="ios2PlaceHolder"></span>
+							<input id="ios2Cancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+						</div>
+					</div>
+				</td>
+			</tr>
+			
+			
+			
+			
+			<tr>
+				<td width="30%" align="right">访问Action：</td>
+				<td width="70%" align="left"><input type="text"
+					name="actionurl" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">有效期：</td>
+				<td width="70%" align="left"><input type="text" name="validity" id="datepicker"/></td>
+			</tr>
+			<tr>
+				<td align="right">候车厅：</td>
+				<td align="left">
+					<input name="colstr" type="checkbox" id="colstr" value="1" />第一候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="2" />第二候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="3" />第三候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="4" />第四候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="5" />第五候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="6" />第六候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="7" />第七候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="8" />第八候车厅
+				</td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">是否是车站：</td>
+				<td width="70%" align="left"><input id="isstation"
+					class="check-box" name="isstation" type="radio" value="1" checked><label>是</label>
+					<input id="isstation" class="check-box" name="isstation" type="radio"
+					value="0" checked="checked"><label>否</label></td>
+			</tr>
+			<tr>
+				<td align="right">显示栏目：</td>
+				<td align="left"><select id="colid">
+						<option value="0">主页</option>
+						<option value="1">电影</option>
+						<option value="2">游戏</option>
+						<option value="3">音乐</option>
+				</select></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">内容广告：</td>
+				<td width="70%" align="left"><textarea cols="20" id="addesc"
+						rows="2"></textarea></td>
+			</tr>
+			<tr style='display:none'>
+				<td width="30%" align="right" >推荐链接ID：</td>
+				<td width="70%" align="left"><input type="hidden" name="tjappid" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+				<td width="70%" align="left"><input id="state"
+					class="check-box" name="flag" type="radio" value="1" checked><label>正常</label>
+					<input id="state" class="check-box" name="flag" type="radio"
+					value="0"><label>停用</label></td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center"><input type="hidden" name="id" /><input
+					type="button" id="btnSave" value="保 存" /></td>
+			</tr>
+		</table>
+	</form>
+	{literal}
+	<script type="text/javascript">
+		$(function() {
+			var androidsettings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/ads/uploadadds",
+					file_post_name: 'android',
+					file_size_limit : "100 MB",
+					file_types : "*.jpg;*.jpeg;*.bmp;*.gif;*.png;*.ico",
+					file_types_description : "All Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "androidProgress",
+						cancelButtonId : "androidCancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "androidPlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : uploadStart,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : androiduploadSuccess
+				};
+			function androiduploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('androidimg');
+					if(serverData == 'SUCCESS')
+					{
+						progress.setStatus("上传成功");
+						input.value = file.name;
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			}  
+			var ios1settings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/ads/uploadadds",
+					file_post_name: 'ios1',
+					file_size_limit : "100 MB",
+					file_types : "*.jpg;*.jpeg;*.bmp;*.gif;*.png;*.ico",
+					file_types_description : "All Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "ios1Progress",
+						cancelButtonId : "ios1Cancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "ios1PlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : ios1UploadStart,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : ios1uploadSuccess
+				};
+			function ios1UploadStart(file)
+			{
+				this.setPostParams({'resname':$("input[name='androidimg']").val()});
+			}
+			function ios1uploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('ios1img');
+					if(serverData == 'SUCCESS')
+					{
+						progress.setStatus("上传成功");
+						input.value = file.name;
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			}  
+			var ios2settings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/ads/uploadadds",
+					file_post_name: 'ios2',
+					file_size_limit : "100 MB",
+					file_types : "*.jpg;*.jpeg;*.bmp;*.gif;*.png;*.ico",
+					file_types_description : "All Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "ios2Progress",
+						cancelButtonId : "ios2Cancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "ios2PlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : ios2UploadStart,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : ios2uploadSuccess
+				};
+			function ios2UploadStart(file)
+			{
+				this.setPostParams({'resname':$("input[name='androidimg']").val()});
+			}
+			function ios2uploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('ios2img');
+					if(serverData == 'SUCCESS')
+					{
+						progress.setStatus("上传成功");
+						input.value = file.name;
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			}  
+			swfu = new SWFUpload(androidsettings);
+			swfu = new SWFUpload(ios1settings);
+			swfu = new SWFUpload(ios2settings);
+
+
+
+
+
+			
+			$('#btnSave').click(function() {
+				var adname = $.trim($("input[name='adname']").val());
+				
+				var androidimg = $("input[name='androidimg']").val();
+				var ios1img = $("input[name='ios1img']").val();
+				var ios2img = $("input[name='ios2img']").val();
+				
+				var actionurl = $.trim($("input[name='actionurl']").val());
+				var validity = $.trim($("input[name='validity']").val());
+				var colstr = [];
+				$('input[name="colstr"]:checked').each(function(){
+					colstr.push($(this).val());
+				});
+				var isstation = $('input[name="isstation"]:checked').val(); 
+				if($('input[name="systerm"]:checked').val() == 1)
+				{
+					var sisterm = 2;
+				}
+				else
+				{
+					var sisterm = 1;
+				}
+				if(sisterm == 2)
+				{
+					if(!ios1img)
+					{
+						alert('请上传IOS下广告图片');
+						return;
+					}
+					if(!ios2img)
+					{
+						alert('请上传IOS下的广告图片');
+						return;
+					}
+				}
+				var px = $('input[name="px"]').val();
+				var colid = $("#colid ").val(); 
+				var addesc =$('#addesc').val();
+				
+				var flag =$('input[name="flag"]:checked').val(); 
+				var tjappid = $.trim($("input[name='tjappid']").val());
+				var id = $.trim($("input[name='id']").val());
+				
+				if (adname == '') {
+					alert('请输入广告位名称');
+					return;
+				}
+				if(androidimg == '')
+				{
+					alert('请上传android广告图片');
+					return;
+				}
+				
+				var validityreg = /^[\d]{4}-[\d]{2}-[\d]{2}$/i;
+				if (!validity.match(validityreg)) {
+					alert('有效期格式不正确');
+					return;
+				};
+				if (colstr.length==0) {
+					alert('请选择候车厅');
+					return;
+				};
+				
+				$.post('/ads/update', {
+				'ispost' : 1,
+				'ajax' : 1,
+				'adname' : adname,
+				'imgurl' : androidimg,
+				'colid' : colid,
+				'actionurl' : actionurl,
+				'addesc' : addesc,
+				'flag' : flag,
+				'tjappid' : tjappid,
+				'id' : id,
+				'validity' : validity,
+				'colstr' : colstr,
+				'isstation' : isstation,
+				'adstype' : sisterm
+				}, function(res) {
+					//alert(res.result);
+					if (res.result == 'SUCCESS') {
+						if (confirm('添加成功，点击确定继续添加，点击取消返回列表')) {
+							window.location.reload();
+							$("input[name='adname']").val('');
+							$("input[name='imgurl']").val('');
+							$("input[name='colid']").val('');
+							$("input[name='actionurl']").val('');
+							$("input[name='addesc']").val('');
+							$("input[name='flag']").val('');
+							$("input[name='tjappid']").val('');
+						} else {
+							document.location.href = '/ads/index';
+						}
+					} else {
+						alert(res.msg + '(' + res.msgcode + ')');
+					}
+				}, 'json');
+				//其他验证
+				
+
+			});
+		});
+	</script>
+	{/literal}
+
+</body>
+</html>

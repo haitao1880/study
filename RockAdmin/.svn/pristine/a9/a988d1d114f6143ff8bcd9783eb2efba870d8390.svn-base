@@ -1,0 +1,108 @@
+{include file="shared/header.html" pagetitle="车次途经站添加/修改"}
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<form action="/train/upstations" method="POST" enctype="multipart/form-data" >
+<input type="file" name="stations"/>
+<input type="hidden" name="id" id="id" value="{$id}" />
+<input type="hidden" name="tid" id="tid" value="{$tid}" />
+<input type="hidden" name="ajax" id="ajax" value="1" />
+<input type="submit" value="导 入"/>
+</form>
+<form class="add" name="frmadd" id="frmadd">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>车次途经站添加/修改</h3>
+  </caption>
+
+  <tr>
+    <td width="30%" align="right">站次：</td>
+    <td width="70%" align="left">
+    <select name="orderid" id="orderid">
+         {html_options options=$orderid selected=$one['orderid']}
+    </select>
+    站名：<input type="text" name="station" id="station" value="{$one['station']}"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">日期：</td>
+    <td align="left">
+    <select name="datestr" id="datestr">
+         {html_options options=$datestr selected=$one['datestr']}
+    </select>
+    	到达时间：<input type="text" name="etime" id="etime" value="{$one['etime']}"/>
+    	(15:30)
+    	</td>
+  </tr>
+  <tr>
+    <td align="right">开车时间：</td>
+    <td align="left">
+    <input type="text" name="btime" id="btime" value="{$one['btime']}"/></td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">停留时间：</td>
+    <td width="70%" align="left">
+    <input type="text" id="staytime" name="staytime" value="{$one['staytime']}"/>
+    (分钟)
+	</td>
+  </tr>
+  <tr>
+    <td align="right">参考票价：</td>
+    <td align="left"><textarea name="price" id="price" rows="3" cols="65">{$one['price']}</textarea>
+    <br />(硬座|24.5;硬卧下|70.5)</td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">里程：</td>
+    <td width="70%" align="left"><input type="text" id="mileage" name="mileage" value="{$one['mileage']}"/>公里</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+    <input type="hidden" name="id" id="id" value="{$id}" />
+    <input type="hidden" name="tid" id="tid" value="{$tid}" />
+    <input type="hidden" name="ispost" id="ispost" value="1" />
+    <input type="hidden" name="ajax" id="ajax" value="1" />
+    <input type="button" id="btnSave" value="保 存"/>
+    </td>
+  </tr>
+</table>
+</form>
+{literal}
+<script type="text/javascript">
+
+$(function(){
+	$('#btnSave').click(function(){
+		var station = $.trim($("#station").val());
+		
+		if(station == '')
+		{
+			alert('请输入站名');
+			return;
+		}
+		
+		//其他验证
+		$.post(
+			'/train/stationadd',
+			$('#frmadd').serialize(),
+			function(res){
+				if(res.result == 'SUCCESS')
+				{
+					if(confirm('添加成功，点击确定继续添加，点击取消返回列表'))
+					{
+						$("#station").val('');
+					}else{
+						document.location.href = '/train/station?tid=' + $('#tid').val();
+					}
+				}
+				else
+				{
+					alert(res.msg+'('+res.msgcode+')');
+				}
+			},
+			'json'
+		);
+		
+	});
+});
+
+</script>
+{/literal}
+
+{include file="shared/footer.html"}

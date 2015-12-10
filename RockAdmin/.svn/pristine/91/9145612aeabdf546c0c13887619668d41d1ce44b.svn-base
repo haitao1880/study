@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>RockHippo Train's Admin Center</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}trainAdmin.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}trainAdmin.js"></script>
+</head>
+
+<body>
+	<div id="header">
+		<a href="http://admin.wonaonao.com"><img id="logo"
+			src="{$psys_img}logo.jpg" width="187" height="74" alt="Logo"
+			border="0" /></a>
+		<div id="top_nav">
+			<ul>
+				<li data-value="service"><img data-value=""
+					src="{$psys_img}img001.jpg" width="52" height="52" alt="客户服务" />
+					<h4>客户服务</h4>
+					<div class="point"></div></li>
+				<li data-value="market"><img src="{$psys_img}img002.jpg"
+					width="52" height="52" alt="市场管理" />
+					<h4>市场管理</h4>
+					<div class="point"></div></li>
+				<li data-value="cp"><img src="{$psys_img}img003.jpg" width="52"
+					height="52" alt="第三方交易明细" />
+					<h4>三方交易</h4>
+					<div class="point"></div></li>
+				<li data-value="finance"><img src="{$psys_img}img004.jpg"
+					width="52" height="52" alt="财务管理" />
+					<h4>财务管理</h4>
+					<div class="point"></div></li>
+				<li data-value="member"><img src="{$psys_img}img005.jpg"
+					width="52" height="52" alt="会员管理" />
+					<h4>会员管理</h4>
+					<div class="point"></div></li>
+				<li data-value="account" id="lifirst"><img
+					src="{$psys_img}img006_h.jpg" width="52" height="52" alt="后台用户" />
+					<h4 style="color: #5cccff;">后台用户</h4>
+					<div class="point"></div></li>
+				<li data-value="sys"><img src="{$psys_img}img007.jpg"
+					width="52" height="52" alt="系统设置" />
+					<h4>系统设置</h4>
+					<div class="point"></div></li>
+			</ul>
+		</div>
+		<div id="user-bg">
+			<p>{$admin_name}：Welcome</p>
+			<p>
+				<span><a href="/account/chgpwd" target="frmain">[修改密码]</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<span><a
+					href="/account/logout">[退出]</a></span>
+			</p>
+
+		</div>
+	</div>
+	<div id="main">
+		<div class="aside" style="display: none;" data-value="service">
+			<div>
+				<h4>客户服务</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li><a href="/member/search" target="frmain">用户查询</a></li>
+				<li><a href="/fin/trasiction" target="frmain">交易明细</a></li>
+			</ul>
+		</div>
+		<div class="aside market_li" style="display: none;"
+			data-value="market">
+			<div>
+				<h4>市场</h4>
+				<div class="fenline"></div>
+			</div>
+			<div>
+				<h5>资源管理</h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/res/index" target="frmain">概述</a></li>
+				<li>视频&nbsp;&nbsp;<a href="/res/vadd" target="frmain">添加</a> |
+					<a href="/res/vlist" target="frmain">列表</a></li>
+				<li>音乐&nbsp;&nbsp;<a href="/res/madd" target="frmain">添加</a> |
+					<a href="/res/mlist" target="frmain">列表</a></li>
+                <li>专辑&nbsp;&nbsp;<a href="/res/albumadd" target="frmain">添加</a> | <a href="/res/albumlist" target="frmain">列表</a></li>
+				<li>游戏&nbsp;&nbsp;<a href="/res/gadd" target="frmain">添加</a> |
+					<a href="/res/glist" target="frmain">列表</a></li>
+			</ul>
+			<div>
+				<h5>广告管理</h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>广告&nbsp;&nbsp;<a href="/ads/add" target="frmain">添加</a> | <a
+					href="/ads/index" target="frmain">列表</a></li>
+				<!--  
+				<li>访问统计</li>
+				<li>按车次访问统计</li>
+				<li>按时间段访问统计</li>
+				<li>按车厢类型访问统计</li>
+				-->
+			</ul>
+			<div>
+				<h5 id="train_show" onclick="list_show(this.id)">数据分析▼</h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<!--
+				<li>栏目统计</li>
+				<li>车次统计</li>
+				<li>时间段统计</li>
+				<li>车厢类型统计</li>
+				<li>用户消费统计</li>
+				-->
+				<li><a href="/count/videoin" target="frmain">电影统计</a></li>
+				<li><a href="/count/countmusic" target="frmain">音乐统计</a></li>
+				<!--  <li><a href="/count/newsin" target="frmain">新闻统计</a></li> -->
+				
+				<li><a href="/count/countreg" target="frmain">注册统计</a></li>
+				<li><a href="/count/modelhits" target="frmain">板块点击</a></li>
+				<li><a href="/count/click" target="frmain">页面点击</a></li>
+				<li><a href="/count/uvisitor" target="frmain">独立访客</a></li>
+				<li><a href="/count/appin" target="frmain">下载统计</a></li>
+				<li><a href="#" target="frmain">应用统计</a></li>
+				<li><a href="/count/gamein" target="frmain">游戏统计</a></li>
+			</ul>
+			<div>
+				<h5 id="station_show" onclick="list_show(this.id)">车站数据分析▼</h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/station/aclog" target="frmain">WIFI连接</a></li>
+				<li><a href="/station/webcount" target="frmain">流程统计</a></li>
+				 
+				<li><a href="/station/reg" target="frmain">注册统计</a></li>
+				<li><a href="/station/navhit" target="frmain">导航点击</a></li>
+				<li><a href="/station/pagehit" target="frmain">页面点击</a></li>
+				
+				<li><a href="/station/movie" target="frmain">电影统计</a></li>
+				<li><a href="/station/music" target="frmain">音乐统计</a></li>
+				<li><a href="/station/app" target="frmain">应用统计</a></li>
+				<li><a href="/station/everyday" target="frmain">伙伴每日数据</a></li>
+				<li><a href="/station/webCountNew" target="frmain">新流程</a></li>
+
+				
+			</ul>
+			<div>
+				<h5>资源合作方管理</h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>多米</li>
+				<li>乐视</li>
+			</ul>
+			<div>
+				<h5>车次管理</h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>车次&nbsp;&nbsp;<a href="/train/add" target="frmain">添加</a> | <a
+					href="/train/index" target="frmain">列表</a></li>
+			</ul>
+		</div>
+		<div class="aside" style="display: none;" data-value="cp">
+			<div>
+				<h4>三方交易</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li><a href="/transaction/threeBird" target="frmain">飞翔小鸟</a></li>
+				<li><a href="/transaction/theworld" target="frmain">风云天下</a></li>
+				<li><a href="/transaction/panda" target="frmain">功夫熊猫</a></li>
+				<li><a href="/transaction/bomb" target="frmain">炸弹糖</a></li>
+				<li><a href="/transaction/contest" target="frmain">比武招亲</a></li>
+				<li><a href="/transaction/forward" target="frmain">天天向前冲</a></li>
+			</ul>
+		</div>
+		<div class="aside" style="display: none;" data-value="finance">
+			<div>
+				<h4>财务</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li><a href="/fin/tradeInquiry" target="frmain">交易查询</a></li>
+				<li><a href="/card/index" target="frmain">充值卡管理</a></li>
+				<li><a href="/fin/orderlist" target="frmain">订单管理</a></li>
+				<li>渠道交易</li>
+				<li><a href="/fin/dateList" target="frmain">日期交易</a></li>
+			</ul>
+		</div>
+		<div class="aside" style="display: none;" data-value="member">
+			<div>
+				<h4>会员管理</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li><a href="/member/index" target="frmain">会员列表</a></li>
+				<li><a href="/member/search" target="frmain">会员查询</a></li>
+				<li><a href="/member/block" target="frmain">会员锁定</a></li>
+			</ul>
+		</div>
+		<div class="aside" data-value="account">
+			<div>
+				<h4>后台用户</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li>用户管理&nbsp;&nbsp;<a href="/account/add" target="frmain">添加</a>
+					| <a href="/account/index" target="frmain">列表</a></li>
+				<li>角色管理</li>
+				<li>权限管理</li>
+			</ul>
+		</div>
+		<div class="aside" style="display: none;" data-value="sys">
+			<div>
+				<h4>系统</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li>设备管理&nbsp;<a href="/ipc/add" target="frmain">添加</a> | <a
+					href="/ipc/index" target="frmain">列表</a></li>
+				<li>同步状态</li>
+				<li><a href="/ipc/status" target="frmain">设备状态</a></li>
+				<li>SIM卡状态&nbsp;<a href="/sim/add" target="frmain">添加</a> | <a
+					href="/sim/index" target="frmain">列表</a></li>
+				<li>管理日志&nbsp;<a
+					href="/ipc/log" target="frmain">列表</a></li>
+                 <li>地址管理&nbsp; <a href="/region/index" target="frmain">列表</a></li>
+                 <li>车站管理&nbsp; <a href="/station/add" target="frmain">添加</a> | <a href="/station/stlist" target="frmain">列表</a></li>
+			</ul>
+		</div>
+		<div id="context">
+			<iframe id="iframe01" name="frmain" src="/index/main" frameborder="0"></iframe>
+		</div>
+	</div>
+{literal}
+<script>
+$(function(){
+	$('#train_show').parent().next().hide();
+	$('#station_show').parent().next().hide();
+});
+function list_show(id)
+{
+	$('#'+id).parent().next().toggle(1000);
+}
+
+</script>
+{/literal}
+</body>
+</html>

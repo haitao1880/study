@@ -1,0 +1,22 @@
+<div id="sidebar">
+    <a href="javascript:;" class="visible-phone"><i class="icon icon-home"></i> Console</a> 
+    
+    {{foreach $psys_menu as $k => $ne}}  
+    {{if $ne.id != 73}}
+    <ul id="{{$ne.action}}" class="sid_menu {{if $ismenu == $ne.action}}show{{else}}hidden{{/if}}">
+        <li {{if $active == "index/index"}} class="active" {{/if}}>
+            <a href=""><i class="icon icon-home"></i><span><b style="font-size:13px;">{{$ne.name}}</b></span></a>
+        </li>
+        {{foreach $ne.submenu as $j => $v}}
+        <li class="submenu {{if $active_id == $v.id}}active open{{/if}}"> <a href="javascript:void(0);"><i class="{{$v.class}}"></i><span>{{$v.name}}</span> </a>
+            <ul>
+             	 {{foreach $v.submenu as $u => $f}}
+                	<li {{if $ac_menu == $f.action}} class="active" {{/if}}><a href="{{if !stristr($f.action,'http://')}}/{{/if}}{{$f.action}}" class="locks" target="content"><i class="{{$f.class}}"></i> <span>&nbsp;&nbsp;{{$f.name}}</span></a></li>
+                 {{/foreach}}
+            </ul>
+        </li>
+        {{/foreach}}
+    </ul>
+    {{/if}}
+    {{/foreach}}
+</div>

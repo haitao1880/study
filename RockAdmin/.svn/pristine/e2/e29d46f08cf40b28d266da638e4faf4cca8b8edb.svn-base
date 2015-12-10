@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+</head>
+<body>
+<form method="post">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>新增信息</h3>
+  </caption>  
+   <tr>
+    <td align="right">充值类别：</td>
+    <td align="left">
+		<select id="type" name="type">
+			<option value="1">电信</option>
+			<option value="2">漫道</option>
+       </select>
+	</td>
+  </tr>
+  <tr>
+    <td align="right">充值条数：</td>
+    <td align="left"><input type="text" name="nume"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><input type="submit" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

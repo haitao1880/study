@@ -1,0 +1,14 @@
+<table class="table form-horizontal">
+    <thead>
+        <tr><th>项 目</th><th>积分变化</th><th>时 间</th></tr>
+    </thead>
+    <tbody>
+        {{foreach $data as $k=>$v}}
+            <tr>
+            <td style="text-align:center;">{{$v.type}}</td>
+            <td style="text-align:center;">{{$v.optype}}{{$v.points}}</td>
+            <td style="text-align:center;">{{$v.ctime|date_format:'%Y-%m-%d %H:%M:%S'}}</td>
+            </tr>
+        {{/foreach}}
+    </tbody>
+</table>

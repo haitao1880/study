@@ -1,0 +1,81 @@
+<?php
+/**
+* Copyright(c) 2014
+* 日    期:2014年7月15日                                                 
+* 作　  者:peter
+* E-mail  :peter@rockhippo.net
+* 文 件 名:Psys_AdsRule.php                                                
+* 创建时间:下午3:08:29                                                
+* 字符编码:UTF-8                                                   
+* 脚本语言:PHP                                            
+* 版本信息:$Id: Psys_AdsRule.php 626 2014-07-09 09:06:35Z peter $                                                 
+* 修改日期:$LastChangedDate: 2014-07-09 17:06:35 +0800 (周三, 09 七月 2014) $                                     
+* 最后版本:$LastChangedRevision: 626 $                                 
+* 修 改 者:$LastChangedBy: peter $                                      
+* 版本地址:$HeadURL: http://192.168.1.100:12000/svn/rocktrain/trunk/RockAdmin/protected/module/psys/dbrule/Psys_AdsRule.php $                                            
+* 摘    要: 后台广告位相关                                                      
+*/
+
+class Psys_AdsRule extends Psys_DbAbstractRule
+{
+	public function __construct()
+	{
+		parent::__construct();
+		$this->SetDb("db-rht_idc");
+		$this->SetTable("rhi_ads");
+	}
+	
+	/**
+	 * 
+	 * 获取待同步数据
+	 * @param array $where 查询条件数组
+	 * @return array $data 查询数组
+	 */
+	
+	public function getSyncList($servicer)
+	{
+		$sql = 'SELECT * FROM ' . $this->GetTableName() . " WHERE appkeys NOT LIKE '%" . $servicer . "%'";
+		$data = $this->Query($sql);
+		return $data;
+	}
+	
+	/**
+	 * 获取train下单条数据
+	 * @param array $where 查询条件
+	 * @param string $field 查询字段
+	 */
+	public function GetOneAds($where,$field)
+	{
+		$this->SetDb('db-rht_train');
+		$this->SetTable("rht_ads");
+		$one = $this->GetOne($field, $where);
+		return $one;
+	}
+	/**
+	 * 更新train下单条数据
+	 * @param array $data 更新数据
+	 * @param array $where 更新条件
+	 * @return num
+	 */
+	public function UpdateOneAds($data,$where)
+	{
+		$this->SetDb('db-rht_train');
+		$this->SetTable("rht_ads");
+		$updateR = $this->Update($data,$where);
+		return $updateR;
+	}
+	/**
+	 * 新增train下单条数据
+	 * @param array $data 新增数据数组
+	 * 
+	 */
+	public function AddOneAds($data)
+	{
+		$this->SetDb('db-rht_train');
+		$this->SetTable("rht_ads");
+		$insertR = $this->Insert($data,true);
+		return $insertR;		
+	}
+	
+	
+}

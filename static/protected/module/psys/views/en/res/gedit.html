@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-游戏列表</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+    </head>
+    <body>
+<style type="text/css">
+input[type="radio"], input[type="checkbox"] {
+    line-height: normal;
+    margin: -4px 2px 0 0;
+}
+#img_form{
+display:none;
+}
+</style>
+
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 资源管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 游戏修改</a>
+            </div>
+        </div>
+        <table class="add-table" width="100%" border="0" cellpadding="0">
+			<caption>
+				<h3>新增游戏信息</h3>
+			</caption>
+			<tr>
+				<td align="right">APP类型：</td>
+				<td align="left">
+					<select id="appcol" name="appcol">
+							<option value="1" {{if $info.appcol eq 1}}selected{{/if}}>游戏</option>
+							<option value="2" {{if $info.appcol eq 2}}selected{{/if}}>应用</option>
+					</select>
+					<select id="typeinfo" name="typeinfo">
+							<option value="其他" {{if $info.typeinfo eq '其他'}}selected{{/if}}>其他</option>
+							<option value="动作" {{if $info.typeinfo eq '动作'}}selected{{/if}}>动作</option>
+							<option value="跑酷" {{if $info.typeinfo eq '跑酷'}}selected{{/if}}>跑酷</option>
+							<option value="消除" {{if $info.typeinfo eq '消除'}}selected{{/if}}>消除</option>
+							<option value="网游RPG" {{if $info.typeinfo eq '网游RPG'}}selected{{/if}}>网游RPG</option>
+							<option value="网络浏览" {{if $info.typeinfo eq '网络浏览'}}selected{{/if}}>网络浏览</option>
+					</select>
+				</td>
+			</tr>
+			<tr id="appishiden">
+				<td width="30%" align="right">运营商编号：</td>
+				<td width="70%" align="left"><input type="text" id="appid" name="appid" value="{{$info.appid}}" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">APP名称：</td>
+				<td width="70%" align="left"><input type="text" name="appname" value="{{$info.appname}}" /><span class="not">&nbsp;*</span></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">开发商：</td>
+				<td width="70%" align="left"><input type="text" name="develop" id="develop" value="{{$info.develop}}" /></td>
+			</tr>
+			<tr><td align="right" style="font-size:12px">温馨提示：&nbsp;</td><td style="font-size:12px" align="left"><span>请选择规格150*150或者等比例规格图片上传</span></td></tr>
+			<tr>
+				<td align="right">logo：</td>
+				<td align="left">
+					<div class="file-box"  style="position:relative">
+						<input type="text" name="logoimg" id="logoimg" readonly style="height:24px" class="colid_1" value="{{$info.imgurl}}"/><span class="not">&nbsp;*</span>
+						<label style="display:none" id="img_tips_1"></label>
+						<label id="st_tips_1"></label>
+						<label id="st_not_1"></label>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">操作系统：</td>
+				<td align="left">
+					<input type="radio" name="systerm" value="1" {{if $info.apptype eq 1}}checked="checked"{{/if}}/>android
+					<input type="radio" name="systerm" value="2" {{if $info.apptype eq 2}}checked="checked"{{/if}}/>ios
+					<!-- <input type="radio" name="systerm" value="3" />winphone
+					<input type="radio" name="systerm" value="4" />other -->
+				</td>
+			</tr>
+			<tr class="android"><td align="right">图片上传：</td><td align="left" style="color:red">android系统</tr>
+
+			<tr class="android"><td align="right" style="font-size:12px">温馨提示：&nbsp;</td><td style="font-size:12px" align="left"><span>请选择规格1080*570或者等比例规格图片上传</span></td></tr>
+			<tr class="android">
+				<td align="right">APP封面：</td>
+				<td align="left">
+					<div class="file-box" style="position:relative">
+						<input type="text" name="fmandroidimg" id="fmandroidimg" readonly style="height:24px" class="colid_2"/><span class="not">&nbsp;</span>
+						<label style="display:none" id="img_tips_2"></label>
+						<label id="st_tips_2"></label>
+						<label id="st_not_2"></label>
+					</div>
+				</td>
+			</tr>
+			<tr class="android" style="font-size:12px;"><td style="font-size:12px" align="right">温馨提示：&nbsp;</td><td style="font-size:12px" align="left"><span>请选择规格480*800或者等比例规格图片上传</span></td></tr>
+			<tr class="android">
+				<td align="right">幻灯片集：</td>
+				<td align="left">
+					<div class="file-box"  style="position:relative">
+						<input type="text" name="pptandroidimg" id="pptandroidimg" placeholder="选择时按住ctrl键进行多选上传" readonly style="height:24px" class="colid_3" value="{{if $imgurls}}{{$imgurls}}{{/if}}"/><span class="not">&nbsp;*请上传2张以上图片</span>				
+						<label style="display:none" id="img_tips_3"></label>
+						<label id="st_tips_3"></label>
+						<label id="st_not_3"></label>
+					</div>
+				</td>
+			</tr>
+			<tr class="ios"><td align="right">图片上传：</td><td align="left" style="color:red">ios系统</tr>
+			<tr class="ios" style="font-size:12px;"><td style="font-size:12px" align="right">温馨提示：&nbsp;</td><td style="font-size:12px" align="left"><span>请选择规格570*960或者等比例规格图片上传</span></td></tr>
+			
+			<tr class="ios">
+				<td align="right">APP封面：</td>
+				<td align="left">
+					<div class="file-box" style="position:relative">
+						<input type="text" name="fmiosimg" id="fmiosimg" readonly style="height:24px" class="colid_4"/><span class="not">&nbsp;*</span>
+						
+						<label style="display:none" id="img_tips_4"></label>
+						<label id="st_tips_4"></label>
+						<label id="st_not_4"></label>
+					</div>
+				</td>
+			</tr>
+			<tr class="ios">
+				<td style="font-size:12px" align="right">幻灯片集：</td>
+				<td style="font-size:12px" align="left">请按照像素对应上传</td>
+			</tr>
+			
+			<tr class="ios">
+				<td align="right">780*1344：</td>
+				<td align="left">
+					<div class="file-box" style="position:relative">
+						<input type="text" name="pptios1img" id="pptios1img" value="{{if $imgurls}}{{$imgurls}}{{/if}}" placeholder="选择时按住ctrl键进行多选上传" readonly style="height:24px" class="colid_5"/><span class="not">&nbsp;*请上传2张以上图片</span>
+						
+						<label style="display:none" id="img_tips_5"></label>
+						<label id="st_tips_5"></label>
+						<label id="st_not_5"></label>
+					</div>				
+				</td>
+			</tr>
+			<tr class="ios">
+				<td align="right">780*1080：</td>
+				<td align="left">
+					<div class="file-box" style="position:relative">
+						<input type="text" name="pptios2img" id="pptios2img" value="{{if $imgurls}}{{$imgurls}}{{/if}}" placeholder="选择时按住ctrl键进行多选上传" readonly style="height:24px" class="colid_6"/><span class="not">&nbsp;*请上传2张以上图片</span>
+						
+						<label style="display:none" id="img_tips_6"></label>
+						<label id="st_tips_6"></label>
+						<label id="st_not_6"></label>
+					</div>				
+				</td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">安装文件：</td>
+				<td width="70%" align="left">
+					<div class="file-box">
+						<input type="text" name="installfileimg" value="{{$info.appurl}}" id="installfileimg" readonly style="height:24px" placeholder="请输入完整的文件名" class="colid_7"/><span class="not">&nbsp;*</span>
+						
+						<label style="display:none" id="img_tips_7"></label>
+						<label id="st_tips_7"></label>
+						<label id="st_not_7"></label>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">版本号：</td>
+				<td width="70%" align="left"><input type="text" name="ver" placeholder="仅允许数字和小数点输入" value="{{$info.ver}}"/><span class="not">&nbsp;*</span></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">数字版本号：</td>
+				<td width="70%" align="left"><input type="text" name="vernum" placeholder="仅允许数字和小数点输入" value="{{$info.vernum}}"/></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">文件大小：</td>
+				<td width="70%" align="left"><input type="text" name="filesize" placeholder="请上传安装文件获取文件大小" value="{{$info.filesize}}"/><span class="not">&nbsp;*</span></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">包名：</td>
+				<td width="70%" align="left"><input type="text" name="package" placeholder="请输入完整的包名" value="{{$info.package}}" /><span class="not">&nbsp;*</span></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">排序：</td>
+				<td width="70%" align="left"><input type="text" name="sortid" placeholder="请输入排序" value="{{$info.sortid}}" /><span class="not">&nbsp;*</span></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">签名：</td>
+				<td width="70%" align="left">
+					<textarea cols="20" id="sig" name="sig"	rows="2" style="width: 500px; height: 88px;resize:none;">{{$info.signature}}</textarea>
+					<span class="not">&nbsp;*</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">语言：</td>
+				<td width="70%" align="left"><select id="lang" name="lang">
+						<option value="简体中文" {{if $info.appcol eq '简体中文'}}selected{{/if}}>简体中文</option>
+						<option value="英文" {{if $info.appcol eq '英文'}}selected{{/if}}>英文</option>
+				</select></td>
+			</tr>
+
+			<tr>
+				<td width="30%" align="right">是否推荐：</td>
+				<td width="70%" align="left"><input id="state"
+					class="check-box" name="iftj" type="radio" value="1" {{if $info.flag eq 1}}checked{{/if}}>是
+					<input id="state" class="check-box" name="iftj" type="radio"
+					value="0" {{if $info.flag eq 0}}checked{{/if}}>否</td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+				<td width="70%" align="left"><input id="state"
+					class="check-box" name="flag" type="radio" value="1" {{if $info.flag eq 1}}checked{{/if}}>正常
+					<input id="state" class="check-box" name="flag" type="radio"
+					value="0" {{if $info.flag eq 0}}checked{{/if}}>停用</td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">描述：</td>
+				<td width="70%" align="left"><textarea cols="20" id="adesc" name="adesc"
+						rows="2" style="width: 565px; height: 88px;resize:none;">{{$info.adesc}}</textarea></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">详情：</td>
+				<td width="70%" align="left"><textarea cols="20" id="adetail" name="adetail"
+						rows="2" style="width: 565px; height: 88px;resize:none;">{{$info.adetail}}</textarea></td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center"><input type="hidden" name="id" value="{{$info.id}}"/><input
+					type="button" id="btnSave" value="保 存" /></td>
+			</tr>
+		</table>
+		
+		<div id="img_form">
+			<form id="form1" action="/res/uploadfile" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file" multiple='true' class="file1" style="display:block"/>
+				<input type="hidden" name='num' value='1'/>
+				<input type="hidden" name='flag' value='logo'/>
+				<input type="hidden" name='appcol2' class="appcol2" value=""/>
+			</form>
+			
+			<form id="form2" action="/res/uploadfile" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file" multiple='true' class="file2" />
+				<input type="hidden" name='num' value='2'/>
+				<input type="hidden" name='flag' value='fmandroid'/>
+				<input type="hidden" name='appcol2' class="appcol2" value=""/>
+			</form>
+			
+			<form id="form3" action="/res/uploadfile" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file[]" multiple='true' class="file3"  multiple/>
+				<input type="hidden" name='num' value='3'/>
+				<input type="hidden" name='flag' value='pptandroid'/>
+				<input type="hidden" name='appcol2' class="appcol2" value=""/>
+			</form>
+			
+			<form id="form4" action="/res/uploadfile" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file" multiple='true' class="file4" />
+				<input type="hidden" name='num' value='4'/>
+				<input type="hidden" name='flag' value='fmios'/>
+				<input type="hidden" name='appcol2' class="appcol2" value=""/>
+			</form>
+			
+			<form id="form5" action="/res/uploadfile" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file[]" multiple='true' class="file5"  multiple/>
+				<input type="hidden" name='num' value='5'/>
+				<input type="hidden" name='flag' value='pptios1'/>
+				<input type="hidden" name='appcol2' class="appcol2" value=""/>
+			</form>
+			
+			<form id="form6" action="/res/uploadfile" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file[]" multiple='true' class="file6"  multiple/>
+				<input type="hidden" name='num' value='6'/>
+				<input type="hidden" name='flag' value='pptios2'/>
+				<input type="hidden" name='appcol2' class="appcol2" value=""/>
+			</form>
+			
+			<form id="form7" action="/res/uploadfile" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file" multiple='true' class="file7" />
+				<input type="hidden" name='num' value='7'/>
+				<input type="hidden" name='flag' value='installfile'/>		
+				<input type="hidden" name='appcol2' class="appcol2" value=""/>		
+			</form>
+			
+			<iframe name="img_iframe"></iframe>
+		</div>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+	<script>
+    $(document).ready(function(){
+    	$('.submenu > a').click(function(e)
+    			{
+    				e.preventDefault();
+    				var submenu = $(this).siblings('ul');
+    				var li = $(this).parents('li');
+    				var submenus = $('#sidebar li.submenu ul');
+    				var submenus_parents = $('#sidebar li.submenu');
+    				if(li.hasClass('open'))
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenu.slideUp();
+    					} else {
+    						submenu.fadeOut(250);
+    					}
+    					li.removeClass('open');
+    				} else 
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenus.slideUp();			
+    						submenu.slideDown();
+    					} else {
+    						submenus.fadeOut(250);			
+    						submenu.fadeIn(250);
+    					}
+    					submenus_parents.removeClass('open');		
+    					li.addClass('open');	
+    				}
+    			});
+    	//显示安卓图片上传
+		anOrios();
+		//logo上传
+		$("#logoimg").click(function(){
+			$(".file1").click();
+		});
+		$(".file1").change(function(){
+			appcolval();
+			if($(this).val()!=''){
+				$("#form1").submit();
+			}
+		});
+		//安卓封面
+		$("#fmandroidimg").click(function(){
+			$(".file2").click();
+		});
+		$(".file2").change(function(){
+			appcolval();
+			if($(this).val()!=''){
+				$("#form2").submit();
+			}
+		});
+		//安卓PPT
+		$("#pptandroidimg").click(function(){
+			$(".file3").click();
+		});
+		$(".file3").change(function(){
+			appcolval();
+			if($(this).val()!=''){
+				$("#form3").submit();
+				$("#st_tips_3").css('color','red').css("display",'inline').text('正在上传请等待');
+			}
+		});
+		//IOS封面
+		$("#fmiosimg").click(function(){
+			$(".file4").click();
+		});
+		$(".file4").change(function(){
+			appcolval();
+			if($(this).val()!=''){
+				$("#form4").submit();
+			}
+		});
+		//苹果PPT1
+		$("#pptios1img").click(function(){
+			$(".file5").click();
+		});
+		$(".file5").change(function(){
+			appcolval();
+			if($(this).val()!=''){
+				$("#form5").submit();
+				$("#st_tips_5").css('color','red').css("display",'inline').text('正在上传请等待');
+			}
+		});		
+		//苹果PPT2
+		$("#pptios2img").click(function(){
+			$(".file6").click();
+		});
+		$(".file6").change(function(){
+			appcolval();
+			if($(this).val()!=''){
+				$("#form6").submit();
+				$("#st_tips_6").css('color','red').css("display",'inline').text('正在上传请等待');
+			}
+		});
+		//安装包上传
+		$("#installfileimg").click(function(){
+			$(".file7").click();
+		});
+		$(".file7").change(function(){
+			var file=$(this).val();
+			var filename=file.replace(/.*(\/|\\)/, "");
+			var fileExt=(/[.] /.exec(filename)) ? /[^.]+$/.exec(filename.toLowerCase()) : '';
+			if(fileExt != 'apk' && fileExt != 'ipa' ){
+				alert('上传安装包格式错误！');
+				return false;
+			}
+			if($(this).val()!=''){
+				$("#form7").submit();
+			}
+		});
+
+		//触发IOS 安卓互换
+		$("input[name='systerm']").click(function(){
+			anOrios();
+		});
+		
+		//Ajax提交数据
+		$('#btnSave').click(function() {
+			var appname = $.trim($("input[name='appname']").val());
+			var appid = $.trim($("input[name='appid']").val());
+			var logourl = $("#logoimg").val();
+			//var imgurl = $("#fmandroidimg").val();
+			var pptfilenames = $('#pptandroidimg').val();
+			var pptfilenames1 = $('#pptios1img').val();
+
+			
+			var appurl = $("#installfileimg").val();
+			var fmios = $("#fmiosimg").val();
+			var pptios1 = $("#pptios1img").val();
+			var pptios2 = $("#pptios2img").val();
+			
+			var ver = $.trim($("input[name='ver']").val());
+			var vernum = $.trim($("input[name='vernum']").val());
+			var filesize = $.trim($("input[name='filesize']").val());
+			var apppackage = $.trim($("input[name='package']").val());
+			var appcol = $("#appcol ").val();
+			var lang = $("#lang ").val();
+			var iftj = $('input[name="iftj"]:checked').val();
+			var flag = $('input[name="flag"]:checked').val();
+			var adesc = $('#adesc').val();
+			var adetail = $('#adetail').val();
+			var sig = $.trim($("#sig").val());
+			var $typeinfo = $("#typeinfo").val();
+			var $develop = $("#develop").val();
+			var sortid = $.trim($("input[name='sortid']").val());
+
+			var apptype=$("input[name='systerm']:checked").val();
+			var id = $.trim($("input[name='id']").val());
+			
+			if (appname == '') {
+				alert('请输入APP名称！');
+				return;
+			}
+			if(logourl == '')
+			{
+				alert('请确认已选择APPlogo图片或者待logo图片上传完毕');
+				return;
+			}
+			
+			if(apptype == '')
+			{
+				alert('请选择应用所属系统！');
+				return;
+			}
+			
+
+			if(apptype == 1)
+			{
+				/*if (imgurl == '') {
+					alert('请确认已选择APP封面图片或者待封面图片上传完毕');
+					return;
+				}*/
+				if(!pptfilenames)
+				{
+					alert('请选择android系统幻灯片图片！')
+					return;
+				}
+				else
+				{
+					var ppts = pptfilenames.split(';');
+					if(ppts.length <3)
+					{
+						alert('请确认幻灯片已经全部上传或者等待幻灯片上传完毕');
+						return;
+					}
+				}
+			}
+			else if(apptype == 2)
+			{
+				if(!fmios)
+				{
+					alert('请选择ios系统封面图片!');
+					return;
+				}
+				if(!pptios1)
+				{
+					alert('请选择ios系统幻灯片图片！');
+					return;
+				}
+				else
+				{
+					var iosppts1 = pptios1.split(';');
+					if(ppt.length < 3)
+					{
+						alert('请确认幻灯片已经全部上传或者等待幻灯片上传完毕');
+						return;
+					}
+				}
+				if(!pptios2)
+				{
+					alert('请选择ios系统的另一幻灯片图片！')
+					return;
+				}
+				else
+				{
+					var iosppts2 = pptios2.split(';');
+					if(ppt.length < 3)
+					{
+						alert('请确认全部幻灯片已经全部上传或者等待幻灯片上传完毕');
+						return;
+					}
+				}
+			}				
+			if (appurl == '') {
+				alert('请确认已选择APP安装文件或者待安装文件上传完毕');
+				return;
+			}
+	
+			if(ver == '')
+			{
+				alert('请输入版本号！');
+				return;
+			}
+			if(filesize == '')
+			{
+				alert('请输入文件大小！');
+				return;
+			}
+			if(apppackage == '')
+			{
+				alert('请输入完整的包名！');
+				return;
+			}
+							
+			if(sig == '')
+			{
+				alert('请输入签名');
+				return;
+			}    
+			$.post('/res/gupdate', {
+				'ispost' : 1,
+				'ajax' : 1,
+				'appid' : appid,
+				'appname' : appname,
+				'logourl' : logourl,
+				'appurl' : appurl,
+				'ver' : ver,
+				'vernum' : vernum,
+				'filesize' : filesize,
+				'package' : apppackage,
+				'appcol' : appcol,
+				'apptype' : apptype,
+				'sortid' : sortid,
+				'lang' : lang,
+				'iftj' : iftj,
+				'flag' : flag,
+				'adesc' : adesc,
+				'adetail' : adetail,
+				'sig' : sig,
+				'pptfilenames':pptfilenames,
+				'pptios':pptfilenames1,
+				'typeinfo':$typeinfo,
+				'develop':$develop,
+				'id' : id
+			}, function(res) {
+				if (res.result == 'SUCCESS') {
+					if (confirm('上传成功，点击【确定】继续添加，点击【取消】返回列表页')) {
+						window.location.reload();
+					} else {
+						document.location.href = '/res/glist';
+					}
+				} else {
+					alert(res.msg + '(' + res.msgcode + ')');
+				}
+			}, 'json');
+		});
+    })
+    function callbackFunction(str)
+		{
+			var jsonobj=eval('('+str+')');
+			var num = jsonobj.num;
+			if(jsonobj.result == 'success')
+			{
+				$("input[class='colid_"+num+"']").val(jsonobj.img_name);
+				$("#st_tips_"+num).css('color','green').css("display",'inline').text(jsonobj.msg);
+				if(num=='7'){
+					$("input[name='filesize']").val(jsonobj.size);
+				}
+			}
+			else if(jsonobj.result == 'error')
+			{
+				$("#st_tips_"+num).css('color','red').css('display','inline').text(jsonobj.msg);
+			}
+		}
+		function anOrios(){
+			var type = $("input[name='systerm']:checked").val();
+			if(type==1){
+				$('.android').show();
+				$('.ios').hide();
+			}else{
+				$('.android').hide();
+				$('.ios').show();
+			}
+		}
+		function appcolval(){
+			var appcol = $("#appcol ").val();
+			$(".appcol2").val(appcol);
+		}
+    </script>
+    </body>
+</html>

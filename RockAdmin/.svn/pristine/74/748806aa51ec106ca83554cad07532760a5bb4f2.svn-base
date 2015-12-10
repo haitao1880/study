@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{$pagetitle}</title>
+    <link rel="stylesheet" type="text/css" href="{$psys_js}lib/css/public.css" />
+    <link rel="stylesheet" type="text/css" href="{$psys_js}lib/css/index.css" />
+    <script src="{$psys_js}lib/js/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="{$psys_js}lib/js/jquery.paging.js" type="text/javascript"></script>
+    <link href="{$psys_js}lib/css/main.css?v=2.1" rel="stylesheet" type="text/css" />   
+       <script src="{$psys_js}lib/js/messager.js" type="text/javascript"></script> 
+    <script type="text/javascript">
+        function rockPaging(perpage, rtype, pelmId, count, curPage) {
+            if (count <= perpage) {
+                // $(elm).show();
+                $(pelmId + " .page_numbers_container").html('');
+                return;
+            }
+            var numberLeft = 5;
+            var formatNumber = '';
+            for (var i = 0; i < numberLeft; i++) {
+                formatNumber += 'n';
+            }
+            var chaged = false;
+            $(pelmId + " .page_numbers_container").paging(count, {
+                format: '[< . (qq -) ' + formatNumber + 'c' + formatNumber + ' (- pp) >]',
+                perpage: perpage,
+                lapping: 0,
+                page: curPage, // we await hashchange() event
+                onSelect: function (page) {
+                    if (chaged) {
+                        pagechange(page);
+                    } else {
+                        chaged = true;
+                    }
+                    return true; // locate!
+                },
+                onFormat: function (type) {
+                    switch (type) {
+                    case 'block': // n and c
+                        if (this.value != this.page)
+                            return '<a href="javascript:void(0);">' + this.value + '</a>';
+                        else {
+                            return '<span>' + this.value + '</span>';
+                        }
+                    case 'next': // >
+                        return '</div><a href="javascript:void(0);"><div class="wall_arrow_right">下一页</div></a>';
+                    case 'prev': // <
+                        return '<a href="javascript:void(0);"><div class="wall_arrow_left">上一页</div></a><div class="wall_chat_box_pages">';
+                    case 'fill': // ]
+                        if (this.active && (this.value > numberLeft || this.page > numberLeft))
+                            return '<a href="javascript:void(0);">...</a>';
+                        return "";
+                    default:
+                        return '';
+                    }
+                }
+            });
+        }
+
+
+        function formatDate(date) {
+            if (typeof (date) == 'undefined' || date == null || date == '')
+                return '';
+            var s = date.replace(/\//g, '').replace(/Date\(/gi, '').replace(/\)/g, '');
+            date = new Date(parseInt(s));
+            //  if(typeof(date) != )
+            date = new Date(date);
+
+            var d = date.getDate(),
+                m = date.getMonth(),
+                y = date.getFullYear();
+
+            var pad = function (value, length) {
+                value = String(value);
+                length = parseInt(length) || 2;
+                while (value.length < length)
+                    value = "0" + value;
+                return value;
+            };
+            return y + '年' + pad(m + 1) + '月' + pad(d) + '日';
+        }
+        $(function () {
+            var kcnub = 1;
+            var zz = /^[0-9]*[1-9][0-9]*$/;
+            $('.jian_zj').click(function () {
+                var jianInVal = parseInt($(this).siblings('.jian_a').val());
+                $(this).siblings('.jian_a').val(jianInVal += 1);
+            });
+            $('.jian_js').click(function () {
+                var jianInVal = parseInt($(this).siblings('.jian_a').val());
+                if (jianInVal <= 1) return
+                $(this).siblings('.jian_a').val(jianInVal -= 1);
+            });
+            $('.jian_a').blur(function () {
+                if (zz.test($(this).val()) != true) {
+                    $(this).val('1');
+                }
+            });
+        })
+    </script>
+    
+</head>
+
+<body>
+    

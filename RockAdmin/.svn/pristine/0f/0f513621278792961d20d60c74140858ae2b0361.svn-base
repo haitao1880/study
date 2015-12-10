@@ -1,0 +1,449 @@
+<?php
+/**
+* Copyright(c) 2014
+* 日    期:2014年7月15日                                                 
+* 作　  者:peter
+* E-mail  :perter@rockhippo.net
+* 文 件 名:adsController.php                                                
+* 创建时间:下午2:29:03                                                
+* 字符编码:UTF-8                                                   
+* 脚本语言:PHP                                            
+* 版本信息:$Id: adController.php 670 2014-07-11 06:59:23Z tony_ren $                                                 
+* 修改日期:$LastChangedDate: 2014-07-11 14:59:23 +0800 (周五, 11 七月 2014) $                                     
+* 最后版本:$LastChangedRevision: 670 $                                 
+* 修 改 者:$LastChangedBy: tony_ren $                                      
+* 版本地址:$HeadURL: http://192.168.1.100:12000/svn/rocktrain/trunk/RockAdmin/protected/module/psys/controller/adsController.php $                                            
+* 摘    要: 广告管理                                                      
+*/
+class adsController extends Psys_AbstractController {
+	public function __construct() {
+		parent::__construct ();
+	}
+	
+	/**
+	 * 广告列表
+	 */
+	public function indexAction() {
+		$page = reqnum ( "page", 1 );
+		$pagesize = reqnum ( "pagesize", 10 );
+		$m = new Psys_AdsModel ();
+		$list = $m->GetList ( '', 'id DESC', $page, $pagesize, "*" );
+		foreach ( $list ['allrow'] as $key => &$var ) {
+			
+			switch ($var ['colid']) {
+				case 0 :
+					$var ['colid'] = '主页';
+					break;
+				case 1 :
+					$var ['colid'] = '电影';
+					break;
+				case 2 :
+					$var ['colid'] = '游戏';
+					break;
+				case 3 :
+					$var ['colid'] = '音乐';
+					break;
+				default :
+					$var ['colid'] = '主页';
+			}
+		}
+		self::inidate ( $list ['allnum'], $page, $pagesize, count ( $list ['allrow'] ) );
+		
+		$this->smarty->assign ( 'list', $list ['allrow'] );
+		$this->smarty->assign ( 'psys_base_url', PSYS_BASE_URL );
+		$this->forward = "index";
+	}
+	/**
+	 * 分页数据显示
+	 *
+	 * @param num $allcount
+	 *        	总条数
+	 * @param num $page        	
+	 * @param num $pagesize        	
+	 * @param num $cursize
+	 *        	当前页的数据条数
+	 */
+	private function inidate($allcount, $page, $pagesize, $cursize) {
+		$this->smarty->assign ( 'allcount', $allcount ); // 总数
+		$allpage = ceil ( $allcount / $pagesize );
+		$this->smarty->assign ( 'allpage', $allpage ); // 总页数
+		$pagesize = ($pagesize % 2) ? $pagesize : $pagesize + 1; // 页码取偶数 = 步长
+		$pageoffset = ($pagesize - 1) / 2; // 当前页 左右偏移
+		$this->smarty->assign ( 'cur_page', $page ); // 当前页
+		if ($allcount > $pagesize) {
+			// 如果当前页小于等于左偏移
+			if ($page <= $pageoffset) {
+				$startNum = 1;
+				$endNum = $pagesize;
+			} else { // 如果当前页大于左偏移
+			         // 如果当前页码右偏移超出最大分页数
+				if ($page + $pageoffset >= $allcount + 1) {
+					$startNum = $allcount - $pagesize + 1;
+				} else {
+					// 左右偏移都存在时的计算
+					$startNum = $page - $pageoffset;
+					$endNum = $page + $pageoffset;
+				}
+			}
+		} else {
+			$startNum = 1;
+			$endNum = $allcount;
+		}
+		
+		$this->smarty->assign ( 'startNum', $startNum ); // 当前从几开始
+		$this->smarty->assign ( 'endNum', $endNum ); // 当前到几结束
+		$this->smarty->assign ( 'sli', (($pagesize * ($page - 1) + 1)) ); // 当前页的起始第多少条
+		$this->smarty->assign ( 'eli', ($pagesize * ($page - 1) + $cursize) ); // 当前页最后一条是第多少条
+	}
+	/**
+	 * 添加广告
+	 */
+	public function addAction() {
+		$this->forward = "add";
+	}
+	/**
+	 * 转到广告修改页面
+	 */
+	public function editAction() {
+		$id = reqnum ( 'id', 0 ); // 获取参数
+		if (! $id) {
+			echo 'empty id';
+			exit ();
+		}
+		$nt = new PSys_AdsModel ();
+		$where = array (
+				'id' => $id 
+		);
+		$info = $nt->GetOne ( $where, "*" );
+		$this->smarty->assign ( 'info', $info );
+		$this->forward = "edit";
+	}
+	/**
+	 * 更新广告位信息
+	 */
+	public function updateAction() {
+		
+		$id = reqnum ( 'id', 0 );
+		$ispost = reqnum ( 'ispost', 0 );
+		$model = new PSys_AdsModel ();
+		if ($ispost == 1) {
+			$adname = reqstr ( 'adname' );
+			$imgurl = reqstr ('imgurl');
+			$actionurl = reqstr ( 'actionurl' );
+			$colid = reqstr ( 'colid' );
+			$addesc = reqstr ( 'addesc' );
+			$flag = reqnum ( 'flag', 0 );
+			$tjappid = reqnum ( 'tjappid', 0 );
+			$validity = strtotime(reqstr('validity',0));
+			$type = reqarray('colstr',array());
+			asort($type);
+			$colstr = ',';
+			if (!empty($type)) {
+				$colstr .= implode(',',$type).',';
+			}
+			$isstation = reqnum('isstation',0);
+			//$ads = reqarray('adstype',array());
+			//asort($ads);
+			//$adstype = ',';
+			//if (!empty($ads)) {
+			//	$adstype .= implode(',',$ads).',';
+			//}
+			$adstype = reqnum('adstype',0);
+			//return $imgurls;
+				
+			$data = array (
+					'adname' => $adname,
+					'imgurl' => $imgurl,
+					'actionurl' => $actionurl,
+					'colid' => $colid,
+					'addesc' => $addesc,
+					'tjappid' => $tjappid,
+					'flag' => $flag,
+					'ctime' => time (), 
+					'validity'=>$validity,
+					'colstr' => $colstr,
+					'station' =>$isstation,
+					'adstype' => $adstype
+			);
+			$result = array (
+					'result' => 'ERROR' 
+			);
+			if ($imgurl == '') {
+				MsgInfoConst::GetMsg ( 1041, $result );
+				return $result;
+			}
+			
+			if ($id == 0) 			// 新增
+			{
+				$returnid = $model->AddOne ( $data );
+				$m = new PSys_ResModel ();
+				$m->Record($data,$returnid,'db-rht_sync','ads','rhs_downsync');
+				// start 写操作日志
+				$log = array (
+						'logtype' => 72,
+						'guid' => $_SESSION ['Cur_X_User'] ['id'],
+						'ctime' => time (),
+						'cip' => real_ip () 
+				);
+				$log ['logdetail'] = $_SESSION ['Cur_X_User'] ['username'] . "于" . date ( "Y-m-d H:i:s" ) . "[添加]广告位" . $adname;
+				$model->admin_syslog ( $log );
+				// end 日志
+				$result ['result'] = 'SUCCESS';
+			} else 			// 更新
+			{
+				
+				$w = array (
+						'id' => $id 
+				);
+				$returnid = $model->UpdateOne ( $data, $w );
+				$m = new PSys_ResModel ();
+				$m->Record($data,$returnid,'db-rht_sync','ads','rhs_downsync');
+				// start 写操作日志
+				$log = array (
+						'logtype' => 72,
+						'guid' => $_SESSION ['Cur_X_User'] ['id'],
+						'ctime' => time (),
+						'cip' => real_ip () 
+				);
+				$log ['logdetail'] = $_SESSION ['Cur_X_User'] ['username'] . "于" . date ( "Y-m-d H:i:s" ) . "[编辑]广告位" . $adname;
+				$model->admin_syslog ( $log );
+				// end 日志
+				$result ['result'] = 'SUCCESS';
+			}
+			return $result;
+		}
+	}
+	
+	/**
+	 * 删除广告
+	 */
+	public function deleteAction() {
+		$m = new PSys_AdsModel ();
+		if (is_array ( $_GET ['id'] )) {
+			$id = reqarray ( 'id', array () );
+			foreach ( $id as $v ) {
+				$where = array (
+						'id' => $v 
+				);
+				$data = $m->GetOne ( $where );
+				$res = $m->DeleteOne ( $where );
+				// start 写操作日志
+				$log = array (
+						'logtype' => 72,
+						'guid' => $_SESSION ['Cur_X_User'] ['id'],
+						'ctime' => time (),
+						'cip' => real_ip () 
+				);
+				$log ['logdetail'] = $_SESSION ['Cur_X_User'] ['username'] . "于" . date ( "Y-m-d H:i:s" ) . "[删除]广告位" . $data ['adname'];
+				// $m=new Psys_SyslogModel();
+				// $m->admin_syslog($log);
+				$m->admin_syslog ( $log );
+				// end 日志
+			}
+			header ( "Location:/ads/index" );
+		} elseif (is_numeric ( $_GET ['id'] )) {
+			$id = reqnum ( 'id', '0' );
+			$where = array (
+					'id' => $id 
+			);
+			$data = $m->GetOne ( $where );
+			$res = $m->DeleteOne ( $where );
+			// start 写操作日志
+			$log = array (
+					'logtype' => 72,
+					'guid' => $_SESSION ['Cur_X_User'] ['id'],
+					'ctime' => time (),
+					'cip' => real_ip () 
+			);
+			$log ['logdetail'] = $_SESSION ['Cur_X_User'] ['username'] . "于" . date ( "Y-m-d H:i:s" ) . "[删除]广告位" . $data ['adname'];
+			$m->admin_syslog ( $log );
+			// end 日志
+			header ( "Location:/ads/index" );
+		} else {
+			echo "<script>alert('id 为空');</script>";
+		}
+	}
+	/**
+	 * 广告图片上传
+	 */
+	function uploadaddsAction(){
+		//echo json_encode($_POST);exit;
+		//缓存读取登录状态
+		$memcache = XMemCache::GetInstance();
+		$status = $memcache->Get('Cur_X_User');
+		if($status !== 'isLogin')
+		{
+			return;	
+		}
+				
+		//图像处理类
+		require_once COMMON_PATH."XThumb.php";
+		$imgthumb = new XThumb();
+		//上传错误提示
+		$errorMsg = array(
+			'1'=>'文件超出了服务器配置大小',
+			'2'=>'文件超出了表单配置大小',
+			'3'=>'仅部分文件上传',
+			'4'=>'没有找到上传文件',
+			'5'=>'上传文件大小为零',
+			'6'=>'未找到临时文件夹',
+			'7'=>'临时文件夹写入失败',
+			'8'=>'服务器文件上传扩展未开启',
+			'9'=>'上传图片规格不符合要求',
+			'10'=>'存放文件夹建立失败',
+			'11'=>'上传文件移动失败'
+		);
+		foreach($_FILES as $key=>$file)
+		{
+			$dir = ADDS_PATH;
+			$img_info = getimagesize($file['tmp_name']);
+			switch($key)
+			{
+				case 'android':
+					if($file['error'] == 0)
+					{
+						//图片比例限制
+						$radio = floor(($img_info[0]/$img_info[1])*100);
+						
+						if(!($radio>133 && $radio<140))
+						{
+							die($errorMsg[9]);
+						}
+						$dir .= 'android' . DIRECTORY_SEPARATOR . 'hdpi' . DIRECTORY_SEPARATOR;
+						if (!is_dir($dir))
+						{
+							if(!mkdir($dir,0777,true))
+							{
+								die($errorMsg[10]);
+							}
+						}
+						$path = $dir . $file['name'];
+						$dir1 = dirname($dir) . DIRECTORY_SEPARATOR . 'mdpi' . DIRECTORY_SEPARATOR;
+						$dir2 = dirname($dir) . DIRECTORY_SEPARATOR . 'xhdpi' . DIRECTORY_SEPARATOR;
+						$dir3 = dirname($dir) . DIRECTORY_SEPARATOR . 'xxhdpi' . DIRECTORY_SEPARATOR;
+									
+									
+						if(!move_uploaded_file($file['tmp_name'], $path))
+						{
+							die($errorMsg[11]);
+						}
+						else 
+						{
+							$imgthumb->imgZoom($path,234,168,$dir.$file['name']);
+							if (!is_dir($dir1))
+							{
+								if(!mkdir($dir1,0777,true))
+								{
+									die($errorMsg[10]);
+								}
+							}
+							$imgthumb->imgZoom($path,264,197,$dir1.$file['name']);
+							if (!is_dir($dir2))
+							{
+								if(!mkdir($dir2,0777,true))
+								{
+									die($errorMsg[10]);
+								}										
+							}
+							$imgthumb->imgZoom($path,352,260,$dir2.$file['name']);
+							if (!is_dir($dir3))
+							{
+								if(!mkdir($dir3,0777,true))
+								{
+									die($errorMsg[10]);
+								}										
+							}
+							$imgthumb->imgZoom($path,528,390,$dir3.$file['name']);
+						}
+					}
+					else
+					{
+						die($errorMsg[$file['error']]);
+					}
+					die('SUCCESS');
+					break;
+				case 'ios1':
+					if($file['error'] == 0)
+					{
+						//图片比例限制
+						$radio = floor(($img_info[0]/$img_info[1])*10);
+						
+						if(!($radio>11 && $radio<13))
+						{
+							die($errorMsg[9]);
+						}
+						
+						$dir .= 'ios' . DIRECTORY_SEPARATOR . 'shdpi';
+						if (!is_dir($dir))
+						{
+							if(!mkdir($dir,0777,true))
+							{
+								die($errorMsg[10]);
+							}
+						}
+						$path = $dir . DIRECTORY_SEPARATOR . $_POST['resname'];
+						/*$dir1 = dirname($dir) . DIRECTORY_SEPARATOR . 'mdpi' . DIRECTORY_SEPARATOR;
+						$dir2 = dirname($dir) . DIRECTORY_SEPARATOR . 'xhdpi' . DIRECTORY_SEPARATOR;
+						$dir3 = dirname($dir) . DIRECTORY_SEPARATOR . 'xxhdpi' . DIRECTORY_SEPARATOR;*/
+									
+									
+						if(!move_uploaded_file($file['tmp_name'], $path))
+						{
+							die($errorMsg[11]);
+						}
+						else 
+						{
+							$imgthumb->imgZoom($path,471,390,$dir . DIRECTORY_SEPARATOR .$_POST['resname']);
+						}
+					}
+					else 
+					{
+						die($errorMsg[$file['error']]);
+					}
+					die('SUCCESS');
+					break;
+				case 'ios2':
+					if($file['error'] == 0)
+					{
+						//图片比例限制
+						$radio = floor(($img_info[0]/$img_info[1])*100);
+						
+						if(!($radio>180 && $radio<185))
+						{
+							die($errorMsg[9]);
+						}
+						$dir .= 'ios' . DIRECTORY_SEPARATOR . 'bhdpi';
+						if (!is_dir($dir))
+						{
+							if(!mkdir($dir,0777,true))
+							{
+								die($errorMsg[10]);
+							}
+						}
+						$path = $dir . DIRECTORY_SEPARATOR . $_POST['resname'];
+						/*$dir1 = dirname($dir) . DIRECTORY_SEPARATOR . 'mdpi' . DIRECTORY_SEPARATOR;
+						$dir2 = dirname($dir) . DIRECTORY_SEPARATOR . 'xhdpi' . DIRECTORY_SEPARATOR;
+						$dir3 = dirname($dir) . DIRECTORY_SEPARATOR . 'xxhdpi' . DIRECTORY_SEPARATOR;*/
+									
+									
+						if(!move_uploaded_file($file['tmp_name'], $path))
+						{
+							die($errorMsg[11]);
+						}
+						else 
+						{
+							$imgthumb->imgZoom($path,471,258,$dir . DIRECTORY_SEPARATOR .$_POST['resname']);
+						}
+					}
+					else 
+					{
+						die($errorMsg[$file['error']]);
+					}
+					die('SUCCESS');
+					break;
+			}
+		}
+	}	
+}
+
+?>

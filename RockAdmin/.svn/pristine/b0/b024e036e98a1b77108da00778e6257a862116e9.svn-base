@@ -1,0 +1,42 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-12 17:25:38
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//station/opration.html" */ ?>
+<?php /*%%SmartyHeaderCode:1287898874548ab4921a8066-87302772%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '3c132a68046a8159beb4d7b599a22a47c19191b3' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//station/opration.html',
+      1 => 1418374935,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '1287898874548ab4921a8066-87302772',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script>
+var ck = <?php echo $_smarty_tpl->getVariable('ck')->value;?>
+;
+var msg;
+if(ck == 1)
+	{
+		msg = '操作成功';
+	}else{
+		msg = '操作失败';
+	}
+alert(msg);
+window.location.href = '/station/stlist';
+</script>
+
+<title>Insert title here</title>
+</head>
+<body>
+</body>
+</html>

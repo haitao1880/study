@@ -1,0 +1,82 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr><th>序 号</th><th>菜单名称</th><th>地址</th><th>父ID</th><th>样试图标</th><th>操作</th></tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $tree as $k=>$v}}
+                            <tr>
+                            <td style="text-align:center;">{{$v.id}}</td>
+                            <td style="text-align:center;">{{$v.name}}</td>
+                            <td style="text-align:center;">{{$v.action}}</td>
+                            <td style="text-align:center;">{{$v.pid}}</td>
+                            <td style="text-align:center;">{{$v.class}}</td>
+                            <td style="text-align:center;">
+                                <div class="btn-group">
+                                    <a href="#choice" data-toggle="modal" onclick="getDetails('{{$v.id}}');" class="btn btn-group">修改<span class="caret"></span></a>
+                                </div>
+                            </td>
+                            </tr>
+                        {{/foreach}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:center;">
+    <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default">共 {{$total_num}} 个</button>
+        <button type="button" class="btn btn-default" onclick="searchMember(1)">首页</button>
+        <button type="button" class="btn btn-default" onclick="searchMember({{$pre}})">上一页</button>
+        <button type="button" class="btn btn-default" onclick="searchMember({{$next}})">下一页</button>
+        <button type="button" class="btn btn-default" onclick="searchMember({{$last}})">末页</button>
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span id="currentpage">选择页码</span>
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                {{section name=loop loop=$last}}
+                    <li style="padding:0; margin:0;"><a href="javaScript:void(0)" onclick="searchMember({{$smarty.section.loop.index+1}})">{{$smarty.section.loop.index+1}}</a></li>
+                {{/section}}
+            </ul>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div id="choice" class="modal hide" style="display: none;" aria-hidden="true">
+<div class="modal-header">
+    <h3>修改</h3>
+</div>
+<div class="modal-body" id="pointDetails">
+    
+</div>
+<div class="modal-footer">
+    <a class="btn" href="javascript:;" onclick="editPost()" data-dismiss="modal">修改</a>
+    <a class="btn" href="javascript:;" id="Cancel" data-dismiss="modal">关 闭</a>
+</div>
+</div>
+<script type="text/javascript">
+	function editPost(){
+		$("#pointDetails form").submit();
+	}
+    function getDetails(id){
+        $.ajax({
+            type: "POST",
+            url: "/menu/ajaxEdit",
+            data: {
+                id:id
+            },
+            dataType: "html",
+            beforeSend:function(XMLHttpRequest){},
+            success: function(data){
+                $("#pointDetails").html(data);
+            }
+        });
+        
+    }
+</script>

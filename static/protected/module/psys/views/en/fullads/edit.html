@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-浏览数据统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+<style type="text/css">
+#title{
+	font-size:20px;
+	font-weight:bold;
+	text-align:center;
+	line-height:100px;
+}      
+</style>
+    </head>
+    <body>
+
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 广告管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 全屏广告</a>
+            </div>
+        </div>
+        <p id="title">编辑车站全屏广告</p>
+		<div id="wrap">
+			<div id="data_form">
+				<form action="/ads/update" method="POST">
+				<table>
+					<tr><td width="250px" align="right">车站：</td>
+						<td align="left">
+							<select id="appkey" name='appkey'>
+					   		 	<option value="{{$appkey}}">{{$station}}</option> 
+							</select>
+						</td>
+					</tr>
+					<tr id="systerms"><td width="250px" align="right">全屏广告一：</td>
+						<td align="left">
+							{{foreach $onelist as $v}}
+					   		 	&nbsp;&nbsp;<input type="checkbox" name="adsone" value="{{$v.id}}" {{if $v.select eq 1}} checked {{/if}}/>&nbsp;{{$v.adname}}
+							{{/foreach}}	
+						</td>
+					</tr>
+					<tr id="systerms"><td width="250px" align="right">全屏广告二：</td>
+						<td align="left">
+							{{foreach $twolist as $v}}
+					   		 	&nbsp;&nbsp;<input type="checkbox" name="adstwo" value="{{$v.id}}" {{if $v.select eq 1}} checked {{/if}} />&nbsp;{{$v.adname}}
+							{{/foreach}}	
+						</td>
+					</tr>
+					<tr><td width="250px" align="right"><input type="hidden" name="id" value="{{$id}}"/></td>
+					<tr><td colspan="2" align="center" style="margin-top:20px"><button id="btn_data_submit">提交</button></tr>
+				</table>
+				</form>
+			</div>
+		</div>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script type="text/javascript">
+$(document).ready(function(){
+	$('.submenu > a').click(function(e)
+			{
+				e.preventDefault();
+				var submenu = $(this).siblings('ul');
+				var li = $(this).parents('li');
+				var submenus = $('#sidebar li.submenu ul');
+				var submenus_parents = $('#sidebar li.submenu');
+				if(li.hasClass('open'))
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenu.slideUp();
+					} else {
+						submenu.fadeOut(250);
+					}
+					li.removeClass('open');
+				} else 
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenus.slideUp();			
+						submenu.slideDown();
+					} else {
+						submenus.fadeOut(250);			
+						submenu.fadeIn(250);
+					}
+					submenus_parents.removeClass('open');		
+					li.addClass('open');	
+				}
+			});
+	
+  	$("#btn_data_submit").click(function(){
+		var adsone = '';
+		$("input[type='checkbox'][name='adsone']:checked").each(function(){
+			adsone += adsone ? ','+$(this).val() : $(this).val(); 
+		});
+		var adstwo = '';
+		$("input[type='checkbox'][name='adstwo']:checked").each(function(){
+			adstwo += adstwo ? ','+$(this).val() : $(this).val(); 
+		});
+		var id = $("input[type='hidden'][name='id']").val();
+		if(!appkey)
+		{
+			alert('请选择车站！');
+			return false;
+		}
+		if(!adsone && !adstwo)
+		{
+			alert('请选择广告！');
+			return false;
+		}
+		$.ajax({
+            type: "POST",
+            url: "/fullads/update",
+            data: {'ajax':1,'ispost':1,'id':id,'adsone':adsone,'adstwo':adstwo},
+            dataType: "json",
+            success: function(data){
+				if(data.result == 'SUCCESS')
+				{
+					alert('车站全屏广告更新成功！');
+					window.location.href = '/fullads/index';
+				}
+				else
+				{
+					alert('您未修改任何信息！');
+				}
+                }             
+        });
+		return false;
+  	});
+});
+</script>
+    </body>
+</html>

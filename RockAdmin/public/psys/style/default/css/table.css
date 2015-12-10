@@ -1,0 +1,65 @@
+@charset "utf-8";
+/* CSS Document */
+table {
+	width:90%;
+	margin:0 auto;
+	line-height:2.5;
+	min-width:1200px;
+}
+table caption {
+	padding:25px;
+}
+table h3 {
+	font-size:16px;
+	color:#333;
+}
+table th {
+	color:#bfeaf5;
+}
+table tr {
+	color:#333;
+	text-align:center;
+}
+table a:hover {
+	color:#f00;
+}
+.tbody:hover {
+	background:#d4eaff;
+	color:#333;
+	text-align:center;
+}
+table input[type="text"] {
+	border:1px solid #a9a9a9;
+	width:210px;
+}
+table input[type="password"] {
+	border:1px solid #a9a9a9;
+	width:210px;
+}
+table input[type="button"] {
+	padding-top:3px;
+	padding-bottom:2px;
+}
+
+.check-box {
+	margin-top:-1px;
+}
+.check-box, label {
+	vertical-align:middle;
+}
+button {
+	padding:3px;
+	margin-top:-1px;
+	border:1px solid #900;
+}
+.add-table {
+	line-height:2.6;
+	min-width:30%;
+}
+.jCalendar{ min-width:0px;}
+.pages {
+	margin-top:50px;
+	width:100%;
+	text-align:center;
+}
+/* 列表样式  jing  2014.7.11*/

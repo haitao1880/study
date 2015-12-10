@@ -1,0 +1,140 @@
+{include file="include/header.html"}
+{literal}
+<script type="text/javascript">
+
+$(function(){
+        $(document).ready(function(){
+            var msg = '';
+            var xtitle = '';
+            var data = {};
+            var pictype = $('#pictype').val()?$('#pictype').val():'spline';
+            var station = '青岛南';
+                data.ajax = 1;
+                data.station = $('#station').val()?$('#station').val():1;
+                data.classtype=0;
+                station = stations(data.station);
+                 totalpaiting(data,pictype,station);
+        });
+      $('#search').click(function(){
+        var msg = '';
+        var xtitle = '';
+        var data = {};
+        var pictype = $('#pictype').val()?$('#pictype').val():'spline';
+        var station = '青岛南';
+            data.ajax = 1;
+            data.station = $('#station').val()?$('#station').val():1;
+            station = stations(data.station);
+            data.classtype = $('#classtype').val()?$('#classtype').val():0;
+            switch(data.classtype){
+                case '1':
+                    msg = '用户连接走势';
+                    xtitle = '连接数量';
+                    break;
+                
+                case '2':
+                    msg = '用户注册走势';
+                    xtitle = '注册数量';
+                    break;
+                
+                case '3':
+                    
+                    msg = '用户下载走势';
+                    xtitle = '下载数量';
+                    break;
+                
+                case '4':
+                   
+                    msg = '转化率走势';
+                    xtitle = '转化率(%)';
+                    break;
+                
+                case '5':
+                    msg = '每日流程步骤流失率';
+                    xtitle = '流失率(%)';
+                    break;
+                
+                case '6':
+                    msg = '每日流程数据概况';
+                    xtitle = '数量';
+                    break;
+             }
+            
+            data.sdate = $('#sdate').val();
+            data.edate = $('#edate').val();
+            if (data.classtype == '0') {
+                totalpaiting(data,pictype,station);
+            }else{
+                graph(data,station,msg,pictype,xtitle); 
+            }
+           
+      });
+
+     $('#classtype').change(function() {
+        var type = $(this).val();
+        if(type=='5' || type=='6' || type=='0'){
+            $('#sdate').hide();
+        }else{
+            $('#sdate').show();
+        }
+     });
+
+});
+//function sortAlpha(com)
+//{ 
+//jQuery('#flex1').flexOptions({newp:1, params:[{name:'letter_pressed', value: com},{name:'qtype',value:$('select[name=qtype]').val()}]});
+//jQuery("#flex1").flexReload(); 
+//}
+</script>
+{/literal}
+</head>
+<body>
+<div class="search" >
+搜索:
+    <select class="select2" id="station" name="station">
+        <option value="">-选择车站-</option>
+        {foreach $stations as $v}
+        <option value="{$v.id}"  >{$v.stationname}</option>
+        {/foreach}
+    </select>
+    <select class="select2" id="classtype" name="classtype">
+        <option value="">-选择统计图分类-</option>
+        <option value="0">总图</option>
+        <option value="1">用户连接走势</option>
+        <option value="2">用户注册走势</option>
+        <option value="3">用户下载走势</option>
+        <option value="4">转化率走势</option>
+        <option value="5">每日流程步骤流失率</option>
+        <option value="6">每日流程数据概况</option>
+    </select>
+    <select class="select2" id="pictype">
+        <option value="">-选择图形-</option>
+        <option value="line"  >折线图</option>
+        <option value="area"  >区域图</option>
+        <option value="column"  >柱状图</option>
+    </select>
+{literal}
+<input id="sdate" class="Wdate" type="text" onFocus="WdatePicker()" name="sdate"/>-
+<input id="edate" class="Wdate" type="text" onFocus="WdatePicker()" name="edate"/>
+{/literal}
+<input type="submit" class="button2" value="搜索" id="search"/>
+</div>
+<label style="color:red;margin-left: 10px;" id="errormsg"></label>
+<div id="container" style="height:1500px;width:1300px;margin:10px auto;border:1px solid #ccc;background:white;">
+    
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="connect"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="reg"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: right;width:648px;" id="down"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="rate"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="rose"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: right;width:648px;" id="prose"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="prevconnect"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: right;width:648px;" id="curconnect"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="prevweekrose"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: right;width:648px;" id="curweekrose"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+
+
+</div>
+</body>
+
+</html>

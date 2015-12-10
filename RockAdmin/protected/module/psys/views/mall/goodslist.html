@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>商品列表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}lightbox.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}lightbox.min.js"></script>
+{literal}
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".toggle").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var obj = $(this);
+			var id = $(this).attr('goods_id');
+			$.ajax({
+	            type: "POST",
+	            url: "/mall/goodstoggle",
+	            data: {'ajax':1,'id':id},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('状态切换成功');
+						if(obj.text() == '禁用')
+						{
+							obj.text('启用');
+						}
+						else
+						{
+							obj.text('禁用');
+						}
+					}
+					else
+					{
+						alert(data.msg);				
+					}
+	            }       
+	        });	
+		}
+		});
+	$(".delgoods").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var obj = $(this);
+			var id = $(this).attr('goods_id');
+			$.ajax({
+	            type: "POST",
+	            url: "/mall/goodsdel",
+	            data: {'ajax':1,'id':id},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('删除成功！');
+						window.location.href = '/mall/goodslist';
+					}
+					else
+					{
+						alert(data.msg);				
+					}
+	            }       
+	        });	
+		}
+		});
+	$(".imgview").click(function(){
+		$("#imgs_section").html('');
+		var id = $(this).attr('goods_id');
+		var imgurl = $('#'+id+'_imgs').text();
+		imgurl = imgurl.split(';');
+		for(key in imgurl){
+			var a = $("<a href='"+imgurl[key]+"' data-lightbox='roadtrip' class='lightbox' title=''></a>");
+			$("#imgs_section").append(a);
+		}
+				
+		$(".lightbox:first").trigger("click");
+	});
+});
+</script>
+<style type="text/css">
+#imgs_section{
+	display:none;
+}
+</style>
+{/literal}
+</head>
+<body>
+<div id="imgs_section">
+</div>
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h1>商品列表</h1></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>商品ID</th>
+	<th>商品名称</th>
+    <th>商品分类</th>
+    <th>单价（积分）</th>
+    <th>折扣价</th>
+    <th>商品描述</th>
+   	<th style="display:none;">图片集路径</th>
+   	<th>库存</th>
+   	<th>开始时间</th>
+    <th>结束时间</th>
+   	<th>增加时间</th>
+    <th>更新时间</th>
+    <th>操作</th>
+</tr>
+{foreach $goods_list as $goods}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td>{$goods.id}</td>
+    <td>{$goods.name}</td>
+    <td>{$goods.category}</td>
+    <td>{$goods.price}</td>    
+    <td>{$goods.discount}</td>
+    <td>{$goods.desc}</td>    
+    <td style="display:none;" id="{$goods.id}_imgs">{$goods.imgs}</td>
+    <td>{$goods.num}</td>
+    <td>{$goods.starttime}</td>
+    <td>{$goods.endtime}</td> 
+    <td>{$goods.ctime}</td>
+    <td>{$goods.utime}</td>  
+    <td>
+    	<a href="/mall/goodsedit/{$goods.id}">编辑</a>
+    	<a href="javascript:;" goods_id="{$goods.id}"  class="toggle">{if $goods.flag}禁用{else}启用{/if}</a> 
+    	<a href="javascript:;" goods_id="{$goods.id}" class="imgview">图片预览</a>
+    	<a href="javascript:;" goods_id="{$goods.id}" class="delgoods">删除</a>
+    </td>
+</tr>
+{/foreach}
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+ 	<li class="previous"><a href="?page=1">&laquo;First</a></li>   
+		{if $cur_page gt 1}
+  	<li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+		{else}
+  	<li class="previous-off"> &laquo;Previous</li>
+		{/if}
+		{if $endNum lt $allpage}	
+	         {for $p=$startNum to $endNum}
+	                
+	                     {if $cur_page eq $p}
+	                     <li class="active">{$p}</li>
+	                     {else}
+	                     <li><a href="?page={$p}">{$p}</a></li> 
+	                     {/if}
+	                   
+	          {/for} 
+	     {else}
+	        {for $p=$startNum to $allpage}
+	                
+	                     {if $cur_page eq $p}
+	                     <li class="active">{$p}</li>
+	                     {else}
+	                     <li><a href="?page={$p}">{$p}</a></li> 
+	                     {/if}
+	                   
+	          {/for}     
+	     {/if}     
+        
+		{if $cur_page lt $allpage}
+		    <li class="next">
+		    <a href="?page={$cur_page+1}">Next &raquo;</a>
+		    </li>
+		{else}
+		    <li class="next-off">
+		    Next &raquo;
+		    </li>
+		{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+       
+  </ul>
+</div>
+</body>
+</html>

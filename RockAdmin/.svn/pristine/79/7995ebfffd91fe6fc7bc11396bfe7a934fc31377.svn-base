@@ -1,0 +1,268 @@
+<?php
+//线路管理
+class tripController extends Psys_AbstractController
+{
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	
+	/**
+	 * 列表
+	 */
+	public function vlistAction()
+	{
+		$keyword = reqstr('trainno','');
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",20);
+		$where = '';
+		$nt = new PSys_TripModel();
+		if(!empty($keyword)){
+			$where = " trainno LIKE '%,$keyword,%'";
+		}
+		$list = $nt -> getTripList($where, $page, $pagesize);
+		self::inidate($list['allnum'],$page,$pagesize,count($list['allrow']));
+
+		$this->smarty->assign('list',$list['allrow']);
+		$this->smarty->assign('trainno',$keyword);
+		$this->smarty->assign('psys_base_url',PSYS_BASE_URL);
+		$this->forward = "vlist";
+	}
+	
+	/**
+	 * 添加
+	 */
+	public function vaddAction()
+	{
+		$ispost = reqnum('ispost', 0);
+		$id = reqnum('id', 0);
+		$nt = new PSys_TripModel();
+		if($ispost){
+			$trainno = reqstr('trainno');
+			if(empty($trainno)){
+				echo '<script>alert("列车信息不能为空,反回列表！"); window.history.go(-1);</script>';
+				exit;
+			}
+			$data = array(
+				'trainno' => reqstr('trainno'),
+			    'traintype' => reqstr('traintype'),
+			    'bstation' => reqstr('bstation'),
+			    'estation' => reqstr('estation', 0),
+			    'btime' => reqstr('btime', 0),
+			    'etime' => reqstr('etime'),
+			    'runtime' => reqstr('runtime'),
+			    'price' => reqstr('price'),
+			   //'mileage' => reqstr('mileage'),
+			    'flag' => reqnum('flag', 0),
+				//'bdate' => reqstr('bdate'),
+				//'bfreq' => reqstr('bfreq'),
+				'stationlist' => reqstr('stationlist'),
+			);
+			$where = array('id'=>$id);
+			$trip = $nt->UpdateOne($data,$where);
+			if($trip){
+				echo '<script>alert("修改成功,反回列表！");window.location.href="/trip/vlist"</script>';
+				exit;
+			}
+		}
+		$this->smarty->assign('action','vadd');
+		$this->smarty->assign('isadd',$isadd);
+		$this->forward = "vadd";
+	}
+		
+	public function veditAction()
+	{
+		$ispost = reqnum('ispost', 0);
+		$id = reqnum('id', 0);
+		$nt = new PSys_TripModel();
+		if($ispost){
+			$trainno = reqstr('trainno');
+			if(empty($trainno)){
+				echo '<script>alert("列车信息不能为空,反回列表！"); window.history.go(-1);</script>';
+				exit;
+			}
+			if(!empty($keyword)){
+				$where = " trainno LIKE '%,$trainno,%'";
+			}
+			$tar = $nt->GetOne($where,"count(*)");
+			if(!empty($tar)){
+				echo '<script>alert("列车信息存在,反回列表！"); window.history.go(-1);</script>';
+				exit;
+			}
+			$data = array(
+				'trainno' => reqstr('trainno'),
+			    'traintype' => reqstr('traintype'),
+			    'bstation' => reqstr('bstation'),
+			    'estation' => reqstr('estation', 0),
+			    'btime' => reqstr('btime', 0),
+			    'etime' => reqstr('etime'),
+			    'runtime' => reqstr('runtime'),
+			    'price' => reqstr('price'),
+			    //'mileage' => reqstr('mileage'),
+			    'flag' => reqnum('flag', 0),
+				//'bdate' => reqstr('bdate'),
+				//'bfreq' => reqstr('bfreq'),
+				'stationlist' => reqstr('stationlist'),
+			);
+			$trip = $nt->AddOne($data);
+			if($trip){
+				echo '<script>alert("添加成功,反回列表！");window.location.href="/trip/vlist"</script>';
+				exit;
+			}
+		}else{		
+			if($id > 0){
+				$where = array('id'=>$id);
+				$trips = $nt->GetOne($where,"*");
+				$this->smarty->assign('trip',$trips);
+			}
+		}
+		$this->smarty->assign('action','vedit');
+		//$this->smarty->assign('isadd',$isadd);
+		$this->forward = "vadd";
+	}
+	
+	//城市添加
+	public function cityAddAction(){
+	$ispost = reqnum('ispost', 0);
+		$nt = new PSys_TripModel();
+		if($ispost){
+			$cityname = reqstr('cityname');
+			if(empty($cityname)){
+				echo '<script>alert("城市名称不能为空,反回列表！"); window.history.go(-1);</script>';
+				exit;
+			}
+			$data = array(
+				'cityname' => reqstr('cityname'),
+			    'pinyin' => reqstr('pinyin'),
+			    'szm' => reqstr('szm'),
+			    'x' => reqnum('x', 0),
+			    'y' => reqnum('y', 0),
+			    'longitude' => reqstr('longitude'),
+			    'latitude' => reqstr('latitude'),
+			    'flag' => reqnum('flag', 0)
+			);
+			$citys = $nt->AddOne($data,'rht_trainstation');
+			if($citys){
+				echo '<script>alert("添加成功,反回列表！");window.location.href="/trip/cityList"</script>';
+				exit;
+			}
+		}
+		$this->smarty->assign('action','cityAdd');
+		$this->forward = "tadd";
+	}
+	//城市修改
+	public function cityEditAction(){
+		$ispost = reqnum('ispost', 0);
+		$id = reqnum('id', 0);
+		$nt = new PSys_TripModel();
+		if($ispost){
+			$cityname = reqstr('cityname');
+			if(empty($cityname)){
+				echo '<script>alert("修改成功,反回列表！"); window.history.go(-1);</script>';
+				exit;
+			}
+			$data = array(
+				'cityname' => reqstr('cityname'),
+			    'pinyin' => reqstr('pinyin'),
+			    'szm' => reqstr('szm'),
+			    'x' => reqnum('x', 0),
+			    'y' => reqnum('y', 0),
+			    'longitude' => reqstr('longitude'),
+			    'latitude' => reqstr('latitude'),
+			    'flag' => reqnum('flag', 0)
+			);
+			$where = array('id'=>$id);
+			$citys = $nt->UpdateOne($data,$where,'rht_trainstation');
+			if($citys){
+				echo '<script>alert("修改成功,反回列表！");window.location.href="/trip/cityList"</script>';
+				exit;
+			}
+		}else{		
+			if($id > 0){
+				$where = array('id'=>$id);
+				$citys = $nt->GetOne($where,"*",'rht_trainstation');
+				$this->smarty->assign('citys',$citys);
+			}
+		}
+		$this->smarty->assign('action','cityEdit');
+		$this->forward = "tadd";
+	}
+	//城市列表
+	public function cityListAction(){
+		$citykey = reqstr('citykey','');
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",20);
+		
+		$nt = new PSys_TripModel();
+		$list = $nt->getCityList("szm LIKE '$citykey%'",$page,$pagesize);
+		self::inidate($list['allnum'],$page,$pagesize,count($list['allrow']));
+
+		$this->smarty->assign('list',$list['allrow']);
+		$this->smarty->assign('psys_base_url',PSYS_BASE_URL);
+		$this->forward = "citylist";
+	}
+	
+	public function updateLngAction(){
+		$Code = -1;
+		$nt = new PSys_TripModel();
+		$data = array('longitude' => reqstr('lng'),'latitude' => reqstr('lat'));
+		$where = array('id'=>reqnum('id'));
+		$num = $nt ->updateLng($data,$where);
+		
+		if($num){
+			$Code = 1;
+		}
+		return array('Code'=>$Code);
+	}
+	
+	/**
+	 * 分页数据显示
+	 * @param num $allcount 总条数
+	 * @param num $page
+	 * @param num $pagesize
+	 * @param num $cursize  当前页的数据条数
+	 */
+	private function inidate($allcount,$page,$pagesize,$cursize){
+		$this->smarty->assign('allcount',$allcount);   //总数
+		$allpage = ceil($allcount/$pagesize);
+		$this->smarty->assign('allpage',$allpage);  //总页数
+		$pagesize = ($pagesize%2)?$pagesize:$pagesize+1; //页码取偶数 = 步长
+		$pageoffset =($pagesize-1)/2; //当前页 左右偏移
+		$this->smarty->assign('cur_page',$page); //当前页
+		if($allcount>$pagesize)
+		{ 
+			//如果当前页小于等于左偏移 
+			if($page<=$pageoffset)
+			{ 
+			$startNum=1; 
+			$endNum = $pagesize; 
+			}
+			else
+			{//如果当前页大于左偏移 
+			//如果当前页码右偏移超出最大分页数 
+				if($page+$pageoffset>=$allcount+1)
+				{ 
+				$startNum = $allcount-$pagesize+1; 
+				}
+				else
+				{ 
+				//左右偏移都存在时的计算 
+				$startNum = $page-$pageoffset; 
+				$endNum = $page+$pageoffset; 
+				} 
+			} 
+		}
+		else
+		{
+			$startNum=1; 
+			$endNum = $allcount; 
+		} 
+
+		$this->smarty->assign('startNum',$startNum);  //当前从几开始
+		$this->smarty->assign('endNum',$endNum);  //当前到几结束
+		$this->smarty->assign('sli',(($pagesize*($page-1)+1)));  //当前页的起始第多少条
+		$this->smarty->assign('eli',($pagesize*($page-1)+$cursize));  //当前页最后一条是第多少条
+	}
+}
+
+?>

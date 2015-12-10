@@ -1,0 +1,340 @@
+<?php
+/**
+* Copyright(c) 2014
+* 日    期:2014年7月20日                                                 
+* 作　  者:Tony_Ren
+* E-mail  :Tony_Ren@rockhippo.net
+* 文 件 名:trainController.php                                                
+* 创建时间:下午2:30:35                                                
+* 字符编码:UTF-8                                                   
+* 脚本语言:PHP                                            
+* 版本信息:$Id: trainController.php 3174 2014-08-20 01:49:06Z terry $                                                 
+* 修改日期:$LastChangedDate: 2014-08-20 09:49:06 +0800 (周三, 20 八月 2014) $                                     
+* 最后版本:$LastChangedRevision: 3174 $                                 
+* 修 改 者:$LastChangedBy: terry $                                      
+* 版本地址:$HeadURL: http://192.168.1.100:12000/svn/rocktrain/trunk/RockAdmin/protected/module/psys/controller/trainController.php $                                            
+* 摘    要: 车次管理                                                      
+*/
+
+class trainController extends Psys_AbstractController
+{
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	
+	/**
+	 * 途经站列表
+	 */
+	public function stationAction()
+	{
+		$tid = reqnum('tid', 0);
+		$w = array('id'=>$tid);
+		$trainModel = new Psys_TrainModel();
+		$trainOne = $trainModel->GetOne($w);
+		if(!$trainOne)
+		{
+			$this->smarty->assign('msg','不存在此车次');
+			$this->forward = "msg";
+			return;
+		}
+		$trainOne['trainno'] = str_ireplace(",","/",trim($trainOne['trainno'],','));
+		$this->smarty->assign('trainno',$trainOne['trainno']);
+		
+		$w = array('tid'=>$tid);
+		$list = $trainModel->GetList($w,'orderid ASC',-1,-1,"*",'rhi_trainnodetail');
+		
+		$this->smarty->assign('tid',$tid);
+		$this->smarty->assign('list',$list['allrow']);
+		$this->forward = 'station';
+	}
+	public function upstationsAction(){
+		$tid = reqnum('tid', 0);
+		$id = reqnum('id', 0);
+		$ispost = reqnum('ispost', 0);
+		$w = array('id'=>$tid);
+		$trainModel = new Psys_TrainModel();
+		$trainOne = $trainModel->GetOne($w,'*');
+
+		if(!$trainOne)
+		{
+			$this->smarty->assign('msg','不存在此车次');
+			$this->forward = "msg";
+			return;
+		}
+		
+		$stations = isset($_FILES['stations'])?$_FILES['stations']:'';
+		$one = array();
+		$stationinfo=array();
+		if($stations && ($stations['error'] == 0)){
+			$conn = fopen($stations['tmp_name'],'rb');
+			while (!feof($conn)) {
+				$stationinfo[] = fgetcsv($conn,1000,',');
+			}
+			
+			foreach($stationinfo as $v){
+				$one['station'] = $v[1];
+				$one['stationid'] = $trainModel->GetTrainCityId($one['station']);
+				$one['tid'] = $tid;
+				$one['trainno'] = $trainOne['trainno'];
+				$one['orderid']= $v[0];
+				$one['datestr'] = $v[2];
+				$one['btime']	= str_ireplace('：',':',$v[3]);
+				$one['etime']	= str_ireplace('：',':',$v[4]);
+				$one['staytime']	= str_ireplace('：',':',$v[5]);
+				$one['price']	= $v[6];
+				$one['mileage']	= $v[7];
+				
+				if($id > 0)
+				{
+					$w = array('id'=>$id);
+					$res = $trainModel->UpdateOne($one,$w,'rhi_trainnodetail');
+					$m = new Psys_ResModel ();
+					$m->Record($one,$res,'db-rht_sync','trainnodetail','rhs_downsync');
+				}else{
+
+					$res = $trainModel->AddOne($one,'rhi_trainnodetail');
+					$m = new Psys_ResModel ();
+					$m->Record($one,$res,'db-rht_sync','trainnodetail','rhs_downsync');
+				}
+			//更新车次站点列表
+				$res = $trainModel->UpdateTrainStationList($tid);
+				$m = new Psys_ResModel ();
+				$m->Record($one,$res,'db-rht_sync','trainno','rhs_downsync');
+				
+			}
+			
+			echo "导入成功！";	
+			exit;
+		}
+
+		echo "导入失败！";	
+		//$this->forward = 'upstations';
+	}
+	/**
+	 * 途经站添加
+	 */
+	public function stationaddAction()
+	{
+		$tid = reqnum('tid', 0);
+		$id = reqnum('id', 0);
+		$ispost = reqnum('ispost', 0);
+		$w = array('id'=>$tid);
+		$trainModel = new Psys_TrainModel();
+		$trainOne = $trainModel->GetOne($w,'*');
+
+		if(!$trainOne)
+		{
+			$this->smarty->assign('msg','不存在此车次');
+			$this->forward = "msg";
+			return;
+		}
+		$one = array();
+		if($ispost == 1)
+		{
+			$rtn = array('result' => 'ERROR');
+			$one['station']	= reqstr('station','');
+			if($one['station'] == '')
+			{
+				MsgInfoConst::GetMsg(2001, $rtn);
+				return $rtn;
+			}
+			$one['stationid'] = $trainModel->GetTrainCityId($one['station']);
+			$one['tid'] = $tid;
+			$one['trainno'] = $trainOne['trainno'];
+			$one['orderid']	= reqnum('orderid',0);
+			$one['datestr']	= reqstr('datestr','');
+			$one['btime']	= str_ireplace('：',':',reqstr('btime',''));
+			$one['etime']	= str_ireplace('：',':',reqstr('etime',''));
+			$one['staytime']	= str_ireplace('：',':',reqstr('staytime',''));
+			$one['price']	= reqstr('price','');
+			$one['mileage']	= reqstr('mileage','');
+			
+			if($id > 0)
+			{
+				$w = array('id'=>$id);
+				$res = $trainModel->UpdateOne($one,$w,'rhi_trainnodetail');
+				$m = new Psys_ResModel ();
+				$m->Record($one,$res,'db-rht_sync','trainnodetail','rhs_downsync');
+			}else{
+
+				$res = $trainModel->AddOne($one,'rhi_trainnodetail');
+				$m = new Psys_ResModel ();
+				$m->Record($one,$res,'db-rht_sync','trainnodetail','rhs_downsync');
+			}
+			//更新车次站点列表
+			$res = $trainModel->UpdateTrainStationList($tid);
+			$m = new Psys_ResModel ();
+			$m->Record($one,$res,'db-rht_sync','trainno','rhs_downsync');	
+			$rtn['result']	= 'SUCCESS';
+			MsgInfoConst::GetMsg(2002, $rtn);
+				
+			return $rtn;
+		}else{
+			$one['station'] = '';
+			$one['orderid']	= '';
+			$one['datestr']	= '';
+			$one['btime']	= '';
+			$one['etime']	= '';
+			$one['staytime']= '';
+			$one['price']	= '';
+			$one['mileage']	= '';
+		}
+		
+		if($id > 0)
+		{
+			$one = $trainModel->GetOne(array('id'=>$id),'*','rhi_trainnodetail');
+			if(!$one)
+			{
+				$id = 0;
+			}
+		}
+		
+		$this->smarty->assign('one',$one);
+		
+		
+		
+		$trainOne['trainno'] = str_ireplace(",","/",trim($trainOne['trainno'],','));
+		$this->smarty->assign('trainno',$trainOne['trainno']);
+		
+		$orderid = array();
+		for($ii=1;$ii < 99;$ii++)
+		{
+			$orderid[$ii] = $ii;
+		}
+		$datestr = array('-','第一天','第二天','第三天','第四天','第五天','第六天','第七天','第八天');
+		$this->smarty->assign('id',$id);
+		$this->smarty->assign('tid',$tid);//硬座|¥0;硬卧上/中/下|¥0/¥0/¥0;软卧上/下|¥0/¥0
+		$this->smarty->assign('datestr',$datestr);
+		$this->smarty->assign('orderid',$orderid);
+		$this->forward = 'stationadd';
+	}
+	
+	/**
+	 * 途经站删除
+	 */
+	public function stationdelAction()
+	{
+		$tid = reqnum('tid', 0);
+		$id  = reqnum('id', 0);
+		
+		$w = array('id'=>$id,'tid'=>$tid);
+		$trainModel = new Psys_TrainModel();
+		$trainModel->DeleteOne($w,'rhi_trainnodetail');
+		$msg = '操作成功，<a href="/train/station?tid='.$tid.'">点此返回列表</a>';
+		$this->smarty->assign('msg',$msg);
+		
+		$this->forward = 'msg';
+	}
+	
+	/**
+	 * 列表
+	 */
+	public function indexAction()
+	{
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",10);
+		
+		$trainModel = new Psys_TrainModel();
+		$w = array();
+		$list = $trainModel->GetList($w,'id DESC',$page,$pagesize,"*");
+		$pagestr = ShowPage('/train/index', $page, $list['allnum'], $pagesize,true,true,'辆',8);
+		foreach ($list['allrow'] as $k1=>&$v1)
+		{
+			$v1['traintypestr'] = @$trainModel->traintype[$v1['traintype']];
+			$v1['trainno'] = str_ireplace(",","/",trim($v1['trainno'],','));
+		}
+				
+		$this->smarty->assign('list',$list['allrow']);
+		$this->smarty->assign('pagestr',$pagestr);
+		$this->forward = "index";
+	}
+
+	/**
+	 * 添加
+	 */
+	public function addAction()
+	{
+		$traintype = array(
+			'K'	=> '快速',
+			'Z'	=> '直达特快',
+			''	=> '其他',
+			'T'	=> '空调特快',
+			'D'	=> '动车组',
+			'G'	=> '高速动车',
+		);
+		$id = reqnum('id', 0);
+		$ispost = reqnum('ispost', 0);
+		$trainModel = new Psys_TrainModel();
+
+		$one = array();
+		if($ispost == 1)
+		{
+			$rtn = array('result' => 'ERROR');
+			$one['trainno']	= reqstr('checi','');
+			if($one['trainno'] == '')
+			{
+				MsgInfoConst::GetMsg(2001, $rtn);
+				return $rtn;
+			}else{
+				$one['trainno']	= str_ireplace("/",",",trim($one['trainno'],','));
+				$one['trainno']	= ','.$one['trainno'].',';
+			}
+			$one['traintype']	= reqstr('leixin','');
+			$one['bstation']	= reqstr('b_station','');
+			$one['btime']	= str_ireplace('：',':',reqstr('btime_station',''));
+			$one['estation']	= reqstr('e_station','');
+			$one['etime']	= str_ireplace('：',':',reqstr('etime_station',''));
+			$one['runtime']	= str_ireplace('：',':',reqstr('runtime',''));
+			$one['price']	= reqstr('price','');
+			$one['mileage']	= reqstr('mileage','');
+			
+			if($id > 0)
+			{
+				$w = array('id'=>$id);
+				$res = $trainModel->UpdateOne($one,$w);
+				$m = new Psys_ResModel ();
+				$m->Record($one,$res,'db-rht_sync','trainno','rhs_downsync');
+			}else{
+				$res = $trainModel->AddOne($one);
+				$m = new Psys_ResModel ();
+				$m->Record($one,$res,'db-rht_sync','trainno','rhs_downsync');
+			}
+			
+			$rtn['result']	= 'SUCCESS';
+			MsgInfoConst::GetMsg(2002, $rtn);
+			
+			return $rtn;
+		}else{
+			$one['trainno'] = '';
+			$one['traintype'] ='';
+			$one['bstation']= '';
+			$one['btime']	= '';
+			$one['estation']	= '';
+			$one['etime']	= '';
+			$one['runtime']	= '';
+			$one['price']	= '';
+			$one['mileage']	= '';
+		}
+		
+		if($id > 0)
+		{
+			$one = $trainModel->GetOne(array('id'=>$id));
+			if(!$one)
+			{
+				$id = 0;
+			}else{
+				$one['trainno']	= str_ireplace(",","/",trim($one['trainno'],','));
+			}
+		}
+		
+		$this->smarty->assign('one',$one);
+		$this->smarty->assign('id',$id);
+		$this->smarty->assign('traintype',$traintype);
+		
+		$this->forward = "add";
+	}
+	
+}
+
+?>

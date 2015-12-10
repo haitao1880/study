@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset="/>
+    <title>WIFI链接详情</title>
+    <link href="{$psys_css}bootstrap.min.css" rel="stylesheet" type="text/css" >
+    <!-- <link href="{$psys_css}style.css" rel="stylesheet" type="text/css" >
+    -->
+    <!-- <link rel="stylesheet" type="text/css" href="{$psys_css}paiting/public.css"/>
+    <link rel="stylesheet" type="text/css" href="{$psys_css}paiting/flexigrid.css" />
+    -->
+    <link rel="stylesheet" type="text/css" href="{$psys_css}paiting/tinybox.css" />
+    <link href="{$psys_css}paiting/flexigrid-extent.css" media="all" type="text/css" rel="stylesheet" />
+
+    <script type="text/javascript" src="{$psys_js}lib/jquery-boottrap.min.js"></script>
+    <script type="text/javascript" src="{$psys_js}paiting/tinybox.js"></script>
+    <script type="text/javascript" src="{$psys_js}paiting/WdatePicker.js"></script>
+
+    <script type="text/javascript" src="{$psys_js}lib/bootstrap.min.js"></script>
+    <!-- <script type="text/javascript" src="{$psys_js}paiting/highcharts.js"></script>
+-->
+<script type="text/javascript" src="{$psys_js}paiting/highstock.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/exporting.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/export-excel.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/function.js"></script>
+{literal}
+<style type="text/css">
+    .table th,.table td{
+        text-align: center;
+    }
+</style>
+<script type="text/javascript">
+
+$(function(){
+    var data = {};
+        data.ajax = 1;
+        data.data =  $('#form').serialize();
+    $(document).ready(function(){
+        tablewifiinfo(data);
+    });
+    $('#searchs').click(function(){
+        data.data =  $('#form').serialize();
+        // console.info(data.data);
+        data.page = 1;
+        tablewifiinfo(data);
+    });
+    $('#paging').delegate('div','click',function(){
+        data.data =  $('#form').serialize();
+        data.page = $(this).attr('page');
+        tablewifiinfo(data);
+    });
+    $('#tbody').delegate('.detail','click',function(){
+        var data = {};
+        data.ajax = 1;
+        data.station = $(this).attr('station');
+        data.date = $(this).attr('date');
+        $.post('/station/WifiApDetail',data,function(res){
+            PaiTingScroll(data.date+'每小时连接数',-20,'',60,res.wifinum.x_cat,'连接数',res.wifinum.y_data,'wifinum','spline',550);
+            PaiTingScroll(data.date+'每个AP访问数',-20,'',60,res.apnum.x_cat,'连接数',res.apnum.y_data,'apnum','spline',550);
+        },'json');
+    });
+
+
+    function tablewifiinfo(data){
+       $.post('/station/wifidata',data,function(res){
+            //画图
+            PaiTingShow('wifi连接趋势图',-20,'',60,res.graph.x_cat,'连接数',res.graph.y_data,'graph','spline');
+
+            //异步表格展示
+            var tr = '';
+            var color = '';
+            $.each(res.table,function(k,v){
+                if (k%2) {
+                    color = ' class="active"';
+                }else{
+                    color = ' class="info"';
+                }
+                tr += '<tr '+color+'>'+
+                            '<td>'+v.date+'</td>'+
+                            '<td>'+v.num+'</td>'+
+                            '<td style="cursor:pointer;" data-toggle="modal" data-target="#myModal" station="'+v.station+'"  date="'+v.date+'" class="detail">详情</td>'+
+                      '</tr>';
+            });
+
+            $('.table tbody').html(tr);
+            $('#paging').html(res.paging);
+        },'json');
+    }
+
+
+});
+
+</script>
+{/literal}
+</head>
+<body>
+
+<div class="content container-fluid sidebarRight animated fadeInUp">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-6" style="width:100%">
+            <div class="panel panel-pink">
+                <form id="form">
+                    <div class="panel-heading" style="float: left;margin-top: 10px;">
+                        <!-- <h3 class="panel-title">时间</h3>
+                    -->
+                    <label style="font-size: 16px;">时间：</label>
+                </div>
+
+                <div class="panel-body" data-toggle="buttons">
+
+                    <label title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="Tooltip on top">
+                        <input type="radio" name="date" id="day" value="1">一天</label>
+                    <button title="" data-placement="left" data-toggle="tooltip" class="btn btn-default tooltips active" type="button" data-original-title="Tooltip on left">
+                        <input type="radio" name="date" id="week" value="7">一周</button>
+                    <button data-original-title="Tooltip on bottom" title="" data-placement="bottom" data-toggle="tooltip " class="btn btn-default tooltips" type="button">
+                        <input type="radio" name="date" id="month" value="30">一月</button>
+                    {literal}
+                    <input class="Wdate" type="text" onFocus="WdatePicker()" name="sdate" style="height:30px;line-height: 30px; font-size: 16px;" />
+                    &nbsp;&nbsp;TO&nbsp;&nbsp;
+                    <input class="Wdate" type="text" onFocus="WdatePicker()" name="edate" style="height:30px;line-height: 30px; font-size: 16px;" />
+                    {/literal}
+                </div>
+
+                <div class="panel-heading" style="float: left;margin-top: 10px;">
+                    <!-- <h3 class="panel-title">时间</h3>
+                -->
+                <label style="font-size: 16px;">车站：</label>
+            </div>
+
+            <div class="col-md-12 col-sm-12" data-toggle="buttons">
+                <!-- <label style="font-size: 16px;">时间：</label>
+            -->
+            <!-- <button title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips active" type="button" data-original-title="Tooltip on top">
+            <input type="radio" name="station" value="0">全部</button>
+        -->
+            {foreach $stations as $v}
+            <button title="" data-placement="left" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="Tooltip on left" style="margin-bottom: 10px;margin-right: 5px;">
+                <input type="checkbox" name="station[]" value="{$v.id}">{$v.stationname}</button>
+            {/foreach}
+        </div>
+    <div class="panel-body">
+        <section class="btn-group pull-left">
+            <a target="_blank" class="btn btn-info" id="searchs">搜索</a>
+        </section>
+
+    </div>
+</form>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<div class="content container-fluid sidebarRight animated fadeInUp">
+<div class="row">
+
+<div class="col-md-6 col-sm-6" style="width:40%;">
+<div class="panel panel-purple">
+<div class="panel-heading">
+    <h3 class="panel-title">连接详情</h3>
+</div>
+<div class="panel-body" style="min-height: 500px;">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>日期</th>
+                <th>人数</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+    <div class="btn-toolbar" role="toolbar" aria-label="..." id="paging"></div>
+</div>
+</div>
+</div>
+
+<div class="col-md-6 col-sm-6" style="width:60%;">
+<div class="panel panel-light-orange">
+<div class="panel-heading">
+    <h3 class="panel-title">趋势图</h3>
+</div>
+<div class="panel-body" style="min-height: 500px;" id="graph"></div>
+</div>
+</div>
+
+</div>
+</div>
+<!-- 模态框（Modal） -->
+<div class="modal fade col-md-12 col-sm-12" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-body">
+<div style="min-height: 300px;text-align:center;margin:0 auto;border:1px solid #ccc;" id="wifinum"></div>
+<div style="min-height: 300px;text-align:center;margin:0 auto;border:1px solid #ccc;" id="apnum"></div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-primary" 
+               data-dismiss="modal">关闭</button>
+</div>
+</div>
+<!-- /.modal-content -->
+</div>
+</div>
+<!-- /.modal -->
+
+</body>
+
+</html>

@@ -1,0 +1,1040 @@
+<?php
+class Psys_StationModel extends Psys_AbstractModel
+{
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	
+	private $path = '/home/upload/nginxlog/';
+	private $LA1 = '/web1/www/appui_wonaonao_access.log';
+	private $LA2 = '/web2/www/appui_wonaonao_access.log';
+	private $LM1 = '/web1/www/m_wonaonao_access.log';
+	private $LM2 = '/web2/www/m_wonaonao_access.log';
+	
+	//前置流程统计
+	function webCount($date,$station)
+	{
+
+		if($station == 1 || $station == 2){
+			$dir = 'qdn/';
+			$qr = $station == 1 ? ' | grep -v "222.43" ' : ' | grep "222.43" ';
+			if ($station == 2) {
+				return $this->webCount_2($date,$dir,$qr);
+			}
+		}else{
+			$dir = 'jn/';
+			$qr = '';
+		}
+		$time = $date ? date('Y_m_d',strtotime($date)) :date('Y_m_d',strtotime('-1 day'));
+		$file_web = ' cat '.$this->path.$dir.$time.$this->LM1.' '.$this->path.$dir.$time.$this->LM2.$qr;
+		$file_app = ' cat '.$this->path.$dir.$time.$this->LA1.' '.$this->path.$dir.$time.$this->LA2.$qr;
+		$result = array();
+		
+		$sys = array('ios','android','andriod','else','wp');
+		//首页
+		$tp_index = $station == 1 ? '/index/index' : '/?';
+		$tp_index2 = $station == 1 ? 'mac=.*&t' : 'usermac=.*&s';
+		$sh = $file_web.'|  grep -i "get '.$tp_index.'" | grep " 200 " | grep -i "window" | grep -o "'.$tp_index2.'" | sort | uniq | grep "&" -c';
+		exec($sh,$arr_index_e);
+		$sh = $file_web.'|  grep -i "get '.$tp_index.'" | grep " 200 " | grep -i "mac " | grep -o "'.$tp_index2.'" | sort | uniq | grep "&" -c';
+		exec($sh,$arr_index_i);
+		$sh = $file_web.'|  grep -i "get '.$tp_index.'" | grep " 200 " | grep -i "android" | grep -o "'.$tp_index2.'" | sort | uniq | grep "&" -c';
+		exec($sh,$arr_index_a);
+		$index['ios'] = $arr_index_i[0];
+		$index['android'] = $arr_index_a[0];
+		$index['else'] = $arr_index_e[0];
+		
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'首页');
+		$index += $array; 
+		$result[] = $index;
+		//注册
+		$sh = $file_web.' | grep -i "post /member/register" | grep " 200 8" | grep -i -o "mac \|android\|window" |awk \'BEGIN{OFS="/"}{count[$0]++}END{for(name in count)print name,count[name]}\'';
+	
+		exec($sh,$arr_reg);
+		foreach ($arr_reg as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			$tep['sys'] = strtolower(rtrim($tep['sys'])) == 'mac' ? 'ios' : $tep['sys'];
+			$tep['sys'] = strtolower(rtrim($tep['sys'])) == 'window' ? 'else' : $tep['sys'];
+			if(in_array(strtolower(rtrim($tep['sys'])),$sys)){
+				$register[strtolower($tep['sys'])] += $tep['dtime'];
+			}
+			
+		}
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'注册');
+		$register += $array;
+		$result[] = $register;
+		//欢迎页
+		$sh = $file_web.' | grep -i "get /index/welcome" | grep "fromRegister" | grep " 200 " | grep -i "window" | cut -d " " -f 7 | cut -d "?" -f 2 | grep -P -o "[0-9].{11}"  | sort | uniq | grep "1" -c';
+		exec($sh,$arr_wel_e);
+		$sh = $file_web.' | grep -i "get /index/welcome" | grep "fromRegister" | grep " 200 " | grep -i "mac " | cut -d " " -f 7 | cut -d "?" -f 2 | grep -P -o "[0-9].{11}"  | sort | uniq | grep "1" -c';
+		exec($sh,$arr_wel_i);
+		$sh = $file_web.' | grep -i "get /index/welcome" | grep "fromRegister" | grep " 200 " | grep -i "android" | cut -d " " -f 7 | cut -d "?" -f 2 | grep -P -o "[0-9].{11}"  | sort | uniq | grep "1" -c';
+		exec($sh,$arr_wel_a);
+		
+		$welcome['ios'] = $arr_wel_i[0];
+		$welcome['android'] = $arr_wel_a[0];
+		$welcome['else'] = $arr_wel_e[0];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'全屏广告');
+		$welcome += $array; 
+		$result[] = $welcome;
+		
+		//弹出下载提示
+		$sh = $file_web.'| grep " 200 " | grep -i "get /record.php?" | grep "/alert" | cut -d " " -f 7 | cut -d "/" -f 4 | cut -d "?" -f 2 | awk \'BEGIN{FS=OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_alert);
+		foreach ($arr_alert as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$alert[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'弹出提示');
+		$alert += $array; 
+		$result[] = $alert;
+		//下载人数
+		$sh = $file_web.' | grep " 200 " | grep -i "get /record.php?downapp" | cut -d " " -f 7 | cut -d "/" -f 4 | cut -d "?" -f 2 | awk \'BEGIN{FS=OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_down);
+		foreach ($arr_down as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$down[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'下载');
+		$down += $array;
+		$result[] = $down;
+		//首次打开
+		$sh = $file_app.'| grep " 200 " | grep -i "record.php?open/first" |cut -d " " -f 7 | cut -d "/" -f 4 | cut -d "?" -f 2 | awk \'BEGIN{FS=OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_open);
+		foreach ($arr_open as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$open[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'首次打开');
+		$open += $array;
+		$result[] = $open;
+		
+		return $result;
+	}
+	//前置流程青岛北（或之类的）
+	function webCount_2($date,$dir,$qr)
+	{
+		
+		$time = $date ? date('Y_m_d',strtotime($date)) :date('Y_m_d',strtotime('-1 day'));
+		$file_web = ' cat '.$this->path.$dir.$time.$this->LM1.' '.$this->path.$dir.$time.$this->LM2.$qr;
+		$file_app = ' cat '.$this->path.$dir.$time.$this->LA1.' '.$this->path.$dir.$time.$this->LA2.$qr;
+		$result = array();
+		$sys = array('ios','android','else','wp');
+		
+		//首页
+		$sh = $file_web.'|  grep -i "get /index/index" | grep " 200 " | grep -i "window" | grep -o "mac=.*&t" | sort | uniq | grep "&" -c';
+		exec($sh,$arr_index_e);
+		$sh = $file_web.'|  grep -i "get /index/index" | grep " 200 " | grep -i "mac " | grep -o "mac=.*&t" | sort | uniq | grep "&" -c';
+		exec($sh,$arr_index_i);
+		$sh = $file_web.'|  grep -i "get /index/index" | grep " 200 " | grep -i "android" | grep -o "mac=.*&t" | sort | uniq | grep "&" -c';
+		exec($sh,$arr_index_a);
+		$index['ios'] = $arr_index_i[0];
+		$index['android'] = $arr_index_a[0];
+		$index['else'] = $arr_index_e[0];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'首页');
+		$index += $array;
+		$result[] = $index;
+		//注册
+	
+		$sh = $file_web.' | grep -i "post /member/register" | grep " 200 8" | grep -i -o "mac \|android\|window" |awk \'BEGIN{OFS="/"}{count[$0]++}END{for(name in count)print name,count[name]}\'';
+	
+		exec($sh,$arr_reg);
+		foreach ($arr_reg as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			$tep['sys'] = strtolower(rtrim($tep['sys'])) == 'mac' ? 'ios' : $tep['sys'];
+			$tep['sys'] = strtolower(rtrim($tep['sys'])) == 'window' ? 'else' : $tep['sys'];
+			if(in_array(strtolower(rtrim($tep['sys'])),$sys)){
+				
+				$register[strtolower($tep['sys'])] += $tep['dtime'];
+			}
+			
+		}
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'注册');
+		$register += $array;
+		$result[] = $register;
+		//欢迎页
+		$sh = $file_web.' | grep -i "get /index/welcome" | grep "fromRegister" | grep " 200 " | grep -i "window" | cut -d " " -f 7 | cut -d "?" -f 2 | grep -P -o "[0-9].{11}"  | sort | uniq | grep "1" -c';
+		exec($sh,$arr_wel_e);
+		$sh = $file_web.' | grep -i "get /index/welcome" | grep "fromRegister" | grep " 200 " | grep -i "mac " | cut -d " " -f 7 | cut -d "?" -f 2 | grep -P -o "[0-9].{11}"  | sort | uniq | grep "1" -c';
+		exec($sh,$arr_wel_i);
+		$sh = $file_web.' | grep -i "get /index/welcome" | grep "fromRegister" | grep " 200 " | grep -i "android" | cut -d " " -f 7 | cut -d "?" -f 2 | grep -P -o "[0-9].{11}"  | sort | uniq | grep "1" -c';
+		exec($sh,$arr_wel_a);
+		
+		$welcome['ios'] = $arr_wel_i[0];
+		$welcome['android'] = $arr_wel_a[0];
+		$welcome['else'] = $arr_wel_e[0];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'全屏广告');
+		$welcome += $array;
+		$result[] = $welcome;
+		//弹出下载提示
+		$sh = $file_web.'| grep " 200 " | grep -i "get /record.php?" | grep "/alert" | cut -d " " -f 7 | cut -d "/" -f 4 | cut -d "?" -f 2 | awk \'BEGIN{FS=OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_alert);
+		foreach ($arr_alert as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$alert[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'弹出提示');
+		$alert += $array;
+		$result[] = $alert;
+		//下载人数
+		$sh = $file_web.' | grep " 200 " | grep -i "get /record.php?downapp" | cut -d " " -f 7 | cut -d "/" -f 4 | cut -d "?" -f 2 | awk \'BEGIN{FS=OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_down);
+		foreach ($arr_down as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$down[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'下载');
+		$down += $array;
+		$result[] = $down;
+		//首次打开
+		$sh = $file_app.'| grep " 200 " | grep -i "record.php?open/first" |cut -d " " -f 7 | cut -d "/" -f 4 | cut -d "?" -f 2 | awk \'BEGIN{FS=OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_open);
+		foreach ($arr_open as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$open[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'首次打开');
+		$open += $array;
+		$result[] = $open;
+		return $result;
+	}
+	//新流程
+	public function webCountNew($date,$station)
+	{
+		if($station == 1 || $station == 2){
+			$dir = 'qdn/';
+			$qr = $station == 1 ? ' | grep -v "222.43" ' : ' | grep "222.43" ';
+		}else{
+			$dir = 'jn/';
+			$qr = '';
+		}
+		$time = $date ? date('Y_m_d',strtotime($date)) :date('Y_m_d',strtotime('-1 day'));
+		$file_web = ' cat '.$this->path.$dir.$time.$this->LM1.' '.$this->path.$dir.$time.$this->LM2.$qr;
+		$result = array();
+		$sys = array('ios','andriod','android','else','wp');
+		
+		$tp_index = ($station == 1 || $station == 2 ) ? '/index/index' : '/?';
+		$tp_index2 = ($station == 1 || $station == 2 ) ? 'mac=.*&t' : 'usermac=.*&s';
+		$tp_cut = ($station == 1 || $station == 2 ) ? '5-17' : '9-26';
+		
+		//广告页uv
+		$sh = $file_web.'| grep " 200 " | grep -i "get '.$tp_index.'" | grep -i "android" | grep -i -v "window" | grep -P -o "'.$tp_index2.'" | cut -c '.$tp_cut.' | sort | uniq | grep "&" -c';
+		exec($sh,$ad_a);
+		$sh = $file_web.'| grep " 200 " | grep -i "get '.$tp_index.'" | grep -i "mac " | grep -i -v "window" | grep -P -o "'.$tp_index2.'" | cut -c '.$tp_cut.' | sort | uniq | grep "&" -c';
+		exec($sh,$ad_i);
+		$sh = $file_web.'| grep " 200 " | grep -i "get '.$tp_index.'" | grep -i "window" | grep -P -o "'.$tp_index2.'" | cut -c '.$tp_cut.' | sort | uniq | grep "&" -c';
+		exec($sh,$ad_e);
+		$result[] = array('android'=>$ad_a[0],'ios'=>$ad_i[0],'else'=>$ad_e[0],'name'=>'广告页uv');
+		//广告详情
+		$sh = $file_web.' | grep " 200 " | grep -i "ad/show/aqy\|ad/show/qd\|ad/show/dm\|ad/show/pkq/" | cut -d " " -f 7 |cut -d "?" -f 2 | cut -d "/" -f 3,4 | awk \'BEGIN{OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_detailAd);
+		foreach ($arr_detailAd as $m=>$n)
+		{
+			$tep = array();
+			list($tep['detail'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$detailAd[$tep['detail']][strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('dm'=>array(),'qd'=>array(),'aqy'=>array(),'pkq'=>array());
+		$detailAd += $array;
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【多米】');
+		$detailAd['dm']['android'] = $detailAd['dm']['andriod'];
+		$detailAd['dm'] += $array;
+		$result[] = $detailAd['dm'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【起点】');
+		$detailAd['qd']['android'] = $detailAd['qd']['andriod'];
+		$detailAd['qd'] += $array;
+		$result[] = $detailAd['qd'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【爱奇艺】');
+		$detailAd['aqy']['android'] = $detailAd['aqy']['andriod'];
+		$detailAd['aqy'] += $array;
+		$result[] = $detailAd['aqy'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【皮卡丘】');
+		$detailAd['pkq']['android'] = $detailAd['pkq']['andriod'];
+		$detailAd['pkq'] += $array;
+		$result[] = $detailAd['pkq'];
+		//注册页uv
+		$sh = $file_web.'| grep " 200 " | grep -i "get /index/register" | grep -i "m.wonaonao.com'.$tp_index.'" | grep -i "android" | grep -P -o "'.$tp_index2.'" | cut -c '.$tp_cut.' | sort | uniq | grep "&" -c';
+		exec($sh,$reg_a);
+		$sh = $file_web.'| grep " 200 " | grep -i "get /index/register" | grep -i "m.wonaonao.com'.$tp_index.'" | grep -i "mac " | grep -P -o "'.$tp_index2.'" | cut -c '.$tp_cut.' | sort | uniq | grep "&" -c';
+		exec($sh,$reg_i);
+		$sh = $file_web.'| grep " 200 " | grep -i "get /index/register" | grep -i "m.wonaonao.com'.$tp_index.'" | grep -i "window" | grep -P -o "'.$tp_index2.'" | cut -c '.$tp_cut.' | sort | uniq | grep "&" -c';
+		exec($sh,$reg_e);
+		$result[] = array('android'=>$reg_a[0],'ios'=>$reg_i[0],'else'=>$reg_e[0],'name'=>'注册页uv');
+		//验证码
+		$sh_android = $file_web.' | grep " 200 " | grep -i "post /member/againgetphonecode" | grep -i "android" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_sub_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "post /member/againgetphonecode" | grep -i "mac " | grep -i "m.wonaonao.com/index/register" | grep -i "index/register" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_sub_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "post /member/againgetphonecode" | grep -i "window" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_sub_e);
+		$result[] = array('android'=>$arr_sub_a[0],'ios'=>$arr_sub_i[0],'else'=>$arr_sub_e[0],'wp'=>0,'name'=>'验证码');
+		//发送成功
+		$sh_android = $file_web.' | grep " 200 " | grep -i "post /member/againgetphonecode" | grep -i "android" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep "43" | cut -d "4" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_sub1_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "post /member/againgetphonecode" | grep -i "mac " | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep "43" | cut -d "4" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_sub1_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "post /member/againgetphonecode" | grep -i "window" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep "43" | cut -d "4" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_sub1_e);
+		$result[] = array('android'=>$arr_sub1_a[0],'ios'=>$arr_sub1_i[0],'else'=>$arr_sub1_e[0],'wp'=>0,'name'=>'【验证码发送成功】');
+		//发送失败
+		$sh_android = $file_web.' | grep " 200 " | grep -i "post /member/againgetphonecode" | grep -i "android" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep -v "43" | cut -d "4" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_sub2_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "post /member/againgetphonecode" | grep -i "mac " | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep -v "43" | cut -d "4" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_sub2_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "post /member/againgetphonecode" | grep -i "window" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep -v "43" | cut -d "4" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_sub2_e);
+		$sub2 = array('android'=>$arr_sub2_a[0],'ios'=>$arr_sub2_i[0],'else'=>$arr_sub2_e[0],'wp'=>0,'name'=>'【验证码发送失败】');
+		$result[] = $sub2;
+		//登录次数
+		$sh_android = $file_web.' | grep " 200 " | grep -i "post /member/register" | grep -i "android" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_login_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "post /member/register" | grep -i "mac " | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_login_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "post /member/register" | grep -i "window" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_login_e);
+		$result[] = array('android'=>$arr_login_a[0],'ios'=>$arr_login_i[0],'else'=>$arr_login_e[0],'wp'=>0,'name'=>'登录次数');
+		//登录成功
+		$sh_android = $file_web.' | grep " 200 65" | grep -i "post /member/register" | grep -i "android" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | cut -d "6" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_success_a);
+		$sh_ios = $file_web.' | grep " 200 65" | grep -i "post /member/register" | grep -i "mac " | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10  | cut -d "6" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_success_i);
+		$sh_else = $file_web.' | grep " 200 65" | grep -i "post /member/register" | grep -i "window" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | cut -d "6" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_success_e);
+		$result[] = array('android'=>$arr_success_a[0],'ios'=>$arr_success_i[0],'else'=>$arr_success_e[0],'wp'=>0,'name'=>'【登录成功】');
+		//验证码错误
+		$sh_android = $file_web.' | grep " 200 " | grep -i "post /member/register" | grep -i "android" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep "122" | cut -d "1" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_error_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "post /member/register" | grep -i "mac " | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep "122" | cut -d "1" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_error_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "post /member/register" | grep -i "window" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep "122" | cut -d "1" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_error_e);
+		$result[] = array('android'=>$arr_error_a[0],'ios'=>$arr_error_i[0],'else'=>$arr_error_e[0],'wp'=>0,'name'=>'【验证码错误】');
+		//已注册
+		$sh_android = $file_web.' | grep " 200 " | grep -i "post /member/register" | grep -i "android" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep "97" | cut -d "9" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_db_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "post /member/register" | grep -i "mac " | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep "97" | cut -d "9" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_db_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "post /member/register" | grep -i "window" | grep -i "m.wonaonao.com/index/register" | cut -d " " -f 10 | grep "97" | cut -d "9" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_db_e);
+		$result[] = array('android'=>$arr_db_a[0],'ios'=>$arr_db_i[0],'else'=>$arr_db_e[0],'wp'=>0,'name'=>'【已注册】');
+		//欢迎页面uv
+		$sh = $file_web.'| grep " 200 " | grep -i "get /index/welcome" | grep -i "m.wonaonao.com/index/register" | grep -i "android" | grep -i -v "window" | grep -P -o "welcome\?[0-9]{11}" | cut -c 8-20 | sort | uniq | grep "?" -c';
+		exec($sh,$wel_a);
+		$sh = $file_web.'| grep " 200 " | grep -i "get /index/welcome" | grep -i "m.wonaonao.com/index/register" | grep -i "mac " | grep -i -v "window" | grep -P -o "welcome\?[0-9]{11}" | cut -c 8-20 | sort | uniq | grep "?" -c';
+		exec($sh,$wel_i);
+		$sh = $file_web.'| grep " 200 " | grep -i "get /index/welcome" | grep -i "m.wonaonao.com/index/register" | grep -i "window" | grep -P -o "welcome\?[0-9]{11}" | cut -c 8-20 | sort | uniq | grep "?" -c';
+		exec($sh,$wel_e);
+		$result[] = array('android'=>$wel_a[0],'ios'=>$wel_i[0],'else'=>$wel_e[0],'name'=>'欢迎页uv');
+		//sindex uv
+		$sh = $file_web.'| grep " 200 " | grep -i "get /index/sindex" | grep -i "android" | grep -i "m.wonaonao.com/index/welcome" | grep -i "" | grep -P -o "welcome\?[0-9].{11}" | cut -c 8-19 | sort | uniq | grep "?" -c';
+		exec($sh,$sindex_a);
+		$sh = $file_web.'| grep " 200 " | grep -i "get /index/sindex" | grep -i "mac " | grep -i "m.wonaonao.com/index/welcome" | grep -i "" | grep -P -o "welcome\?[0-9].{11}" | cut -c 8-19 | sort | uniq | grep "?" -c';
+		exec($sh,$sindex_i);
+		$sh = $file_web.'| grep " 200 " | grep -i "get /index/sindex" | grep -i "window" | grep -i "m.wonaonao.com/index/welcome" | grep -i "" | grep -P -o "welcome\?[0-9].{11}" | cut -c 8-19 | sort | uniq | grep "?" -c';
+		exec($sh,$sindex_e);
+		$result[] = array('android'=>$sindex_a[0],'ios'=>$sindex_i[0],'else'=>$sindex_e[0],'name'=>'sindex uv');
+		//station
+		$sh_android = $file_web.' | grep " 200 " | grep -i "get /station/index " | grep -i "android" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_station_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "get /station/index " | grep -i "mac " | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_station_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "get /station/index " | grep -i "window" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_station_e);
+		$result[] = array('android'=>$arr_station_a[0],'ios'=>$arr_station_i[0],'else'=>$arr_station_e[0],'wp'=>0,'name'=>'【车站】');
+		//game
+		$sh_android = $file_web.' | grep " 200 " | grep -i "get /game/index " | grep -i "android" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_game_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "get /game/index " | grep -i "mac " | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_game_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "get /game/index " | grep -i "window" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_game_e);
+		$result[] = array('android'=>$arr_game_a[0],'ios'=>$arr_game_i[0],'else'=>$arr_game_e[0],'wp'=>0,'name'=>'【游戏】');
+		//movie
+		$sh_android = $file_web.' | grep " 200 " | grep -i "get /movie/index " | grep -i "android" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_movie_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "get /movie/index " | grep -i "mac " | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_movie_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "get /movie/index " | grep -i "window" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_else,$arr_movie_e);
+		$result[] = array('android'=>$arr_movie_a[0],'ios'=>$arr_movie_i[0],'else'=>$arr_movie_e[0],'wp'=>0,'name'=>'【电影】');
+		//music
+		$sh_android = $file_web.' | grep " 200 " | grep -i "get /music/index " | grep -i "android" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_android,$arr_music_a);
+		$sh_ios = $file_web.' | grep " 200 " | grep -i "get /music/index " | grep -i "mac " | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_music_i);
+		$sh_else = $file_web.' | grep " 200 " | grep -i "get /music/index " | grep -i "window" | cut -d " " -f 7 | cut -d "/" -f 1 | sort | uniq -c ';
+		exec($sh_ios,$arr_music_e);
+		$result[] = array('android'=>$arr_music_a[0],'ios'=>$arr_music_i[0],'else'=>$arr_music_e[0],'wp'=>0,'name'=>'【音乐】');
+		//train弹窗
+		$sh = $file_web.' | grep " 200 " | grep -i "alertdown/trainapp/" | cut -d " " -f 7 |cut -d "?" -f 2 | cut -d "/" -f 4 | awk \'BEGIN{OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_tAlert);
+		foreach ($arr_tAlert as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$tAlert[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$tAlert['android'] = $tAlert['andriod'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'train弹窗');
+		$tAlert += $array;
+		$result[] = $tAlert;
+		//train弹窗详情
+		$sh = $file_web.' | grep " 200 " | grep -i "alertdown/trainapp/" | cut -d " " -f 7 |cut -d "?" -f 2 | cut -d "/" -f 3,4 | awk \'BEGIN{OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_detailAlert);
+		foreach ($arr_detailAlert as $m=>$n)
+		{
+			$tep = array();
+			list($tep['detail'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$detailAlert[$tep['detail']][strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('game'=>array(),'movie'=>array(),'music'=>array(),'sindex'=>array());
+		$detailAlert += $array;
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【游戏】');
+		$detailAlert['game']['android'] = $detailAlert['game']['andriod'];
+		$detailAlert['game'] += $array;
+		$result[] = $detailAlert['game'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【电影】');
+		$detailAlert['movie']['android'] = $detailAlert['movie']['andriod'];
+		$detailAlert['movie'] += $array;
+		$result[] = $detailAlert['movie'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【音乐】');
+		$detailAlert['music']['android'] = $detailAlert['music']['andriod'];
+		$detailAlert['music'] += $array;
+		$result[] = $detailAlert['music'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【sindex】');
+		$detailAlert['sindex']['android'] = $detailAlert['sindex']['andriod'];
+		$detailAlert['sindex'] += $array;
+		$result[] = $detailAlert['sindex'];
+
+		//train下载uv
+		$sh = $file_web.'| grep " 200 " | grep -i "downapp/trainapp/" | cut -d " " -f 7 |cut -d "?" -f 2 | cut -d "/" -f 4 | awk \'BEGIN{OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_tDown);
+		foreach ($arr_tDown as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$tDown[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$tDown['android'] = $tDown['andriod'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'train下载uv');
+		$tDown += $array;
+		$result[] = $tDown;
+		//train uv下载详情
+		$sh = $file_web.' | grep " 200 " | grep -i "downapp/trainapp/" | cut -d " " -f 7 |cut -d "?" -f 2 | cut -d "/" -f 3,4 | awk \'BEGIN{OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_detailDown);
+		foreach ($arr_detailDown as $m=>$n)
+		{
+			$tep = array();
+			list($tep['detail'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$detailDown[$tep['detail']][strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('game'=>array(),'movie'=>array(),'music'=>array(),'sindex'=>array());
+		$detailDown += $array;
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【游戏】');
+		$detailDown['game']['android'] = $detailDown['game']['andriod'];
+		$detailDown['game'] += $array;
+		$result[] = $detailDown['game'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【电影】');
+		$detailDown['movie']['android'] = $detailDown['movie']['andriod'];
+		$detailDown['movie'] += $array;
+		$result[] = $detailDown['movie'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【音乐】');
+		$detailDown['music']['android'] = $detailDown['music']['andriod'];
+		$detailDown['music'] += $array;
+		$result[] = $detailDown['music'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【sindex】');
+		$detailDown['sindex']['android'] = $detailDown['sindex']['andriod'];
+		$detailDown['sindex'] += $array;
+		$result[] = $detailDown['sindex'];
+		//app弹窗
+		$sh = $file_web.' | grep " 200 " | grep -i "alertdown/aqy/sindex/\|alertdown/dm/sindex/\|alertdown/qd/sindex/\|alertdown/pkq/sindex/" | cut -d " " -f 7 |cut -d "?" -f 2 | cut -d "/" -f 4 | awk \'BEGIN{OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_appAlert);
+		foreach ($arr_appAlert as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$appAlert[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$appAlert['android'] = $appAlert['andriod'];
+		$array = array('ios'=>'0','andriod'=>'0','else'=>'0','name'=>'App弹窗');
+		$appAlert += $array;
+		$result[] = $appAlert;
+		//app弹窗详情
+		$sh = $file_web.' | grep " 200 " | grep -i "alertdown/aqy/sindex/\|alertdown/dm/sindex/\|alertdown/qd/sindex/\|alertdown/pkq/sindex/" | cut -d " " -f 7 |cut -d "?" -f 2 | cut -d "/" -f 2,4 | awk \'BEGIN{OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_detailAppA);
+		foreach ($arr_detailAppA as $m=>$n)
+		{
+			$tep = array();
+			list($tep['detail'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$detailAppA[$tep['detail']][strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('dm'=>array(),'qd'=>array(),'aqy'=>array(),'pkq'=>array());
+		$detailAppA += $array;
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【多米】');
+		$detailAppA['dm']['android'] = $detailAppA['dm']['andriod'];
+		$detailAppA['dm'] += $array;
+		$result[] = $detailAppA['dm'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【起点】');
+		$detailAppA['qd']['android'] = $detailAppA['qd']['andriod'];
+		$detailAppA['qd'] += $array;
+		$result[] = $detailAppA['qd'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【爱奇艺】');
+		$detailAppA['aqy']['android'] = $detailAppA['aqy']['andriod'];
+		$detailAppA['aqy'] += $array;
+		$result[] = $detailAppA['aqy'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【皮卡丘】');
+		$detailAppA['pkq']['android'] = $detailAppA['pkq']['andriod'];
+		$detailAppA['pkq'] += $array;
+		$result[] = $detailAppA['pkq'];
+		//app下载
+		$sh = $file_web.' | grep " 200 " | grep -i "downapp/aqy/sindex/\|downapp/dm/sindex/\|downapp/qd/sindex/\|downapp/pkq/sindex/" | cut -d " " -f 7 |cut -d "?" -f 2 | cut -d "/" -f 4 | awk \'BEGIN{OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_appDown);
+		foreach ($arr_appDown as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$appDown[strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$appDown['android'] = $appDown['andriod'];
+		$array = array('ios'=>'0','andriod'=>'0','else'=>'0','name'=>'App下载');
+		$appDown += $array;
+		$result[] = $appDown;
+		//app下载详情
+		$sh = $file_web.' | grep " 200 " | grep -i "downapp/aqy/sindex/\|downapp/dm/sindex/\|downapp/qd/sindex/\|downapp/pkq/sindex/" | cut -d " " -f 7 |cut -d "?" -f 2 | cut -d "/" -f 2,4 | awk \'BEGIN{OFS="/"}{count[$1]++}END{for(name in count)print name,count[name]}\'';
+		exec($sh,$arr_detailAppD);
+		foreach ($arr_detailAppD as $m=>$n)
+		{
+			$tep = array();
+			list($tep['detail'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$detailAppD[$tep['detail']][strtolower($tep['sys'])] = $tep['dtime'];
+			}
+		}
+		$array = array('dm'=>array(),'qd'=>array(),'aqy'=>array(),'pkq'=>array());
+		$detailAppD += $array;
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【多米】');
+		$detailAppD['dm']['android'] = $detailAppD['dm']['andriod'];
+		$detailAppD['dm'] += $array;
+		$result[] = $detailAppD['dm'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【起点】');
+		$detailAppD['qd']['android'] = $detailAppD['qd']['andriod'];
+		$detailAppD['qd'] += $array;
+		$result[] = $detailAppD['qd'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【爱奇艺】');
+		$detailAppD['aqy']['android'] = $detailAppD['aqy']['andriod'];
+		$detailAppD['aqy'] += $array;
+		$result[] = $detailAppD['aqy'];
+		$array = array('ios'=>'0','android'=>'0','else'=>'0','name'=>'【皮卡丘】');
+		$detailAppD['pkq']['android'] = $detailAppD['pkq']['andriod'];
+		$detailAppD['pkq'] += $array;
+		$result[] = $detailAppD['pkq'];
+		//时长
+		$sh = $file_web.'| grep " 200 " | grep "record.php?time/" | cut -d " " -f 7 | cut -d "/" -f 3,4,5 | awk \'BEGIN{FS=OFS="/"}{sum[$1"/"$3]+=$2}END{for(name in sum)print name,sum[name]}\'';
+		exec($sh,$arr_time);
+		$time = array();
+		foreach ($arr_time as $m=>$n)
+		{
+			$tep = array();
+			list($tep['detail'],$tep['sys'],$tep['time']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$time[$tep['detail']][strtolower($tep['sys'])] = $tep['time'];
+			}
+		}
+		$sh = $file_web.'| grep " 200 " | grep "record.php?time/webstation" | cut -d " " -f 7 | cut -d "/" -f 4,5 | awk \'BEGIN{FS=OFS="/"}{sum[$2]+=$1}END{for(name in sum)print name,sum[name]}\'';
+		exec($sh,$arr_time2);
+		
+		foreach ($arr_time2 as $m=>$n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['time']) = explode('/', $n);
+			if(in_array(strtolower($tep['sys']),$sys)){
+				$time['webstation'][strtolower($tep['sys'])] = $tep['time'];
+			}
+		}
+		//wenindex
+		$result[] = array('ios'=>$time['webindexindex']['ios'],'android'=>$time['webindexindex']['android'],'else'=>$time['webindexindex']['else'],'name'=>'广告页时长');
+		//webregister
+		$result[] = array('ios'=>$time['webindexregister']['ios'],'android'=>$time['webindexregister']['android'],'else'=>$time['webindexregister']['else'],'name'=>'注册页时长');
+		//webwelcome
+		$result[] = array('ios'=>$time['webindexwelcome?']['ios'],'android'=>$time['webindexwelcome?']['android'],'else'=>$time['webindexwelcome?']['else'],'name'=>'欢迎页时长');
+		//websindex
+		$result[] = array('ios'=>$time['webindexsindex']['ios'],'android'=>$time['webindexsindex']['android'],'else'=>$time['webindexsindex']['else'],'name'=>'sindex时长');
+		//webstation
+		$result[] = array('ios'=>$time['webstation']['ios'],'android'=>$time['webstation']['android'],'else'=>$time['webstation']['else'],'name'=>'车站时长');
+		//webgame
+		$result[] = array('ios'=>$time['webgameindex']['ios'],'android'=>$time['webgameindex']['android'],'else'=>$time['webgameindex']['else'],'name'=>'游戏时长');
+		//webmovie
+		$result[] = array('ios'=>$time['webmovieindex']['ios'],'android'=>$time['webmovieindex']['android'],'else'=>$time['webmovieindex']['else'],'name'=>'电影时长');
+		//webmusic
+		$result[] = array('ios'=>$time['webmusicindex']['ios'],'android'=>$time['webmusicindex']['android'],'else'=>$time['webmusicindex']['else'],'name'=>'音乐时长');
+		
+		return $result;
+	}
+	/**
+	 * @param 车站列表
+	 * @return
+	 */
+	public function picDir($stationid)
+	{
+		$db = new Psys_StationRule();
+		return $db->dirList($stationid);
+	}
+	/**
+	 * 
+	 * @param 车站列表
+	 * @return 
+	 */
+	public function station()
+	{
+		$db = new Psys_StationRule();
+		return $db->stationList();
+	}
+	public function downCount($date,$station)
+	{
+		
+		$qr = $station == 1 ? ' grep "172.1" ' : ' grep "222.43" ';
+		
+		$c_data = function($time,$time2)
+		{
+			$grep_apps = 'cat '.$this->file.' | grep ".apk" | grep "'.$time.'" | grep "200 " | grep "/apps/" | '.$qr.' -c';
+			$grep_game = 'cat '.$this->file.' | grep ".apk" | grep "'.$time.'" | grep "200 " | grep "/game/" | '.$qr.' -c';
+			exec($grep_apps,$arr_a);
+			exec($grep_game,$arr_g);
+			$res = array('apps'=>$arr_a[0],'game'=>$arr_g[0],'time'=>$time2);
+			return $res;
+		};
+		$return = array();
+		if (!$date) {
+			for ($i = 0 ; $i < 10 ;$i++)
+			{
+				$da = date('d/M/Y',time()-24*3600*$i);
+				$showd = date('Y-m-d',time()-24*3600*$i);
+				$temp_arr = $c_data($da,$showd);
+				array_push($return, $temp_arr);
+			}
+		}else{
+			$da = date('d/M/Y',strtotime($date));
+			$showd = date('Y-m-d',strtotime($date));
+			$temp_arr = $c_data($da,$showd);
+			array_push($return, $temp_arr);
+		}
+		return $return;
+	}
+	
+	/**
+	 * app下载详情
+	 * @param unknown $date
+	 * @return Ambigous <multitype:, multitype:number Ambigous <> >
+	 */
+	public function downDetail($date,$station)
+	{
+		$qr = $station == 1 ? ' grep "172.1" ' : ' grep "222.43" ';
+		
+		$this->SetDb('db-rht_train');
+		$time = $date ? date('Y_m_d',strtotime($date)):date('Y_m_d',strtotime('-1 day'));
+		
+		$file = $this->path.$time.$this->LA1.' '.$this->path.$time.$this->LA2;
+		
+		$grep = 'cat '.$file.' | grep "apk " | grep " 200 " | '.$qr.'  | cut -d " " -f 7 | cut -d "/" -f 4 | sort | uniq -c';
+		exec($grep,$s_data);
+		$tep = array();
+		foreach ($s_data as $key=>$var)
+		{
+			$arra = explode(' ', trim($var,' '));
+			if (!isset($arra[1]) ||  strchr($arra[1],'TrainApp')) {
+				$arra[1] = 1;
+			}
+			if (is_numeric($arra[1])) {
+				$d = $this->GetOne(array('appid'=>$arra[1]),'appname','rht_apps');
+			}else{
+				$d = $this->GetOne(array('appurl'=>$arra[1]),'appname','rht_apps');
+			}
+			if (!$d) {
+				continue;
+			}
+			if (!isset($tep[$d['appname']])) {
+				
+				$tep += array($d['appname'] => $arra[0]);
+			}else{
+				
+				$tep[$d['appname']] += $arra[0];
+			}
+			
+		}
+		arsort($tep);
+		
+		
+		return $tep;
+		
+	}
+	//查询记录总数
+	public function totalrows()
+	{
+		$db = new Psys_StationRule();
+		return $db->totalrows();
+	}
+	/**
+	 * 每日伙伴数据
+	 * @param $date,$stationid
+	 * @return $data
+	 */
+	public function everyday($date,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$lists = $db->Everyday($date,$stationid);
+		$data = $lists['detail'];
+		
+		foreach ($data as &$v){
+			if($v['model']=='index'){
+				$v['action']='index';
+			}
+			unset($v['model']);
+		}
+		$list = array();
+		foreach ($data as &$v){
+			$v['sys']= strtolower($v['sys']);
+			$list[$v['sys']][$v['action']]=$v['dtime'];
+		}
+		//未下载、转化率
+		foreach ($list as &$v){
+			$v['undown']=$v['alert']-$v['downapp'];
+
+			$v['convert']=round($v['downapp']/$lists['link'],4)*100;
+			$v['convert']=$v['convert']."%";
+		}
+		$info=array();
+		$info['link']=$lists['link'];
+		$info['detail']=$list;	
+		return $info;
+	}
+	/**
+	 * 注册统计
+	 * @param $stationid
+	 * @return $data
+	 */
+	public function regCount($page,$pagesize,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$data = $db->RegInfo($page,$pagesize,$stationid);
+		$data = $data['allrow'];
+		foreach ($data as $k=>&$v){
+		
+			$detail = explode(',', $v['postids']);
+			foreach ($detail as $m=>$n)
+			{
+				$tep = explode('/', $n);
+				if(isset($tep[1]))
+				{
+					$v[$tep[0]]=$tep[1];
+				}
+			}
+			unset($v['postids']);
+		}
+		return $data;
+	}
+	/**
+	 * 导航点击统计
+	 * @param $stationid
+	 * @return $data
+	 */
+	public function navhitCount($page,$pagesize,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$data = $db->NavhitInfo($page,$pagesize,$stationid);
+		$data = $data['allrow'];
+		foreach ($data as $k=>&$v){
+	
+			$detail = explode(',', $v['postids']);
+			foreach ($detail as $m=>$n)
+			{
+				$tep = explode('/', $n);
+				if(isset($tep[1]))
+				{
+					$v[$tep[0]]=$tep[1];
+				}
+			}
+			unset($v['postids']);
+		}
+		return $data;
+	}
+	/**
+	 * 页面点击统计
+	 * @param $stationid
+	 * @return $data
+	 */
+	public function pagehitCount($page,$pagesize,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$data = $db->PagehitInfo($page,$pagesize,$stationid);
+		$data = $data['allrow'];
+		foreach ($data as $k=>&$v){
+		
+			$detail = explode(',', $v['postids']);
+			foreach ($detail as $m=>$n)
+			{
+				$tep = explode('/', $n);
+				if(isset($tep[1]))
+				{
+					$v[$tep[0]]=$tep[1];
+				}
+			}
+			unset($v['postids']);
+		}
+		return $data;
+	}
+	/**
+	 * 影视统计
+	 * @param $stationid
+	 * @return $data
+	 */
+	public function movieCount($page,$pagesize,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$data = $db->MovieInfo($page,$pagesize,$stationid);
+		$data = $data['allrow'];
+		foreach ($data as $k=>&$v){
+			$detail = explode(',', $v['postids']);
+			foreach ($detail as $m=>$n)
+			{
+				$tep = explode('/', $n);
+				if(isset($tep[1]))
+				{
+					$v[$tep[0]]=$tep[1];
+				}
+			}
+			unset($v['postids']);
+		}
+		return $data;
+	}
+	/**
+	 * 影视详情统计
+	 * @param $stationid
+	 * @return $data
+	 */
+	public function moviePlay($date,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$data=$db->MovieDetail($date,$stationid);
+		return $data;
+
+	}
+	/**
+	 * 音乐统计
+	 * @param $stationid
+	 * @return $data
+	 */
+	public function musicCount($page,$pagesize,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$data = $db->MusicInfo($page,$pagesize,$stationid);
+		$data = $data['allrow'];
+		foreach ($data as $k=>&$v){
+			$detail = explode(',', $v['postids']);
+			foreach ($detail as $m=>$n)
+			{
+				$tep = explode('/', $n);
+				if(isset($tep[1]))
+				{
+					$v[$tep[0]]=$tep[1];
+				}	
+			}
+			unset($v['postids']);
+		}
+		return $data;
+	}
+	/**
+	 * 音乐详情统计
+	 * @param $stationid
+	 * @return $data
+	 */
+	public function musicPlay($date,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$data=$db->MusicDetail($date,$stationid);
+		return $data;
+
+	}
+	/**
+	 * App统计
+	 * @param $stationid
+	 * @return $data
+	 */
+	public function appCount($page,$pagesize,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$data = $db->AppInfo($page,$pagesize,$stationid);
+		$data = $data['allrow'];
+		foreach ($data as $k=>&$v){
+			$detail = explode(',', $v['postids']);
+			foreach ($detail as $m=>$n)
+			{
+				$tep = explode('/', $n);
+				$v[$tep[0]]=$tep[1];
+			}
+			unset($v['postids']);
+		}
+		return $data;
+	}
+	/**
+	 * 下载详情统计
+	 * @param $stationid
+	 * @return $data
+	 */
+	public function downapkCount($date,$stationid)
+	{
+		$db = new Psys_StationRule();
+		$data=$db->DownInfo($date,$stationid);
+		return $data;
+
+	}
+	
+	public function uVisitor($date)
+	{
+		$do_grep = function($time,$time2)
+		{
+			$grep = 'cat '.$this->file.' | grep "'.$time.'" | grep "GET /.*/index " | cut -d " " -f 7,1| sort | uniq |cut -d " " -f 2 |  sort | uniq -c';
+			exec($grep,$data);
+			$res = array();
+			$match = array('app'=>0,'game'=>0,'movie'=>0,'music'=>0);
+			foreach ($data as $key=>$var)
+			{
+				$arr = explode(' ', trim($var));
+				switch ($arr[1]){
+					case '/app/index':
+						$res += array('app'=>$arr[0]);
+						break;
+					case '/game/index':
+						$res += array('game'=>$arr[0]);
+						break;
+					case '/movie/index':
+						$res += array('movie'=>$arr[0]);
+						break;
+					case '/music/index':
+						$res += array('music'=>$arr[0]);
+						break;
+					default:
+				}
+			}
+	
+	
+			$res += array('time'=>$time2);
+	
+			$res += $match;
+			return $res;
+		};
+	
+		$return = array();
+		if (!$date) {
+			for ($i = 0 ; $i < 10 ;$i++)
+			{
+			$da = date('d/M/Y',time()-24*3600*$i);
+			$showd = date('Y-m-d',time()-24*3600*$i);
+			$temp_arr = $do_grep($da,$showd);
+			array_push($return, $temp_arr);
+			}
+			}else{
+			$da = date('d/M/Y',strtotime($date));
+			$showd = date('Y-m-d',strtotime($date));
+			$temp_arr = $do_grep($da,$showd);
+			array_push($return, $temp_arr);
+			}
+			return $return;
+			}
+			//榜单点击
+			public function albumHit($date)
+			{
+			$this->SetDb('db-rht_train');
+	
+		$time = $date?date('d/M/Y',strtotime($date)):'';
+	
+			$grep = 'cat '.$this->file.' | grep "'.$time.'" | grep "GET /music/albummusic/" | cut -d " " -f 7| sort | uniq -c';
+		exec($grep,$data);
+	
+			$res = array();
+	
+			foreach ($data as $key=>$var)
+			{
+			$arr = explode(' ', trim($var));
+			$con = explode('/', $arr[1]);
+			$ser = array('id'=>$con[3]);
+			$data = $this->GetOne($ser,'aname','rht_album');
+					$res[$data['aname']]= $arr[0];
+		}
+			arsort($res);
+	
+	
+			return $res;
+			}
+	
+	//车站日期列表
+	function AcList($page,$pagesize=10,$stationid =1)
+	{
+		$offset = $pagesize * ($page - 1);
+		$obj = new Psys_StationRule();
+		return $obj->AcList($offset,$pagesize,$stationid);
+	}
+	function AcTime($date,$stationid)
+	{
+		$obj = new Psys_StationRule();
+		return $obj->AcTime($date,$stationid);
+	}
+	
+	function ApLog($date,$stationid)
+	{
+		$obj = new Psys_StationRule();
+		return $obj->ApLog($date,$stationid);
+	}
+	
+	function ApDetail($date,$stationid)
+	{
+		$obj = new Psys_StationRule();
+		return $obj->ApDetail($date,$stationid);
+	}
+	
+}
+?>

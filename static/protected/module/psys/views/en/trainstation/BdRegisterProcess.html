@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-保单注册流程</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/style/en/default/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/style/en/default/css/bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="/style/en/default/css/uniform.css" />
+        <link rel="stylesheet" href="/style/en/default/css/select2.css" />
+        <link rel="stylesheet" href="/style/en/default/css/matrix-style.css" />
+        <link rel="stylesheet" href="/style/en/default/css/matrix-media.css" />
+        <link rel="stylesheet" href="/style/en/default/css/alertify.default.css" />
+        <link rel="stylesheet" href="/style/en/default/css/alertify.core.css" />
+        <link rel="stylesheet" href="/style/en/default/css/font-awesome/css/font-awesome.css" />       
+
+    </head>
+    <body>
+
+    <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> web端统计</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 保单流程统计</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <p><b>说 明: </b></p>
+            <p>保单流程统计</p>  
+            <hr>
+            <div class="span" style="width:100px;margin-left: 0;">
+                <!-- <select name="dateSearch"> -->
+                  <lable style="font-size: 18px;font-family:block;line-height: 30px;">日期选择：</lable>
+                <!-- </select> -->
+            </div>
+            <form id="form">
+                <span class="manyday dateSpan">
+                    <input id="d5221" class="Wdate" type="text" onfocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},maxDate:'#F{$dp.$D(\'d5222\',{d:-1})}'})" name="sdate">
+                        -
+                    <input id="d5222" class="Wdate" type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:1})}'})" name="edate"></span>
+                <p></p>
+        
+                
+                车站类型: 
+                
+               <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" id="t1" onchange="checkAlls('form','t1')" />全部</a></label> 
+               
+               <p></p>
+               火车站：
+               
+               <div id="bus1">
+               
+               <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" id="t2" onchange="checkAlls('bus1','t2')" />全部</a></label>
+               
+               {{foreach $trainstation as $key=>$val}}
+               
+                    <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" name="stationid[]" value="{{$val.id}}" />{{$val.stationname}}</a></label>
+               
+               {{/foreach}}
+               
+               </div>
+               
+               <p></p>
+               汽车站：
+               
+               <div id="bus2">
+               
+               <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" id="t3" onchange="checkAlls('bus2','t3')" />全部</a></label>
+               
+               {{foreach $busstation as $key=>$val}}
+               
+                    <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" name="stationid[]" value="{{$val.id}}" />{{$val.stationname}}</a></label>
+               
+               {{/foreach}}
+               
+               </div>
+               
+               <hr/>
+                                                
+                <p>
+                   <span class="btn btn-info"><i class="icon icon-search am-icon-lg"></i>搜索</span> 
+
+                   <span class="btn btn-primary"><i class="icon icon-arrow-up"></i>导出</span> 
+                </p>
+
+            </form>
+            <hr/>
+            <div id="dateError" class="alert alert-error alert-block hide">
+                <h4 class="alert-heading">提示</h4>
+                查询时间设置错误，请重新设置。
+            </div>
+            
+            
+            <div id="container" style="min-width: 350px; width:98%; margin: 0 auto"></div>
+          
+            <div id="containerTable"></div>
+            
+            
+            <a id="loading" href="#myModal" data-toggle="modal" class="hide"></a> 
+            <div id="myModal" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><img src="/style/en/default/img/loading.gif" /></p>
+                <p style="text-align:center;">加载中...</p>
+                <a id="loading_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+        </div>
+    </div>
+    
+<!--Footer-part-->
+<div class="row-fluid">
+  <div id="footer" class="span12"> 2015 &copy; Rorkhippo v1.0 beta </div>
+</div><!--end-Footer-part--> 
+<div id="choice" class="modal hide" style="display: none;" aria-hidden="true">
+    <div class="modal-header">                
+    <button class="close" type="button" data-dismiss="modal">×</button>
+    <h3>手机号码</h3> 
+    <button class="btn btn-info" style="float: right;position:relative;margin-right: 40px;margin-top:-30px;" id="export">导出</button>
+    </div>
+    <div class="modal-body" id="showphone">
+      
+    </div>
+</div>
+    
+    <script src="/style/en/default/js/jquery.min.js"></script> 
+    <script src="/style/en/default/js/jquery.ui.custom.js"></script> 
+    <script src="/style/en/default/js/bootstrap.min.js"></script> 
+    <script src="/style/en/default/js/jquery.uniform.js"></script> 
+    <script src="/style/en/default/js/select2.min.js"></script> 
+    <script src="/style/en/default/js/jquery.dataTables.min.js"></script> 
+    <script src="/style/en/default/js/DatePicker/datePicker.js"></script>
+    <script src="/style/en/default/js/matrix.js"></script> 
+    <script src="/style/en/default/js/matrix.tables.js"></script>
+    <script src="/style/en/default/js/highcharts.js"></script>
+    <script src="/style/en/default/js/exporting.js"></script>
+    <script src="/style/en/default/js/export-excel.js"></script>
+    <script src="/style/en/default/js/alertify.min.js"></script>
+
+    <script src="/style/en/default/js/function1.js"></script>
+    <script src="/style/en/default/js/icheck.min.js"></script>
+    
+
+    
+    <script type="text/javascript"> 
+//        $(function(){
+//            var data = {};
+//                data.bus = 0;
+//                data.isall = 0;
+//            $.post('/bus/getbustype1',data,function(res){
+//                $('#screening1').html(res);
+//            },'html');
+//            gethtmldata();
+//        });  //
+//        $("input[name='show']").change(function(){
+//            var data = {};
+//                data.bus = $("input[name='show']:checked").val();
+//            $.post('/bus/getbustype1',data,function(res){
+//                $('#screening1').html(res);
+//            },'html');
+//
+//        });
+
+        //查询
+        $('.btn-info').on('click', function(){
+           gethtmldata();
+        })
+
+
+        function gethtmldata(){
+            var data= {};
+            data.data =  $('#form').serialize();
+            GetProcessData(data);
+        }
+
+        //获取流程数据
+        function GetProcessData (data) {            
+            data.ajax = 1;
+            $.post('/trainstation/BdRegisterProcessData',data,function(res){
+                if (res.status == '0') {
+                    // alert(1111);
+                    alertmsg(res.msg);
+                    return;
+                }
+                PaiTing('流程图',-20,'',60,res.x_cat,'UV数',res.y_data,'container','spline');
+                createTable(res.table_title,res.table_data,'containerTable');
+            },'json')
+        }
+
+
+        //导出流程数据
+        $('.btn-primary').on('click', function(){
+            var sdate = $("input[name='sdate']").val();
+            var edate = $("input[name='edate']").val();
+            var stationid = "";
+
+            $("#.checker span").each(function(){
+                if($(this).find("input[type=checkbox]:checked").val() != undefined)
+                {
+                    var chk = $(this).find("input[type=checkbox]:checked").val();
+                    stationid += chk + ',';
+                }
+            });            
+           
+            var string = 'sdate='+sdate+'&edate='+edate+'&stationid='+stationid+'&isexport=1';
+            exportexcel(string);
+
+        })
+
+        //查看手机号
+        $('#containerTable').delegate('a','click',function(){
+             var data = {};
+             data.ajax = 1;
+             data.sdate = $(this).attr('sdate');
+             data.edate = $(this).attr('edate');
+             data.carid = $(this).attr('carid');
+             $.post('/bus/showphone',data,function(res){
+                createTable(res.table_title,res.table_data,'showphone');
+                $('#export').attr('sdate',data.sdate);
+                $('#export').attr('edate',data.edate);
+                $('#export').attr('carid',data.carid);
+             },'json');
+
+        });
+
+        //导出流程数据
+        function exportexcel(string){
+            window.location.href = '/trainstation/exportbddata?'+string;
+        }
+
+        //导出手机号码
+        $('#export').click(function(){
+            var sdate = $(this).attr('sdate');
+            var edate = $(this).attr('edate');
+            var carid = $(this).attr('carid');
+
+            var string = 'sdate='+sdate+'&edate='+edate+'&carid='+carid;
+            exportphone(string);
+        });
+
+        //导出手机号码
+        function exportphone(string){
+            window.location.href = '/bus/exportphone?'+string;
+        }
+
+
+        function loading_func(s){
+            s == 1 ? $("#loading").click() : $("#loading_c").click();
+        }
+    </script>
+
+    
+    </body>
+</html>
+  

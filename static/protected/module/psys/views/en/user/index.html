@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>TriangulumCMS v1.0 beta</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+{{include file="header.html"}}
+<!--sidebar-menu-->
+{{include file="menu.html"}}
+<!--close-left-menu-stats-sidebar-->
+
+    <div id="content">
+        {{include file="breadcrumb.html"}}
+        <div class="container-fluid">
+
+            <a class="btn btn-mini btn-info" href="/user/add">Create User</a>
+
+
+            <hr/>  
+            
+            <div class="widget-box">
+                <div class="widget-title"> 
+                    <span class="icon"><i class="icon-list"></i></span>
+                    <h5>User List</h5>
+                </div>
+                <div class="widget-content nopadding">
+                
+                    <form method="post" action="" >
+                
+                        <table class="table table-bordered form-horizontal">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Create Time</th>
+                                    <th>Status</th>
+                                    <th>Operate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{foreach $userlist.allrow as $key=>$val}}
+                                    <tr>
+                                        <td style="text-align:center;">{{$val.id}}</td>
+                                        <td style="text-align:center;">{{$val.username}}</td>
+                                        <td>{{$val.email}}</td>
+                                        <td style="text-align:center;">{{$val.rolename}}</td>
+                                        <td style="text-align:center;">{{$val.createtime|date_format:"%Y-%m-%d %H:%M:%S"}}</td>
+                                        <td style="text-align:center;">{{if $val.status == 1}}<i class="icon-ok"></i>{{else}}<i class="icon-remove"></i>{{/if}}</td>
+                                        <td style="text-align:center;"><a class="btn btn-mini btn-info" href="/user/edit?id={{$val.id}}">Edit</a> <a class="btn btn-mini btn-danger btn-delete-user" data-toggle="modal" href="#userDelete" userid="{{$val.id}}">Delete</a> </td>
+                                    </tr>
+                                {{/foreach}}
+                                
+                                <tr>
+                                
+                                    <td colspan="8">{{$userlist.pageView}}</td>
+                                
+                                
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    
+                    </form>
+                    
+                    <div id="userDelete" class="modal hide">
+                        <div class="modal-header">
+                            <button data-dismiss="modal" class="close" type="button">×</button>
+                            <h3>Delete User</h3>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure delete this user?</p>
+                        </div>
+                        <div class="modal-footer"> <a class="btn btn-success confirm-delete-user" href="javascript:;">Confirm</a> <a data-dismiss="modal" class="btn" href="javascript:;">Cancel</a> </div>
+                    </div>
+                    
+                </div>
+            </div>        
+        </div>
+    </div>
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+        </body>
+    </html>

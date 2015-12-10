@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>列车时刻表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+</head>
+<body>
+<div style="display: none;" id="isadd">0</div>
+<form action="" method="POST" enctype="multipart/form-data">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>{if $action == 'add'}添加{else}修改{/if}车站</h3>
+  </caption>
+  <tr>
+    <td align="right">车&nbsp;&nbsp;次：</td>
+    <td align="left"><input type="text" name="sno" value="{$station.sno}"/></td>
+  </tr>
+  <tr>
+    <td align="right">到站顺序：</td>
+    <td align="left"><input type="text" name="dzxh" value="{$station.dzxh}"/></td>
+  </tr>
+  <tr>
+    <td align="right">发&到站：</td>
+    <td align="left">
+			<input id="state" class="check-box" name="isdz" type="radio" value="1" {if $station.isdz == 1}checked{/if}><label>到站</label>
+			<input id="state" class="check-box" name="isdz" type="radio" value="0" {if $station.isdz == 0}checked{/if}><label>发站</label>
+	</td>
+  </tr>
+  <tr>
+    <td align="right">发&nbsp;&nbsp;站：</td>
+    <td align="left"><input type="text" name="fz" value="{$station.fz}"/></td>
+  </tr>
+  <tr>
+    <td  align="right">到&nbsp;&nbsp;站：</td>
+    <td align="left"><input type="text" name="dz"  value="{$station.dz}"/></td>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">发站时间：</td>
+    <td align="left"><input type="text" name="stime"  value="{$station.stime}"/></td>	
+    </td>
+  </tr>
+  <tr>
+    <td align="right">到站时间：</td>
+    <td align="left"><input type="text" name="dtime"  value="{$station.dtime}"/></td>	
+    </td>
+  </tr>
+　<tr>
+		<td width="50%" align="right">是否启用：</td>
+		<td width="50%" align="left">
+			<input id="state" class="check-box" name="flag" type="radio" value="1" {if $station.flag == 1}checked{/if}><label>是</label>
+			<input id="state" class="check-box" name="flag" type="radio" value="0" {if $station.flag == 0}checked{/if}><label>否</label>
+		</td>
+	</tr>
+  <tr>
+  	<input type="hidden" name="id"  value="{$station.id}"/>
+	<input type="hidden" name="ispost"  value="1"/>
+    <td colspan="2" align="center"><input type="submit" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

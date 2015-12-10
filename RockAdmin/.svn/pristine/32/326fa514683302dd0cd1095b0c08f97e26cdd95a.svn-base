@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>专辑添加</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}swfupload/swfupload.js"></script>
+<script type="text/javascript" src="{$psys_js}swfuploadjs/swfupload.queue.js"></script>
+<script type="text/javascript" src="{$psys_js}swfuploadjs/fileprogress.js"></script>
+<script type="text/javascript" src="{$psys_js}swfuploadjs/handlers.js"></script>
+
+<link type="text/css" rel="stylesheet" href="{$psys_css}swfupload.css">
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<style type="text/css">
+body {
+  font-size: 14px;
+}
+
+input {
+  vertical-align: middle;
+  margin: 0;
+  padding: 0
+}
+
+.file-box {
+  position: relative;
+  width: 340px
+}
+
+.txt {
+  height: 22px;
+  border: 1px solid #cdcdcd;
+  width: 180px;
+}
+
+.btn {
+  background-color: #FFF;
+  border: 1px solid #CDCDCD;
+  height: 24px;
+  width: 70px;
+}
+
+.file {
+  position: absolute;
+  top: 0;
+  right: 80px;
+  height: 24px;
+  filter: alpha(opacity : 0);
+  opacity: 0;
+  width: 260px
+}
+button, input, select, textarea {
+border-width: 1px;
+margin-bottom: 10px;
+padding: 2px 3px;
+}
+</style>
+</head>
+<body>
+<form class="add" id="addfrom" action="/res/upalbum" method="POST" enctype="multipart/form-data">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>专辑添加</h3>
+  </caption>
+  <tr>
+    <td width="30%" align="right">专辑名：</td>
+    <td width="70%" align="left"><input type="text" name="aname"/></td>
+  </tr>
+  <tr>
+    <td align="right">小&nbsp;&nbsp;图：</td>
+    <td align="left">
+		<div class="file-box"  style="position:relative">
+			<input type="text" name="smallpic" id="smallimg" readonly style="height:24px"/>
+			<div class="fieldset flash" id="smallProgress">
+				<span class="legend">快速上传</span>
+			</div>
+		
+			<div style="position:absolute;left:230px;top:0px">
+				<span id="smallPlaceHolder"></span>
+				<input id="smallCancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+			</div>
+		</div>
+	</td>
+  </tr>
+ 
+  <tr>
+    <td width="30%" align="right">大&nbsp;&nbsp;图：</td>
+     <td align="left">
+		<div class="file-box"  style="position:relative">
+			<input type="text" name="bigpic" id="bigimg" readonly style="height:24px"/>
+			<div class="fieldset flash" id="bigProgress">
+				<span class="legend">快速上传</span>
+			</div>
+		
+			<div style="position:absolute;left:230px;top:0px">
+				<span id="bigPlaceHolder"></span>
+				<input id="bigCancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+			</div>
+		</div>
+	</td>
+  </tr>
+  <tr>
+    <td align="right">点&nbsp;&nbsp;击：</td>
+    <td align="left"><input type="text" name="hits"/></td>
+  </tr>
+ 
+  <tr>
+    <td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+    <td width="70%" align="left">
+    	<input id="state" class="check-box" name="flag" type="radio" value="1" checked><label>正常</label>
+        <input id="state" class="check-box" name="flag" type="radio" value="0"><label>停用</label>
+    </td>
+  </tr>
+   <tr>
+    <td width="30%" align="right">合作商ID：</td>
+    <td width="70%" align="left"><input type="text"  name="parternid"/></td>
+  </tr>
+     <tr>
+    <td width="30%" align="right">合作商：</td>
+    <td width="70%" align="left"><input type="text"  name="partner"/></td>
+  </tr>
+       <tr>
+    <td width="30%" align="right">排&nbsp;&nbsp;序：</td>
+    <td width="70%" align="left"><input type="text"  name="sortid"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><input type="hidden" name="id" /><input type="button" id="btnSave" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+{literal}
+<script type="text/javascript">
+
+$(function(){
+	var smallsettings = {
+			flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+			upload_url: "/res/upalbum",	
+			file_post_name: 'small',
+			file_size_limit : "100 MB",
+			file_types : "*.png;*.jpeg;*.jpg;*.gif",
+			file_types_description : "All Files",
+			file_upload_limit : 10,  //配置上传个数
+			file_queue_limit : 0,
+			custom_settings : {
+				progressTarget : "smallProgress",
+				cancelButtonId : "smallCancel"
+			},
+			debug: false,
+
+			// Button settings
+			button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+			button_width: "65",
+			button_height: "29",
+			button_placeholder_id: "smallPlaceHolder",
+			button_text: '<span class="theFont">浏览</span>',
+			button_text_style: ".theFont { font-size: 16; }",
+			button_text_left_padding: 12,
+			button_text_top_padding: 3,
+			
+			file_queued_handler : fileQueued,
+			file_queue_error_handler : fileQueueError,
+			file_dialog_complete_handler : fileDialogComplete,
+			upload_progress_handler : uploadProgress,
+			upload_error_handler : uploadError,
+			upload_success_handler : smalluploadSuccess
+		};
+	function smalluploadSuccess(file, serverData) 
+	{
+		try {  
+			var progress = new FileProgress(file, this.customSettings.progressTarget);
+			var input = document.getElementById('smallimg');
+			if(serverData == 'SUCCESS')
+			{
+				progress.setStatus("上传成功");
+				input.value = input.value ? input.value + ';'+file.name : file.name;
+			}
+			else
+			{
+				progress.setError();
+				progress.setStatus(serverData);
+			}
+			progress.toggleCancel(false);  
+	  
+		} catch (ex) {  
+			this.debug(ex);  
+		}  
+	}  
+
+
+	swfu = new SWFUpload(smallsettings);
+	var bigsettings = {
+			flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+			upload_url: "/res/upalbum",	
+			file_post_name: 'big',
+			file_size_limit : "100 MB",
+			file_types : "*.png;*.jpeg;*.jpg;*.gif",
+			file_types_description : "All Files",
+			file_upload_limit : 10,  //配置上传个数
+			file_queue_limit : 0,
+			custom_settings : {
+				progressTarget : "bigProgress",
+				cancelButtonId : "bigCancel"
+			},
+			debug: false,
+
+			// Button settings
+			button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+			button_width: "65",
+			button_height: "29",
+			button_placeholder_id: "bigPlaceHolder",
+			button_text: '<span class="theFont">浏览</span>',
+			button_text_style: ".theFont { font-size: 16; }",
+			button_text_left_padding: 12,
+			button_text_top_padding: 3,
+			
+			file_queued_handler : fileQueued,
+			file_queue_error_handler : fileQueueError,
+			file_dialog_complete_handler : fileDialogComplete,
+			upload_progress_handler : uploadProgress,
+			upload_error_handler : uploadError,
+			upload_success_handler : biguploadSuccess
+		};
+	function biguploadSuccess(file, serverData) 
+	{
+		try {  
+			var progress = new FileProgress(file, this.customSettings.progressTarget);
+			var input = document.getElementById('bigimg');
+			if(serverData == 'SUCCESS')
+			{
+				progress.setStatus("上传成功");
+				input.value = input.value ? input.value + ';'+file.name : file.name;
+			}
+			else
+			{
+				progress.setError();
+				progress.setStatus(serverData);
+			}
+			progress.toggleCancel(false);  
+	  
+		} catch (ex) {  
+			this.debug(ex);  
+		}  
+	}  
+
+
+	swfu = new SWFUpload(bigsettings);
+
+	
+
+
+
+
+	
+	$('#btnSave').click(function(){
+		var aname = $.trim($("input[name='aname']").val());
+		var smallpic = $.trim($("input[name='smallpic']").val());
+		var bigpic = $.trim($("input[name='bigpic']").val());
+		var hits = $.trim($("input[name='hits']").val());
+		var flag = $.trim($("input[name='flag']").val());
+		var parternid = $.trim($("input[name='parternid']").val());
+		var partner = $.trim($("input[name='partner']").val());
+		var sortid = $.trim($("input[name='sortid']").val());
+		var id = $.trim($("input[name='id']").val());
+		if(aname == '')
+		{
+			alert('请输入专辑名');
+			return;
+		}
+		
+		//其他验证
+		$.post(
+			'/res/updatealbum',
+			{'ispost':1,'ajax':1,'aname':aname,'smallpic':smallpic,'bigpic':bigpic,'hits':hits,'flag':flag,'parternid':parternid,'partner': partner, 'sortid': sortid,'id':id},
+			function(res){
+				if(res.result == 'SUCCESS')
+				{ 
+					if(confirm('添加成功，点击确定继续添加，点击取消返回列表'))
+					{
+						document.location.reload();
+						
+					}else{
+						document.location.href = '/res/albumlist';
+					}
+				}
+				else
+				{
+					alert(res.msg+'('+res.msgcode+')');
+				}
+			},
+			'json'
+		);
+		
+	});
+});
+</script>
+{/literal}
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+{include file="include/header.html"}
+{literal}
+<script type="text/javascript">
+
+$(function(){
+    $(document).ready(function(){
+        checkloginfo();
+        var date = $('#date').text();
+        var data = {};
+            data.ajax=1;
+            data.date = date;
+        SingleGraph(data,date+'车站流程对比图','spline','数量','/station/stationinfo?ajax=1&isgrahp=1&date='+date,'container');     
+    });
+
+});
+
+</script>
+{/literal}
+</head>
+<body>
+
+<form action="/station/totalstation" method="post">
+    <div class="search" >
+        搜索:
+        {literal}
+        <input class="Wdate" type="text" onFocus="WdatePicker()" name="date"/>
+        {/literal}
+        <input type="submit" class="button2" value="搜索" id="search"/>
+    </div>
+</form>
+<table id="flex1" style="display:none"></table>
+<div id="container" style="height:500px;width:1300px;margin:10px auto;border:1px solid #ccc;background:white;">
+<div style="display:none" id="date">{$date}</div>
+
+
+
+</body>
+{literal}
+<script type="text/javascript">
+function checkloginfo(){
+        var date = $('#date').text();
+         $("#flex1").flexigrid
+        (
+            {
+
+                url: '/station/stationinfo?ajax=1&date='+date,
+
+                dataType: 'json',
+                colModel : [
+                    {display: '站名', name : 'station', width : 150, sortable : true, align: 'center'},
+                    {display: '连接数', name : 'conn', width : 150, sortable : true, align: 'center'},
+                    {display: '广告1', name : 'ad1', width : 150, sortable : true, align: 'center'},
+                    {display: '注册页', name : 'regpage', width : 150, sortable : true, align: 'center'},
+                    {display: '注册数', name : 'regnum', width : 150, sortable : true, align: 'center'},
+                    {display: '广告2', name : 'ad2', width : 150, sortable : true, align: 'center'},
+                    {display: '首页', name : 'indexnum', width : 150, sortable : true, align: 'center'},
+                    {display: '下载', name : 'down', width : 150, sortable : true, align: 'center'}
+                    
+                    ],
+                buttons : [       
+                    {separator: true}
+                    //{name: 'A', onpress: sortAlpha},
+
+                    ],
+                sortname: "id",
+                sortorder: "desc",
+                usepager: true,
+                title: date+'车站流程对比',
+                useRp: true,
+                rp: 10,
+                showTableToggleBtn: true,
+                //onSuccess: stationgraph,
+                // width: document.body.clientWidth ,
+                // height: document.body.clientHeight - 400
+            }
+        ); 
+}
+
+</script>
+{/literal}
+</html>

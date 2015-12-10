@@ -1,0 +1,109 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-23 15:40:30
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//account/login.html" */ ?>
+<?php /*%%SmartyHeaderCode:147511563354991c6e4f23d4-28965440%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'd00264d44335d67815287c607fa035dd2faf51da' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//account/login.html',
+      1 => 1407132458,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '147511563354991c6e4f23d4-28965440',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>login-Admin RockTrain</title>
+<link rel="stylesheet" type="text/css" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+avaHt.css"/>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+jquery-1.10.2.min.js"></script>
+</head>
+<body class="login_body"> 
+<form action="/account/login" method="post">
+<div class="login_w100">
+  <div class="login_mod">
+  	<div class="login_w745">
+    	<div class="login_fist">
+        	<div class="login_fist_one"><span class="LogL">Username：</span><span class="LogR"><input  class="text" type="text" id="username" name="username" value='admin'/></span></div>
+            <div class="login_fist_one"><span class="LogL">Password：</span><span class="LogR"><input  class="text" type="password" id="passwd" name='passwd' value='admin'/></span></div>
+            
+			<div class="login_fist_one"><span class="LogL">Code：</span><span class="LogC"><input type="text" name="code" id="code" value="1234" class="yzm" /></span><span><a href="javascript:void(0);" id="rfvcode"><img id="imgcode" src="" border="0" /></a></span></div>
+            
+			<input type="hidden" name="ispost" value='1'>
+			<div class="login_fist_btn">
+            	<div class="btn_login"><input type="button" value="Login " id='login'/></div>
+                <div class="btn_rest"><input type="reset" value="Reset" /></div>
+            </div>
+            <div class="tsy" id="errmsg" style="display:none;">User name or password wrong!</div>
+        </div>
+        <div class="login_bottom">
+        	<div class="login_bottom_left">Copyright © 2014 rockhippo.cn Co., Ltd. All Rights Reserved </div>
+            <div class="login_bottom_right">Powered by RockHippo Inc </div>
+        </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<script>
+$(function(){
+	refreshcode();
+	$('#rfvcode').click(refreshcode);
+	$('#login').click(function(){
+		var username = $.trim($('#username').val());
+		var passwd = $.trim($('#passwd').val());
+		if(username == '' || passwd == '')
+		{
+			$('#errmsg').html("username or password can't empty");
+			$('#errmsg').show();
+			return;
+		}
+		var code = $.trim($('#code').val());
+		if(code == '')
+		{
+			$('#errmsg').html("please input code.");
+			$('#errmsg').show();
+			return;
+		}
+		$.post(
+			'/account/login',
+			{username:username,passwd:passwd,ajax:1,code:code,ispost:1},
+			function(res){
+				if(res.result == 'SUCCESS')
+				{
+					document.location.href = '/index/index';
+				}else{
+					$('#errmsg').html(res.msg);
+					$('#errmsg').show();
+				}
+			},
+			'json'
+		);
+	});
+});
+function refreshcode()
+{
+	var url = '/v.php?' +  Math.random();
+
+	$.post(url,{},function(res){
+		if(res.result == 'SUCCESS')
+		{
+			$('#imgcode').attr('src','data:image/png;base64,' + res.imageBase64);
+		}else{
+			alert(res.msg);
+		}
+	});
+}
+</script>
+
+</body>
+</html>

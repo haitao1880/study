@@ -1,0 +1,210 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-22 13:36:29
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//count/index.html" */ ?>
+<?php /*%%SmartyHeaderCode:8617331235497addd30a526-98373434%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'b854eb9b95039ffaa4d4cce20c5ede8962b606c5' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//count/index.html',
+      1 => 1407218991,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '8617331235497addd30a526-98373434',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+public.css"/>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+mytc.js"></script>
+
+<style type="text/css">
+body{margin:0;padding:0;font-size:12px;}
+dt{padding:10px;}
+i{ font-style:normal;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+</style>
+
+
+<script>
+
+function show(time,model)
+{
+	var $title = '<caption>'
+		  		+	'<h3>点击详情</h3>'
+				+'</caption>'
+		 		+'<tr  bgcolor="#417eb7">'
+		  		+  	'<th>名称</th>'
+		   		+ 	'<th>点击播放次数</th>'
+		   		+ 	'<th>点击暂停次数</th>'
+		 		+'</tr>'; 
+	$("#detailcon").html($title);
+	
+	
+	$.ajax({
+        type: "POST",
+        data: { model: model, time: time, ajax:1},
+        url: '/count/detail',
+        success: function (data) {                  	
+            if (data.code == 1) {
+            	
+            	
+            	$.each(data.result, function (index, item) {
+            		
+            		 $('#detailcon').append(
+            			'<tr bgcolor="#FFFFFF"> '   
+						+   ' <td>'+item.vname+'</td>'
+						+   ' <td>'+item.play+'</td>'
+						+   ' <td>'+item.pause+'</td>'
+						+  '</tr>'	 
+            		 );
+            		
+            		
+            	});
+            	
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+            	
+	popWin("detail");
+}
+</script>
+
+</head>
+
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  	<h3><?php echo $_smarty_tpl->getVariable('counttitle')->value;?>
+</h3>
+  </caption>
+  <tr  bgcolor="#417eb7">
+    <th>日期</th>
+    <th>移动端浏览次数</th>
+    <th>移动端浏览总时间</th>
+    <th>PC端浏览次数</th>
+    <th>PC端浏览总时间</th>
+    <th>操作</th>
+  </tr>
+  <?php  $_smarty_tpl->tpl_vars['v'] = new Smarty_Variable;
+ $_From = $_smarty_tpl->getVariable('clist')->value; if (!is_array($_From) && !is_object($_From)) { settype($_From, 'array');}
+if ($_smarty_tpl->_count($_From) > 0){
+    foreach ($_From as $_smarty_tpl->tpl_vars['v']->key => $_smarty_tpl->tpl_vars['v']->value){
+?>
+  <tr bgcolor="#FFFFFF">    
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['ctime'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['mnum'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['mtime'];?>
+s</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['pcnum'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['pctime'];?>
+s</td>
+    <td><a href="#" name="<?php echo $_smarty_tpl->tpl_vars['v']->value['ctime'];?>
+" onclick="show(this.name,'<?php echo $_smarty_tpl->getVariable('model')->value;?>
+')">详细</a></td>
+  </tr>
+  <?php }} ?>
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+<?php if ($_smarty_tpl->getVariable('cur_page')->value>1){?>
+  <li class="previous"><a href="?page=<?php echo $_smarty_tpl->getVariable('cur_page')->value-1;?>
+">&laquo;Previous</a></li>
+<?php }else{ ?>
+  <li class="previous-off"> &laquo;Previous</li>
+<?php }?>
+	<?php if ($_smarty_tpl->getVariable('endNum')->value<$_smarty_tpl->getVariable('allpage')->value){?>	
+         <?php $_smarty_tpl->tpl_vars['p'] = new Smarty_Variable;$_smarty_tpl->tpl_vars['p']->step = 1;$_smarty_tpl->tpl_vars['p']->total = (int)ceil(($_smarty_tpl->tpl_vars['p']->step > 0 ? $_smarty_tpl->getVariable('endNum')->value+1 - ($_smarty_tpl->getVariable('startNum')->value) : $_smarty_tpl->getVariable('startNum')->value-($_smarty_tpl->getVariable('endNum')->value)+1)/abs($_smarty_tpl->tpl_vars['p']->step));
+if ($_smarty_tpl->tpl_vars['p']->total > 0){
+for ($_smarty_tpl->tpl_vars['p']->value = $_smarty_tpl->getVariable('startNum')->value, $_smarty_tpl->tpl_vars['p']->iteration = 1;$_smarty_tpl->tpl_vars['p']->iteration <= $_smarty_tpl->tpl_vars['p']->total;$_smarty_tpl->tpl_vars['p']->value += $_smarty_tpl->tpl_vars['p']->step, $_smarty_tpl->tpl_vars['p']->iteration++){
+$_smarty_tpl->tpl_vars['p']->first = $_smarty_tpl->tpl_vars['p']->iteration == 1;$_smarty_tpl->tpl_vars['p']->last = $_smarty_tpl->tpl_vars['p']->iteration == $_smarty_tpl->tpl_vars['p']->total;?>
+                
+                     <?php if ($_smarty_tpl->getVariable('cur_page')->value==$_smarty_tpl->tpl_vars['p']->value){?>
+                     <li class="active"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</li>
+                     <?php }else{ ?>
+                     <li><a href="?page=<?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</a></li> 
+                     <?php }?>
+                   
+          <?php }} ?> 
+     <?php }else{ ?>
+        <?php $_smarty_tpl->tpl_vars['p'] = new Smarty_Variable;$_smarty_tpl->tpl_vars['p']->step = 1;$_smarty_tpl->tpl_vars['p']->total = (int)ceil(($_smarty_tpl->tpl_vars['p']->step > 0 ? $_smarty_tpl->getVariable('allpage')->value+1 - ($_smarty_tpl->getVariable('startNum')->value) : $_smarty_tpl->getVariable('startNum')->value-($_smarty_tpl->getVariable('allpage')->value)+1)/abs($_smarty_tpl->tpl_vars['p']->step));
+if ($_smarty_tpl->tpl_vars['p']->total > 0){
+for ($_smarty_tpl->tpl_vars['p']->value = $_smarty_tpl->getVariable('startNum')->value, $_smarty_tpl->tpl_vars['p']->iteration = 1;$_smarty_tpl->tpl_vars['p']->iteration <= $_smarty_tpl->tpl_vars['p']->total;$_smarty_tpl->tpl_vars['p']->value += $_smarty_tpl->tpl_vars['p']->step, $_smarty_tpl->tpl_vars['p']->iteration++){
+$_smarty_tpl->tpl_vars['p']->first = $_smarty_tpl->tpl_vars['p']->iteration == 1;$_smarty_tpl->tpl_vars['p']->last = $_smarty_tpl->tpl_vars['p']->iteration == $_smarty_tpl->tpl_vars['p']->total;?>
+                
+                     <?php if ($_smarty_tpl->getVariable('cur_page')->value==$_smarty_tpl->tpl_vars['p']->value){?>
+                     <li class="active"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</li>
+                     <?php }else{ ?>
+                     <li><a href="?page=<?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</a></li> 
+                     <?php }?>
+                   
+          <?php }} ?>     
+     <?php }?>     
+        
+<?php if ($_smarty_tpl->getVariable('cur_page')->value<$_smarty_tpl->getVariable('allpage')->value){?>
+    <li class="next">
+    <a href="?page=<?php echo $_smarty_tpl->getVariable('cur_page')->value+1;?>
+">Next &raquo;</a>
+    </li>
+<?php }else{ ?>
+    <li class="next-off">
+    Next &raquo;
+    </li>
+<?php }?>
+   <li class="next">
+    <a href="?page=<?php echo $_smarty_tpl->getVariable('allpage')->value;?>
+">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   <?php echo $_smarty_tpl->getVariable('cur_page')->value;?>
+/<?php echo $_smarty_tpl->getVariable('allpage')->value;?>
+ Page
+    </li>
+  </ul>
+</div>
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:365px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>
+		
+		 
+		</table>
+	</div>
+</div>
+
+
+
+</body>
+</html>

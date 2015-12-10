@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-专辑列表</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+<style type="text/css">
+.adsadd{
+line-height:30px;
+border:#2d68a0 1px solid;
+width:100px;
+cursor:pointer;
+text-align:center;
+background:#fff;
+margin-left:85px;
+margin-top:15px;
+}
+input[type="radio"], input[type="checkbox"] {
+    line-height: normal;
+    margin: -4px 2px 0 0;
+}
+.black_box{
+display:none;
+position:absolute;
+top:0;
+left:0;
+width:99.9%;
+height:99.9%;
+}
+.black_box_1{
+position:absolute;
+top:0;
+left:0;
+width:99.9%;
+height:99.9%;
+filter:alpha(opacity=50);  
+      -moz-opacity:0.5;  
+      -khtml-opacity: 0.5;  
+      opacity: 0.5;  
+background:#303030;
+}
+.black_box_2 ul{
+position:absolute;
+z-index:1000;
+border:4px #FFFFFF solid;
+padding:0;
+width:350px;
+margin:auto;
+margin-top:130px;
+background:#FFFFFF;
+cursor:pointer;
+border-radius:3px;
+}
+.black_box_2 ul li{
+list-style:none;
+padding:0;
+margin:0;
+}
+.black_box_2 ul li img{
+padding:0;
+margin:0;
+}
+</style>
+    </head>
+    <body>
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 资源管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 专辑列表</a>
+            </div>
+        </div>
+        <form action="/res/albumdel" method="get">
+		<table class="hovertable" width="100%" border="1" cellpadding="0" cellspacing="1" bgcolor="#417eb7" bordercolor="#2d68a0">
+		<caption><h4>专辑列表</h4></caption>
+		<tr class="table-head" bgcolor="#2d68a0">
+			<th>ID</th>
+		    <th>专辑名</th>
+		    <th>小图</th>
+		    <th>大图</th>
+		    <th>添加时间</th>
+		    <th>更新时间</th>
+		    <th>点击</th>
+		    <th>显示</th>
+		    <th>合作商</th>
+		    <th>排序</th>
+		    <th>操作</th>    
+		</tr>
+		{{foreach $list as $v}}
+		<tr class="tbody" bgcolor="#FFFFFF">
+			<td><input name="id[]" type="checkbox"  value="{{$v.id}}">{{$v.id}}</td>
+		    <td>{{$v.aname}}</td>
+		    <td>{{$v.smallpic}}</td>
+		    <td class="bigpic">{{$v.bigpic}}</td>
+		    <td>{{$v.ctime}}</td>
+		    <td>{{$v.utime}}</td>
+		    <td>{{$v.hits}}</td>
+		    <td>{{$v.flag}}</td>
+		    <td>{{$v.partner}}</td>
+		    <td>{{$v.sortid}}</td>
+		    <td><a href="/res/albumedit?id={{$v.id}}">编辑</a> <a href="/res/albumdel?id={{$v.id}}">删除</a>
+            	<a class="imgShow">图片浏览</a>
+		    </td>
+		</tr>
+		{{/foreach}}
+		</table>
+		<div class="adsadd"><a href="/res/albumadd">专辑添加</a></div>
+		<div class="black_box">
+		<div class="black_box_1"></div>
+		<div class="black_box_2">
+				<ul>
+					<li><img src="http://bill.wonaonao.com/imgs/ppts/" class="img_1" width="350"></li>
+				</ul>
+			</div>
+		</div>
+		
+		<div class="pages">
+		<ul class="pagination-digg">
+		    
+		   
+		 <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+		{{if $cur_page gt 1}}
+		  <li class="previous"><a href="?page={{$cur_page-1}}">&laquo;Previous</a></li>
+		{{else}}
+		  <li class="previous-off"> &laquo;Previous</li>
+		{{/if}}
+			{{if $endNum lt $allpage}}	
+		         {{for $p=$startNum to $endNum}}
+		                
+		                     {{if $cur_page eq $p}}
+		                     <li class="active">{{$p}}</li>
+		                     {{else}}
+		                     <li><a href="?page={{$p}}">{{$p}}</a></li> 
+		                     {{/if}}
+		                   
+		          {{/for}} 
+		     {{else}}
+		        {{for $p=$startNum to $allpage}}
+		                
+		                     {{if $cur_page eq $p}}
+		                     <li class="active">{{$p}}</li>
+		                     {{else}}
+		                     <li><a href="?page={{$p}}">{{$p}}</a></li> 
+		                     {{/if}}
+		                   
+		          {{/for}}    
+		     {{/if}}     
+		        
+		{{if $cur_page lt $allpage}}
+		    <li class="next">
+		    <a href="?page={{$cur_page+1}}">Next &raquo;</a>
+		    </li>
+		{{else}}
+		    <li class="next-off">
+		    Next &raquo;
+		    </li>
+		{{/if}}
+		   <li class="next">
+		    <a href="?page={{$allpage}}">Last &raquo;</a>
+		    </li>
+		    <li class="next-off">
+		   {{$cur_page}}/{{$allpage}} Page
+		    </li>   
+		  </ul>
+		</div>
+		</form>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+	<script>
+    $(document).ready(function(){
+    	//浏览窗口偏移到正中
+    	var leftWidth = ($(document).width()-400)/2
+    	$(".black_box_2").find("ul").css("left",leftWidth+"px");
+    	$(".black_box_2").find("ul").click(function(){
+    		$(".black_box").css("display","none");
+    	});
+    	//menu
+    	$('.submenu > a').click(function(e)
+    			{
+    				e.preventDefault();
+    				var submenu = $(this).siblings('ul');
+    				var li = $(this).parents('li');
+    				var submenus = $('#sidebar li.submenu ul');
+    				var submenus_parents = $('#sidebar li.submenu');
+    				if(li.hasClass('open'))
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenu.slideUp();
+    					} else {
+    						submenu.fadeOut(250);
+    					}
+    					li.removeClass('open');
+    				} else 
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenus.slideUp();			
+    						submenu.slideDown();
+    					} else {
+    						submenus.fadeOut(250);			
+    						submenu.fadeIn(250);
+    					}
+    					submenus_parents.removeClass('open');		
+    					li.addClass('open');	
+    				}
+    			});
+		$(".imgShow").click(function(){
+			var imgurl = "http://img.wonaonao.com/imgs/album/"+$(this).parent().prevAll(".bigpic").html();
+			$(".img_1").attr("src",imgurl);
+			$(".black_box").css("display","block");
+		});
+    })
+    </script>
+    </body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-浏览数据统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+{{include file="header.html"}}
+<!--sidebar-menu-->
+{{include file="menu.html"}}
+<!--close-left-menu-stats-sidebar-->
+
+                        <span class="manyday dateSpan">
+                            <input id="d5221" name="bmanyday" value="{{$sdate}}" class="Wdate" type="text" onFocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},firstDayOfWeek:1,maxDate:'%y-%M-%d'})"/> -
+                            <input id="d5222" name="emanyday" value="{{$edate}}" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:0})}',firstDayOfWeek:1,maxDate:'%y-%M-%d',onpicked:function(){dataSearch()}})"/>
+                        </span>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    
+    <script type="text/javascript">
+        $(function(){
+            dataSearch();
+            $("input[name='show']").change(function(){
+                if($("input[name='show']:checked").val() == 'pic'){
+                    $("#container").show();
+                    $("#containerTable").hide();
+                }else if($("input[name='show']:checked").val() == 'form'){
+                    $("#container").hide();
+                    $("#containerTable").show();
+                }else if($("input[name='show']:checked").val() == 'pic_form'){
+                    $("#container").show();
+                    $("#containerTable").show();
+                }
+            })
+        })
+        
+        function dataSearch(){
+            var bmanyday = $("#d5221").attr("value");
+            var emanyday = $("#d5222").attr("value");
+            if(!bmanyday || !emanyday){
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/pageview/ajaxPageviewJson",
+                data: {
+                    start:bmanyday,
+                    end:emanyday
+                },
+                dataType: "json",
+                beforeSend:function(XMLHttpRequest){
+                    loading_func(1);
+                },
+                success: function(data){
+                    var xAxis = "[" + data.xAxis + "]";
+                    var series = "[" + data.series + "]";
+                    getData(eval(xAxis),eval(series));
+                }
+            });
+            
+            $.ajax({
+                type: "POST",
+                url: "/pageview/ajaxPageviewHtml",
+                data: {
+                    start:bmanyday,
+                    end:emanyday
+                },
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){},
+                success: function(data){
+                    loading_func();
+                    $("#containerTable").html(data);
+                }
+            });
+            
+        }
+        
+        function dataColumnSearch(){
+            var bmanyday = $("#d5221").attr("value");
+            var emanyday = $("#d5222").attr("value");
+            if(!bmanyday || !emanyday){
+                return false;
+            }
+    </script>
+    </body>
+</html>

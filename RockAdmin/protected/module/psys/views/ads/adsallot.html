@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>广告分配</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.Jcrop.min.js"></script>
+
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+<link type="text/css" href="{$psys_css}jquery.Jcrop.min.css" rel="stylesheet" />
+
+<style type="text/css">
+input {
+	vertical-align: middle;
+	margin: 0;
+	padding: 0
+}
+#title{
+	font-size:20px;
+	font-weight:bold;
+	text-align:center;
+}
+#wrap{
+	margin:0 auto;
+	width:1600px;
+	position:relative;
+}
+#data_form form table{
+	margin-top:20px;
+	border-collapse:separate; 
+	border-spacing:10px;
+}
+#data_form form table tr td{
+	height:30px;
+}
+
+#data_form form table tr td label{
+	border:1px solid #DEDEDE;
+	background-color:#EAEAEA;
+	margin-left:10px;
+	width:40px;
+	height:28px;
+	line-height:28px;
+	padding:6px;
+}
+#data_form form table tr td span{
+	border:1px solid #DEDEDE;
+	background-color:#68228B;
+	margin-left:20px;
+	color:#FFFFFF;
+	width:40px;
+	height:28px;
+	line-height:28px;
+	padding:6px;
+}
+#data_form form table tr #content{
+	vertical-align:top;
+}
+#data_form form table tr td input,select{
+	height:24px;
+	margin-bottom:4px;
+}
+#data_form form table tr td select{
+	width:160px;
+}
+textarea{
+	width: 400px;
+	height: 100px;
+	max-width: 400px;
+	max-height: 100px;
+}
+#img_form{
+	position: absolute;
+	width:80px;
+	height:28px;
+	top:264px;
+	left:285px;
+}
+#img_form .file{
+	margin-top:3px;
+	height: 28px;
+	filter: alpha(opacity : 40);
+	opacity: 0.4;
+	width: 74px;
+}
+iframe{
+	width:0px;
+	height:0px;
+	display:none;
+}
+#st_tips{
+	display:none;
+}
+#st_not{
+	display:none;
+}
+#img_view{
+	position:absolute;
+	width:99.9%;
+	height:99.9%;
+	padding:100px auto;
+	left:0;
+	top:0;
+	background-color:#D4D4D4;
+	filter: alpha(opacity : 70);
+	opacity: 0.7;
+	display:none;
+	border:1px solid black;
+}
+#img_view #img_wrap{
+	margin:100px auto;
+}
+#img_view #res_img{
+	text-align:center;
+	margin: 0 auto;
+	width: 0;
+	margin-left: 30%;
+}
+#img_view #res_img img
+{
+	display:block;
+	margin:10px auto;
+	
+}
+#action{
+	text-align:center;
+	margin:40px auto;
+}
+#action label
+{
+	border:1px solid blue;
+	padding:8px;
+	margin-left:30px;
+}
+.adsOne,.adsTwo{
+	display:none;
+}
+</style>
+{literal}
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	$("#adsid").change(function(){
+		var adsid = $(this).val();
+		var adsType = $("#adsType").val();
+		if(adsType != '0'){
+			$.ajax({
+			     type: 'GET',
+			     url: 'http://admin.wonaonao.com/ads/changecity?adsid='+adsid+'&&adsType='+adsType,
+			     dataType: "html",
+		         success: function(data){
+					data = data.split(',');
+					$("input[type='checkbox'][name='cityid[]']").attr("checked",false);
+					for(var i=0;i<data.length;i++){
+						$(".cname_"+data[i]).attr("checked",true);
+					}
+		         } 
+			});
+		}
+	});
+	
+	$("#adsType").change(function(){
+		var type = $(this).val();
+		switch(type){
+		case '5':
+			$('.adsOne').css("display","block");
+			$('.adsTwo').css("display","none");
+			break;
+		case '6':
+			$('.adsTwo').css("display","block");
+			$('.adsOne').css("display","none");
+			break;
+		case '0':
+			$('.adsOne').css("display","none");
+			$('.adsTwo').css("display","none");
+			break;
+		}
+	});
+
+	$(".clickAll").click(function(){
+		var isclick = $(this).attr("checked");
+		if(isclick){
+			$("input[type='checkbox'][name='cityid[]']").attr("checked",isclick);
+		}else{
+			$("input[type='checkbox'][name='cityid[]']").attr("checked",isclick);
+		}
+	});
+	$("#btn_data_submit").click(function(){
+		var adsType = $("#adsType").val();
+		var adsid = $("#adsid").val();
+		if(adsType=='0'){
+			alert('请选择广告位');
+			return false;
+		}
+		if(adsid=='0'){
+			alert('请选择广告');
+			return false;
+		}
+	});
+})
+</script>
+{/literal}
+</head>
+<body>
+	<form id="form1" action="/ads/updateads" method="post">
+	<p id="title">广告一键分配</p>
+	<div id="wrap">
+		<div id="data_form">
+			<form action="/ads/update" method="POST">
+			<table>
+				<tr><td width="250px" align="right">选择广告位：</td>
+					<td align="left">
+					<select id="adsType" name="adsType">
+						<option value ="0">请选择广告位</option> 
+						<option value ="5">广告一</option> 
+						<option value ="6">广告二</option>
+					</td>
+				</tr>
+				<tr><td width="250px" align="right">广告选择：</td>
+					<td align="left">
+					<select id="adsid" name="adsid">
+						<option value="0">请选择广告</option>
+						{foreach $addOnelist as $v}
+						<option value ="{$v.id}" class="adsOne">{$v.adname}</option>
+						{/foreach}
+						{foreach $addTwolist as $v}
+						<option value ="{$v.id}" class="adsTwo">{$v.adname}</option>
+						{/foreach}
+					</td>
+					</td>
+				</tr>
+				<tr id="systerms"><td width="250px" align="right">车站选择：</td>
+					<td align="left">
+					<input type="checkbox" class="clickAll"/>全选&nbsp&nbsp
+					{foreach $citys as $city}
+				   		 	<input type="checkbox" name="cityid[]" value="{$city.id}" class="cname_{$city.id}"/>{$city.name}
+				   	{/foreach}
+					</td>
+				</tr>
+				<tr><td colspan="2" align="center" style="margin-top:20px"><button id="btn_data_submit">提交</button></tr>
+				<input type="hidden" name='ispost' value="1"/>
+			</table>
+			</form>
+		</div>
+	</div>
+	</form>
+</body>
+</html>

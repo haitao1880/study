@@ -1,0 +1,68 @@
+                  
+<caption>
+                              <h3>每日详情</h3>
+                        </caption>
+                        <tr  bgcolor="#417eb7">
+                         <th>操作</th>'
+                         <th>Android</th>
+                         <th>Ios</th>
+                         <th>Else</th>
+                       </tr>
+                    <tr bgcolor="#FFFFFF">  
+                        <td>广告页1/uv</td>
+                        <td>{$totallist['detail'][$date]['a1a']}</td>
+                        <td>{$totallist['detail'][$date]['a1i']}</td>
+                        <td>{$totallist['detail'][$date]['a1w']}</td>
+                    </tr>
+                    
+                       <tr bgcolor="#FFFFFF">  
+                        <td>注册页/uv</td>
+                        <td>{$totallist['detail'][$date]['a2a']}</td>
+                        <td>{$totallist['detail'][$date]['a2i']}</td>
+                        <td>{$totallist['detail'][$date]['a2w']}</td>
+                    </tr>
+                    
+                    <tr bgcolor="#FFFFFF">  
+                        <td>新注册/uv</td>
+                        <td>{$totallist['detail'][$date]['a3a']}</td>
+                        <td>{$totallist['detail'][$date]['a3i']}</td>
+                        <td>{$totallist['detail'][$date]['a3w']}</td>
+                    </tr>
+                    
+                    
+                         <tr bgcolor="#FFFFFF">  
+                        <td>广告页2/uv</td>
+                        <td>{$totallist['detail'][$date]['a4a']}</td>
+                        <td>{$totallist['detail'][$date]['a4i']}</td>
+                        <td>{$totallist['detail'][$date]['a4w']}</td>
+                    </tr>
+                         <tr bgcolor="#FFFFFF">  
+                        <td>sindex/uv </td>
+                        <td>{$totallist['detail'][$date]['a5a']}</td>
+                        <td>{$totallist['detail'][$date]['a5i']}</td>
+                        <td>{$totallist['detail'][$date]['a5w']}</td>
+                    </tr>
+                    <tr bgcolor="#FFFFFF">  
+                        <td>下载APP统计</td>
+                        <td>{$totallist['detail'][$date]['a6a']}</td>
+                        <td>{$totallist['detail'][$date]['a6i']}</td>
+                        <td>{$totallist['detail'][$date]['a6w']}</td>
+                    </tr>
+                      <tr bgcolor="#FFFFFF">  
+                        <td>获取验证码 UV </td>
+                        <td>{$totallist['detail'][$date]['a7a']}</td>
+                        <td>{$totallist['detail'][$date]['a7i']}</td>
+                        <td>{$totallist['detail'][$date]['a7w']}</td>
+                    </tr>
+                     <tr bgcolor="#FFFFFF">  
+                        <td>获取验证码成功 UV </td>
+                        <td>{$totallist['detail'][$date]['a8a']}</td>
+                        <td>{$totallist['detail'][$date]['a8i']}</td>
+                        <td>{$totallist['detail'][$date]['a8w']}</td>
+                    </tr>
+                     <tr bgcolor="#FFFFFF">  
+                        <td>获取验证码失败 UV </td>
+                        <td>{$totallist['detail'][$date]['a9a']}</td>
+                        <td>{$totallist['detail'][$date]['a9i']}</td>
+                        <td>{$totallist['detail'][$date]['a9w']}</td>
+                    </tr>

@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+{literal}
+<style type="text/css">
+	body{
+		margin:0;
+		padding:0;
+		font-size:12px;
+	}
+</style>
+{/literal}
+</head>
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  	<h3>导航统计</h3>
+  </caption>
+  <tr>
+    <form method="post" action="/station/navhit" enctype="multipart/form-data">
+	    {include file="station/station.html"}
+    </form> 
+  </tr>
+  <tr  bgcolor="#417eb7">
+    <th style="width:250px">日期</th>
+    <th>订票</th>
+    <th>到站</th>
+    <th>行李</th>
+    <th>影视</th>
+    <th>游戏</th>
+    <th>应用</th>
+    <th>音乐</th>
+  </tr>
+  {foreach $data as $v}
+  <tr bgcolor="#FFFFFF">    
+    <td>{$v.date}</td>
+    <td>{$v.inquiries}</td>
+    <td>{$v.station}</td>
+    <td>{$v.luggage}</td>
+    <td>{$v.movie}</td>
+    <td>{$v.game}</td>
+    <td>{$v.app}</td>
+    <td>{$v.music}</td> 
+  </tr>
+  {/foreach}
+</table>
+
+<div class="pages">
+  <ul class="pagination-digg">
+  
+ <li class="previous"><a href="?page=1&stationid={$stationid}">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}&stationid={$stationid}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+  {if $endNum lt $allpage}  
+        {for $p=$startNum to $endNum}
+             {if $cur_page eq $p}
+             <li class="active">{$p}</li>
+             {else}
+             <li><a href="?page={$p}&stationid={$stationid}">{$p}</a></li> 
+             {/if}      
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+            {if $cur_page eq $p}
+            <li class="active">{$p}</li>
+            {else}
+            <li><a href="?page={$p}&stationid={$stationid}">{$p}</a></li> 
+            {/if}       
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}&stationid={$stationid}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}&stationid={$stationid}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>    
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<div class="content container-fluid sidebarRight animated fadeInUp">
+   <div class="row">
+                
+        <div class="col-md-6" style="width:40%;">
+            <div class="panel panel-purple">
+                <div class="panel-heading">
+                    <h3 class="panel-title">连接详情</h3>
+                </div>
+                <div class="panel-body" style="min-height: 500px;">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                {foreach $alladuvlist.legend.data as $v}
+                                  <th>{$v}</th>
+                                {/foreach}
+                                <th>详细</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                          
+                           {foreach $alladuvlist.xaxis.data as $k=>$v}
+                            <tr>
+                                <td>{$v}</td>
+                                  {foreach $alladuvlist.series as $k2=>$v2}
+                                    <td>{$v2['data'][$k]}</td>
+                                {/foreach}
+                                <td style="cursor:pointer;" data-toggle="modal" data-target="#myModal"  onclick="getdetail(this)" date='{$v}' stationid="{$stationid}" class="detail">详情</td>
+                            </tr>
+                              {/foreach}
+                        </tbody>
+                    </table>
+                   <div class="btn-toolbar" role="toolbar" aria-label="..." id="paging">
+                      
+                  </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-md-6" style="width:60%;">
+            <div class="panel panel-light-orange">
+                <div class="panel-heading">
+                    <h3 class="panel-title">趋势图</h3>
+                </div>
+                  
+                <div class="panel-body" style="min-height: 500px;" id="graph"> 
+                   
+                </div>
+            </div>
+        </div>
+    
+    </div>
+</div>
+    <!-- 模态框（Modal） -->
+<div class="modal fade home " id="myModalu" >
+   <div class="modal-dialog">
+      <div class="modal-content">
+         
+         <div class="modal-body">
+            <div style="min-height: 400px;text-align:center;margin:0 auto;border:1px solid #ccc;" id="wifinum">ddddddddddddd</div>
+           
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" 
+               data-dismiss="modal">关闭
+            </button>
+         </div>
+      </div>
+     
+   </div>
+</div>
+
+ <div id="alladuv" style="height:400px"></div>
+    
+     <style>
+  .home {
+    opacity: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    
+}
+.modal-dialog {
+    margin: 30px auto;
+    width: 850px;
+}
+.hiddenbody{
+    
+    overflow:  hidden;
+}
+.modal.fade .modal-dialog {
+    transform: translate(0px,0px);
+    transition: transform 0.3s ease-out 0s;
+}
+    </style>
+      <script type="text/javascript">
+            Trend("graph",{$alladuv});
+            
+            
+        function getdetail(mythis){
+            var postdata={};
+           postdata.edate=  $(mythis).attr("date");
+           postdata.stationid=  $(mythis).attr("stationid");
+           $.post("/pagerecord/adLogDay",postdata,
+               function(data){
+              
+                
+           $("#myModalu").slideDown("10000");
+                 $("body").addClass("hiddenbody");
+                   Trend("wifinum",data);
+               }
+             );
+         }
+     $(function(){
+        $(".btn-primary").click( function () {  
+            $("#myModalu").hide();
+            $("body").removeClass("hiddenbody");
+        });
+     });
+            
+            
+            
+            
+           </script>

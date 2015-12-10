@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>TriangulumCMS v1.0 beta</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}colorpicker.css" />
+        <link rel="stylesheet" href="{{$psys_css}}datepicker.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+{{include file="header.html"}}
+<!--sidebar-menu-->
+{{include file="menu.html"}}
+<!--close-left-menu-stats-sidebar-->
+
+    <div id="content">
+        
+        <div id="content-header">
+            <div id="breadcrumb"> 
+                <a href="/index/index" title="Go to Dashboard" class="tip-bottom"><i class="icon-home"></i> Dashboard</a> 
+                <a href="javascript:void(0);"><i class="icon-user"></i> My data</a> 
+            </div>
+            <h1><i class="icon-user"></i> My Data</h1>
+        </div>
+        
+        <div class="container-fluid">
+
+            <hr/>
+            <div class="row-fluid">
+                <div class="span6">
+                    <div class="widget-box">
+                        
+                        <div class="widget-content nopadding">
+                            <form action="" method="post" class="form-horizontal">
+                                <div class="control-group">
+                                    <label class="control-label">My Photo</label>
+                                    <div class="controls">
+                                        {{if $data.photo}}
+                                            <img src="/upload/{{$data.photo}}" class="mydata-head" width="100" height="100" />
+                                        {{else}}
+                                            -
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Nick</label>
+                                    <div class="controls">
+                                        <input type="text" class="span4" placeholder="Your Nickname." name="nick" value="{{$data.nick}}" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Age</label>
+                                    <div class="controls">
+                                        <input type="text" class="span2" placeholder="Your Age." name="age" value="{{$data.age}}" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Phone</label>
+                                    <div class="controls">
+                                        <input type="text" class="span4" placeholder="Your Phone." name="phone" value="{{$data.phone}}" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Address</label>
+                                    <div class="controls">
+                                        <input type="text" class="span8" placeholder="Your Address." name="address" value="{{$data.address}}" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Photo</label>
+                                    <div class="controls">
+                                        <div id="file_upload_photo" ></div>
+                                        <input type="text" class="span6" placeholder="Your photo." name="photo" id="photo" value="{{$data.photo}}" readonly="readonly" />
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <input type="hidden" name="id" value="{{$data.id}}" />
+                                    <button type="submit" class="btn btn-danger">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+<script src="{{$psys_js}}jquery.min.js"></script> 
+<script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+<script src="{{$psys_js}}bootstrap.min.js"></script> 
+<script src="{{$psys_js}}bootstrap-colorpicker.js"></script> 
+<script src="{{$psys_js}}bootstrap-datepicker.js"></script>
+<script src="{{$psys_js}}masked.js"></script> 
+<script src="{{$psys_js}}jquery.uniform.js"></script> 
+<script src="{{$psys_js}}select2.min.js"></script> 
+<script src="{{$psys_js}}matrix.js"></script> 
+<script src="{{$psys_js}}matrix.form_common.js"></script> 
+<script src="{{$psys_js}}jquery.peity.min.js"></script>
+<script src="{{$psys_js}}jquery.huploadify.js"></script>
+<script type="text/javascript">
+    $(function() {
+        setTimeout(function(){
+            $("#file_upload_photo").Huploadify({
+                auto:true,
+                fileTypeExts:"*.jpg;*.png;*.gif",
+                multi:true,
+                formData:{
+                    "timestamp" : "{{$timestamp}}",
+                    "token"     : "{{$timestamp_token}}"
+                },
+                fileSizeLimit:9999,
+                showUploadedPercent:false,
+                showUploadedSize:false,
+                removeTimeout:9999999,
+                uploader:"/uploadOne.php",
+                buttonText : "upload",
+                onUploadStart:function(){
+                    $("#photo").val("Uploading...");
+                },
+                onUploadComplete:function(a,b){
+                    var data = eval("("+b+")");
+                    if(data.code==1){
+                        $("#photo").val(data.url);
+                        
+                    }else if(data.code==0){
+                        
+                    }
+                }
+            });
+        },10);
+    });
+</script>
+
+    </body>
+</html>

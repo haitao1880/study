@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>广告分配</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+<style type="text/css">
+#title{
+	font-size:20px;
+	font-weight:bold;
+	text-align:center;
+	line-height:100px;
+}      
+</style>
+    </head>
+    <body>
+
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 广告管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 全屏广告</a>
+            </div>
+        </div>
+        <form id="form1" action="/ads/updateads" method="post">
+		<p id="title">广告一键分配</p>
+		<div id="wrap">
+			<div id="data_form">
+				<form action="/ads/update" method="POST">
+				<table>
+					<tr><td width="250px" align="right">选择广告位：</td>
+						<td align="left">
+						<select id="adsType" name="adsType">
+							<option value ="0">请选择广告位</option> 
+							<option value ="5">广告一</option> 
+							<option value ="6">广告二</option>
+						</td>
+					</tr>
+					<tr><td width="250px" align="right">广告选择：</td>
+						<td align="left">
+						<select id="adsid" name="adsid">
+							<option value="0">请选择广告</option>
+							{{foreach $addOnelist as $v}}
+							<option value ="{{$v.id}}" class="adsOne">{{$v.adname}}</option>
+							{{/foreach}}
+							{{foreach $addTwolist as $v}}
+							<option value ="{{$v.id}}" class="adsTwo">{{$v.adname}}</option>
+							{{/foreach}}
+						</td>
+						</td>
+					</tr>
+					<tr id="systerms"><td width="250px" align="right">车站选择：</td>
+						<td align="left">
+						<input type="checkbox" class="clickAll"/>全选&nbsp&nbsp
+						{{foreach $citys as $city}}
+					   		 	<input type="checkbox" name="cityid[]" value="{{$city.id}}" class="cname_{{$city.id}}"/>{{$city.name}}
+					   	{{/foreach}}
+						</td>
+					</tr>
+					<tr><td colspan="2" align="center" style="margin-top:20px"><button id="btn_data_submit">提交</button></tr>
+					<input type="hidden" name='ispost' value="1"/>
+				</table>
+				</form>
+			</div>
+		</div>
+		</form>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script type="text/javascript">
+$(document).ready(function(){
+	$('.submenu > a').click(function(e)
+			{
+				e.preventDefault();
+				var submenu = $(this).siblings('ul');
+				var li = $(this).parents('li');
+				var submenus = $('#sidebar li.submenu ul');
+				var submenus_parents = $('#sidebar li.submenu');
+				if(li.hasClass('open'))
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenu.slideUp();
+					} else {
+						submenu.fadeOut(250);
+					}
+					li.removeClass('open');
+				} else 
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenus.slideUp();			
+						submenu.slideDown();
+					} else {
+						submenus.fadeOut(250);			
+						submenu.fadeIn(250);
+					}
+					submenus_parents.removeClass('open');		
+					li.addClass('open');	
+				}
+			});
+	
+	$("#adsid").change(function(){
+		var adsid = $(this).val();
+		var adsType = $("#adsType").val();
+		if(adsType != '0'){
+			$.ajax({
+			     type: 'GET',
+			     url: '/ads/changecity?adsid='+adsid+'&&adsType='+adsType,
+			     dataType: "html",
+		         success: function(data){
+					data = data.split(',');
+					$("input[type='checkbox'][name='cityid[]']").attr("checked",false);
+					for(var i=0;i<data.length;i++){
+						$(".cname_"+data[i]).attr("checked",true);
+					}
+		         } 
+			});
+		}
+	});
+	
+	$("#adsType").change(function(){
+		var type = $(this).val();
+		switch(type){
+		case '5':
+			$('.adsOne').css("display","block");
+			$('.adsTwo').css("display","none");
+			break;
+		case '6':
+			$('.adsTwo').css("display","block");
+			$('.adsOne').css("display","none");
+			break;
+		case '0':
+			$('.adsOne').css("display","none");
+			$('.adsTwo').css("display","none");
+			break;
+		}
+	});
+
+	$(".clickAll").click(function(){
+		var isclick = $(this).attr("checked");
+		if(isclick){
+			$("input[type='checkbox'][name='cityid[]']").attr("checked",isclick);
+		}else{
+			$("input[type='checkbox'][name='cityid[]']").attr("checked",false);
+		}
+	});
+	$("#btn_data_submit").click(function(){
+		var adsType = $("#adsType").val();
+		var adsid = $("#adsid").val();
+		if(adsType=='0'){
+			alert('请选择广告位');
+			return false;
+		}
+		if(adsid=='0'){
+			alert('请选择广告');
+			return false;
+		}
+	});
+})
+</script>
+    </body>
+</html>

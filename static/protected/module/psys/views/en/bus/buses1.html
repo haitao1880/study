@@ -1,0 +1,17 @@
+<!-- <a id="close-station-1" class="btn checi" style="margin-bottom: 10px;margin-right: 5px;">
+    <div id="uniform-square-checkbox-1" class="checker">
+        <span class="checked">
+            <input style="opacity: 0;" tabindex="9" id="square-checkbox-1" name="carid[]" type="checkbox" value="0" checked="checked">
+        </span>
+    </div>A&nbsp;L&nbsp;L
+</a> -->
+
+{{foreach $buses as $bus}}
+<a id="close-station-1" class="btn checi" style="margin-bottom: 10px;margin-right: 5px;">
+    <div id="uniform-square-checkbox-1" class="checker">
+    	<span>
+    		<input style="opacity: 0;" tabindex="9" id="square-checkbox-1" name="carid[]" type="checkbox" value="{{$bus.id}}">
+    	</span>
+    </div>{{$bus.number}}
+</a>
+{{/foreach}}

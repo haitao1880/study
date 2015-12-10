@@ -1,0 +1,29 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-11 22:52:25
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//res/index.html" */ ?>
+<?php /*%%SmartyHeaderCode:17537766005489afa9774ca8-31935211%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '55a2fcbd9cd6f555ceb605920345539008749a3b' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//res/index.html',
+      1 => 1407132457,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '17537766005489afa9774ca8-31935211',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>资源概述</title>
+</head>
+<body>
+
+</body>
+</html>

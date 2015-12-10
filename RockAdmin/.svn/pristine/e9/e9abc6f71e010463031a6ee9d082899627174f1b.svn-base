@@ -1,0 +1,108 @@
+{include file="shared/header.html" pagetitle="车次添加/修改"}
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<form class="add">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>车次添加/修改</h3>
+  </caption>
+  <tr>
+    <td width="30%" align="right">车次：</td>
+    <td width="70%" align="left">
+    <input type="text" name="checi" id="checi" value="{$one['trainno']}"/>
+             类型：<select name="leixin" id="leixin">
+         {html_options options=$traintype selected=$one['traintype']}
+       </select></td>
+  </tr>
+  <tr>
+    <td align="right">始发站：</td>
+    <td align="left">
+    	<input type="text" name="b_station" id="b_station" value="{$one['bstation']}"/>
+    	时间：<input type="text" name="btime_station" id="btime_station" value="{$one['btime']}"/>
+    	(15:30)
+    	</td>
+  </tr>
+  <tr>
+    <td align="right">终到站：</td>
+    <td align="left">
+    	<input type="text" name="e_station" id="e_station" value="{$one['estation']}"/>
+    	时间：<input type="text" name="etime_station" id="etime_station" value="{$one['etime']}"/></td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">区间时间：</td>
+    <td width="70%" align="left">
+    <input type="text" id="runtime" name="runtime" value="{$one['runtime']}"/>
+    (39:50)
+	</td>
+  </tr>
+  <tr>
+    <td align="right">参考票价：</td>
+    <td align="left"><textarea name="price" id="price" rows="3" cols="65">{$one['price']}</textarea>
+    <br />(硬座|24.5;硬卧下|70.5)</td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">区间里程：</td>
+    <td width="70%" align="left"><input type="text" id="mileage" name="mileage" value="{$one['mileage']}"/>公里</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+    <input type="hidden" name="id" id="id" value="{$id}" />
+    <input type="button" id="btnSave" value="保 存"/>
+    </td>
+  </tr>
+</table>
+</form>
+{literal}
+<script type="text/javascript">
+
+$(function(){
+	$('#btnSave').click(function(){
+		var checi = $.trim($("#checi").val());
+		var leixin = $.trim($("#leixin").val());
+		var b_station = $.trim($("#b_station").val());
+		var btime_station = $.trim($("#btime_station").val());
+		var e_station = $.trim($("#e_station").val());
+		var etime_station = $.trim($("#etime_station").val());		
+		var runtime = $.trim($("#runtime").val());
+		var price = $.trim($("#price").val());
+		var mileage = $.trim($("#mileage").val());
+		var id = $.trim($("#id").val());
+		
+		if(checi == '')
+		{
+			alert('请输入车次');
+			return;
+		}
+		
+		//其他验证
+		$.post(
+			'/train/add',
+			{'ispost':1,'ajax':1,'checi':checi,'leixin':leixin,
+			'b_station':b_station,'btime_station':btime_station,
+			'e_station':e_station,'etime_station':etime_station,
+			'runtime':runtime,'price':price,'mileage':mileage,
+			'id':id},
+			function(res){
+				if(res.result == 'SUCCESS')
+				{
+					if(confirm('添加成功，点击确定继续添加，点击取消返回列表'))
+					{
+						$("#checi").val('');
+						$("#b_station").val('');
+					}else{
+						document.location.href = '/train/index';
+					}
+				}
+				else
+				{
+					alert(res.msg+'('+res.msgcode+')');
+				}
+			},
+			'json'
+		);
+		
+	});
+});
+</script>
+{/literal}
+
+{include file="shared/footer.html"}

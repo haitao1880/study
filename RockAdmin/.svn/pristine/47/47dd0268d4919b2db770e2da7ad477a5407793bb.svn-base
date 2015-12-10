@@ -1,0 +1,72 @@
+<!--header start-->
+<div class="w100 header_100">
+    <div class="w1026">
+        <!--logo start-->
+        <div class="logo">
+            <a href="{$pc_base_url}" title="logo">
+                <img src="{$pc_img}/images/logo.jpg" /></a>
+        </div>
+        <!--logo end-->
+        <div class="main_nav">
+            <div id="menu2">
+                <ul class="topmenu1">
+                    <li class="test" id="homeID"><a href="/">首 页</a></li>
+                    <li class="test" id="newsID"><a href="/News">新 闻</a></li>
+                    <li class="test" id="moviesID"><a href="/Movies">电 影</a></li>
+                    <li class="test" id="gamesID"><a href="/Games">游 戏</a></li>
+                    <li class="test" id="musicsID"><a href="/Musics">音 乐</a></li>
+                    <li class="test" id="foodsID"><a href="javascript:;">列车服务</a></li>
+                </ul>
+            </div>
+            <div class="nav_grzx">
+                <div id="xl_one" style="" class="nav_grzx_a"><a href="javascript:;">个人中心</a></div>
+                <!--hide nav start-->
+                <div id="xl_two" class="hide_nav_main" style="display: none; position: absolute;">
+                    <ul>
+                        <div class="nav_grzx_a"><a class="a2" href="/Recharge">个人中心</a></div>
+                            <li><a class="gr_a" href="/Recharge">账户查询</a></li>
+                            <li><a class="{if $cur_userid gt '0'}gr_a{else}a1{/if}" href="/Recharge/BuyToken">充值中心</a></li>
+                            {if $cur_userid gt '0'}
+                            <li><a class="a1" href="/Member/LogOut">注销</a></li>
+                            {/if}
+                    </ul>
+                </div>
+                <!--hide nav end-->
+                <!--xiala nav start-->
+                <div class="xial_mod">
+                    <div class="xial_fist"></div>
+                    <div class="xial_fist"></div>
+                    <div class="xial_fist"></div>
+                    <div class="xial_fist"></div>
+                    <div class="xial_fist"></div>
+                    <div class="xial_fist">
+                        <ul>
+                            <li><a class="gr_a" href="/Foods">美食</a></li>
+                            <li><a class="gr_a" href="/Service/Tax">出租车</a></li>
+                            <li><a class="gr_a" href="/Service/Tour">旅游</a></li>
+                            <li><a class="a1" href="/Service/Bags">行李管理</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--xiala nav end-->
+            </div>
+        </div>
+    </div>
+</div>
+<!--header end-->
+<script type="text/javascript">
+{literal}
+    function logOut() {
+        $.ajax({
+            type: "POST",
+            url: '/Member/LogOut',
+            data:{'ajax':1},
+            success: function (data) {
+                if (data.result == 'SUCCESS') {
+                    window.location.href = '/';
+                }
+            }
+        });
+    }
+{/literal}
+</script>

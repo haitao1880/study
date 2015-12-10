@@ -1,0 +1,111 @@
+{{include file="public_header.html"}}
+<!--sidebar-menu-->
+  <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/main" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-user"></i> 同步数据</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i>站点同步列表</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <p><b>说 明: </b></p>
+            <p>请选择服务器进行同步。</p>  
+           		 <div style="float:left;">
+                    <div class="btn-group">
+                        <a href="#choice2" data-toggle="modal" onclick="AddStation();" class="btn btn-group">添加</a>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#choice2" data-toggle="modal" onclick="citeChoice();" class="btn btn-group">站点同步选择</a>
+                    </div>
+                </div>
+                
+            <p></p>   
+            <hr/>
+            <div id="containerTable">  
+
+            </div>
+            
+            <a id="loading" href="#myModal" data-toggle="modal" class="hide"></a> 
+            <div id="myModal" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><img src="{{$psys_img}}loading.gif" /></p>
+                <p style="text-align:center;">加载中...</p>
+                <a id="loading_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div id="choice2" class="modal hide" style="display: none;" aria-hidden="true">
+		<div class="modal-header">
+		    <h3>添加</h3>
+		</div>
+		<div class="modal-body" id="AddStation">
+		    
+		</div>
+		<div class="modal-footer">
+		    <a class="btn" href="javascript:;" onclick="AddPost()" data-dismiss="modal">添加</a>
+		    <a class="btn" href="javascript:;" id="Cancel" data-dismiss="modal">关 闭</a>
+		</div>
+	</div>
+<!--Footer-part-->
+{{include file="public_footer.html"}}
+<!--end-Footer-part--> 
+    <script type="text/javascript">
+        function AddPost(){
+        	$("#AddStation form").submit();
+        }
+        $(function(){
+            searchMember(1);
+        })
+        function searchMember(page){
+            var pid = $("#pid").val();
+            $.ajax({
+                type: "POST",
+                url: "/syn/citelist",
+                data: {
+                    pid:pid,
+                    page:page
+                },
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){
+                    loading_func(1);
+                },
+                success: function(data){
+                    loading_func();
+                    $("#containerTable").html(data);
+                    $("#currentpage").html(page + "　");
+                }
+            });
+            
+        }        
+        function loading_func(s){
+            s == 1 ? $("#loading").click() : $("#loading_c").click();
+        }
+
+        function AddStation(){
+            $.ajax({
+                type: "POST",
+                url: "/syn/citeAdd",
+                data: {},
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){},
+                success: function(data){
+                    $("#AddStation").html(data);
+                }
+            });  
+        }
+
+        function citeChoice(){
+            $.ajax({
+                type: "POST",
+                url: "/syn/citeChoice",
+                data: {},
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){},
+                success: function(data){
+                    $("#AddStation").html(data);
+                }
+            });  
+        }
+    </script>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <link href="{$psys_css}public.css" media="all" type="text/css" rel="stylesheet" />
+    <link href="{$psys_css}formByNick.css" media="all" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="{$psys_js}jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="{$psys_js}formByNick.js"></script>
+        
+</head>
+<body>
+
+	<form action="" method="post" onsubmit="return checkForm('form1');" id="form1">
+    
+        <div class="head">
+        
+            <h4>Change PassWord</h4>
+            <h5>Set your password.</h5>
+        
+        </div>
+    
+        <dl>
+            <h3>Required</h3>
+		</dl>
+        
+        <dl>
+        
+            <dt>Username:</dt>
+            <dd>{$smarty.session.Cur_X_User.username}</dd>
+            <dd class="error"></dd>
+        
+        </dl>
+        
+        <dl>
+        
+            <dt>Old Password:</dt>
+            <dd><input type="password" class="input1" name="oldpwd" /></dd>
+            <dd class="error"></dd>
+        
+        </dl>
+        
+        <dl>
+        
+            <dt>New Password:</dt>
+            <dd><input type="password" class="input1" name="passwd" /></dd>
+            <dd class="error"></dd>
+        
+        </dl>
+        
+        <dl class="foot">
+        
+            <dt>&nbsp;</dt>
+            <dd><input type="submit" class="button2" name="ispost" value="Submit" /></dd>
+            
+        
+        </dl>
+
+	</form>
+
+</body>
+</html>

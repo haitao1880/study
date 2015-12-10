@@ -1,0 +1,27 @@
+<!--Header-part-->
+<script src="/style/en/default/js/jquery.min.js"></script> 
+<div id="header">
+  <h1><a href="/index/index">伙伴平台统计</a></h1>
+</div>
+<!--close-Header-part-->
+<!--top-Header-menu-->
+<div id="user-nav" class="navbar navbar-inverse">
+  <ul class="nav" id="top_nav">
+    {{foreach $psys_menu as $k => $ne}}
+    {{if $ne.id != 73}}
+   	  <li id="li_{{$ne.action}}" class="sub_nav {{if $ismenu == $ne.action}}active{{/if}}"><a href="#" onclick="getMenu('{{$ne.action}}')"> <span class="text">{{$ne.name}}</span></a></li>
+    {{/if}}
+    {{/foreach}}	
+    <li class=""><a href="#"><i class="icon icon-user"></i>  <span class="text">欢迎你,{{$smarty.session.TA_user.nick}}</span></a></li>
+    <li class=""><a title="" href="/index/loginout"><i class="icon icon-share-alt"></i> <span class="text">登出</span></a></li>
+  </ul>
+</div>
+<script>
+function getMenu($id){
+	$('#top_nav .sub_nav').removeClass('active');
+	$('#li_'+$id).addClass('active');
+	
+	$('#sidebar .sid_menu').removeClass('show').addClass('hidden');
+	$('#'+$id).removeClass('hidden').addClass('show');    
+}
+</script>

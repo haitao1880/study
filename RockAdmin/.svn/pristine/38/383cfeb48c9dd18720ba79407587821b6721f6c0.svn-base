@@ -1,0 +1,124 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-10 16:38:21
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//account/edit.html" */ ?>
+<?php /*%%SmartyHeaderCode:18987016815488067ddfece5-36982569%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'd4bfba3b85d57a5bb2604178b0197fb061bb2b7c' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//account/edit.html',
+      1 => 1407132458,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '18987016815488067ddfece5-36982569',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>后台账号编辑</title>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.11.1.js"></script>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+</head>
+<body>
+<form class="add">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>编辑用户信息</h3>
+  </caption>
+  <tr>
+    <td width="30%" align="right">用户名：</td>
+    <td width="70%" align="left"><input type="text" name="username" value="<?php echo $_smarty_tpl->getVariable('info')->value['username'];?>
+"/></td>
+  </tr>
+  <tr>
+    <td align="right">密&nbsp;&nbsp;码：</td>
+    <td align="left"><input type="password" name="passwd"/>(密码为空则不修改原密码)</td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">姓&nbsp;&nbsp;名：</td>
+    <td width="70%" align="left"><input type="text" name="realname" value="<?php echo $_smarty_tpl->getVariable('info')->value['realname'];?>
+"/></td>
+  </tr>
+  <tr>
+    <td align="right">公&nbsp;&nbsp;司：</td>
+    <td align="left"><input type="text" name="corp" value="<?php echo $_smarty_tpl->getVariable('info')->value['corp'];?>
+"/></td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">部&nbsp;&nbsp;门：</td>
+    <td width="70%" align="left"><input type="text"  name="depart" value="<?php echo $_smarty_tpl->getVariable('info')->value['depart'];?>
+"/></td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+    <td width="70%" align="left">
+    	<input id="state" class="check-box" name="flag" type="radio" value="1" <?php if ($_smarty_tpl->getVariable('info')->value['flag']==1){?>checked<?php }?>><label>正常</label>
+        <input id="state" class="check-box" name="flag" type="radio" value="0" <?php if ($_smarty_tpl->getVariable('info')->value['flag']==0){?>checked<?php }?>><label>停用</label>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><input type="hidden" name="id" value="<?php echo $_smarty_tpl->getVariable('info')->value['id'];?>
+"/><input type="button" id="btnSave" value="更  新"/></td>
+  </tr>
+</table>
+</form>
+
+<script type="text/javascript">
+
+$(function(){
+	$('#btnSave').click(function(){
+		var username = $.trim($("input[name='username']").val());
+		var passwd = $.trim($("input[name='passwd']").val());
+		var realname = $.trim($("input[name='realname']").val());
+		var corp = $.trim($("input[name='corp']").val());
+		var depart = $.trim($("input[name='depart']").val());
+		var flag = $.trim($("input[name='flag']").val());
+		var id = $.trim($("input[name='id']").val());
+		if(username == '')
+		{
+			alert('请输入用户名');
+			return;
+		}
+		
+		//其他验证
+		$.post(
+			'/account/update',
+			{'ispost':1,'ajax':1,'username':username,'passwd':passwd,'realname':realname,'corp':corp,'depart':depart,'flag':flag,'id':id},
+			function(res){
+				if(res.result == 'SUCCESS')
+				{
+					if(confirm('更新成功，点击确定添加新帐号，点击取消返回列表'))
+					{
+						$("input[name='username']").val();
+						$("input[name='passwd']").val();
+						$("input[name='realname']").val();
+						$("input[name='corp']").val();
+						$("input[name='depart']").val();
+						$("input[name='flag']").val();
+					}else{
+						document.location.href = '/account/index';
+					}
+				}
+				else
+				{
+					alert(res.msg+'('+res.msgcode+')');
+				}
+			},
+			'json'
+		);
+		
+	});
+});
+</script>
+
+
+</body>
+</html>

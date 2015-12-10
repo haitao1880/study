@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>参加过活动用户列表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+<link href="{$psys_js}lib/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="{$psys_js}lib/jquery-ui.min.js"></script>
+{literal}
+<style type="text/css">
+/* detail */
+#detail{position:absolute;width:620px;height:520px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#ipcno{width: 150px;height: 20px;margin-left: 0;}
+#news_select input{padding:4px;}
+#news_select select{padding:4px;}
+
+.hovertable {width:90%;margin:0 auto;line-height:2.5;min-width:1200px;}
+.hovertable caption {padding:25px;}
+.hovertable h3 {font-size:16px;color:#333;}
+.hovertable th {color:#bfeaf5;}
+.hovertable tr {color:#333;text-align:center;}
+.hovertable a:hover {color:#f00;}
+.tbody:hover {background:#d4eaff;color:#333;text-align:center;}
+.hovertable input[type="text"] {border:1px solid #a9a9a9;width:210px;}
+.hovertable input[type="password"] {border:1px solid #a9a9a9;width:210px;}
+.hovertable input[type="button"] {padding-top:3px;padding-bottom:2px;}
+.check-box {margin-top:-1px;}
+.check-box, label {vertical-align:middle;}
+button {padding:3px;margin-top:-1px;border:1px solid #900;}
+.hovertable {line-height:2.6;min-width:30%;}
+.jCalendar{ min-width:0px;}
+.pages {margin-top:50px;width:100%;text-align:center;}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){	  
+	$("#indate").datepicker();
+	$("#todate").datepicker();
+	
+});
+</script>
+{/literal}
+</head>
+<body>
+<form action="/user/index" method="post">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>参加活动用户列表</h4></caption>
+<tr>
+	<td colspan="7" align="left" style="color:#FFF">&nbsp;&nbsp;
+	车站：
+			<select id="appkey" name="appkey">
+			<option value="0" {if $appk==''}selected="selected"{/if}>全部</option>
+			{foreach $appkeys as $k=>$v}
+				<option value="{$k}" {if $appk==$k}selected="selected"{/if}>{$v}</option>
+			{/foreach}
+	       </select>&nbsp;&nbsp;
+	         是否可抽奖：<select id="flag" name="flag">
+			<option value="0" {if $moeny==''}selected="selected"{/if}>全部</option>
+			<option value="0">是</option>
+			<option value="1">否</option>			
+	       </select>&nbsp;&nbsp;			
+     	号码：<input type="text" name="username" value="{$username}" />&nbsp;&nbsp;     	
+     	开始：<input type="text" name="indate" id="indate"  value="{$select.indate}" />&nbsp;&nbsp;
+     	结束：<input type="text" name="todate" id="todate"  value="{$select.todate}" />&nbsp;
+     	<input type="submit"  id="btnSave" name="btnSave" value="查询"/>
+	</td>
+</tr>
+<tr class="table-head" bgcolor="#2d68a0">
+     <th>序号</th>
+	<th>电话号码</th>
+    <th>车站</th>
+    <th>日期</th>
+    <th>是否可抽奖</th>
+    <th>剩余抽奖次数</th>
+    <th>任务号</th>      
+</tr>
+{foreach $list as $v}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><input name="id[]" type="checkbox"  value="{$v.id}">{$v.id}</td>
+    <td>{$v.username}</td>
+    <td>{$v.appkey}</td>
+    <td>{$v.ctime|date_format:'%Y-%m-%d %H:%M:%S'}</td>
+     <td>{if $v.flag eq 1}是{else}否{/if}</td>
+    <td>{$v.awardnum}</td>    
+     <td>{$v.tasks}</td>  
+</tr>
+{/foreach}
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+    
+  </ul>
+</div>
+</form>
+</body>
+</html>

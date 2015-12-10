@@ -1,0 +1,175 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-23 11:02:45
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//res/album_add.html" */ ?>
+<?php /*%%SmartyHeaderCode:7417782075498db55a0c091-93670747%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '8f8cc2411bcd55d6fb2af073fff2a4b2432eb5ef' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//res/album_add.html',
+      1 => 1408433278,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '7417782075498db55a0c091-93670747',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>专辑添加</title>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.11.1.js"></script>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<style type="text/css">
+body {
+  font-size: 14px;
+}
+
+input {
+  vertical-align: middle;
+  margin: 0;
+  padding: 0
+}
+
+.file-box {
+  position: relative;
+  width: 340px
+}
+
+.txt {
+  height: 22px;
+  border: 1px solid #cdcdcd;
+  width: 180px;
+}
+
+.btn {
+  background-color: #FFF;
+  border: 1px solid #CDCDCD;
+  height: 24px;
+  width: 70px;
+}
+
+.file {
+  position: absolute;
+  top: 0;
+  right: 80px;
+  height: 24px;
+  filter: alpha(opacity : 0);
+  opacity: 0;
+  width: 260px
+}
+</style>
+</head>
+<body>
+<form class="add" id="addfrom" action="/res/upalbum" method="POST" enctype="multipart/form-data">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>专辑添加</h3>
+  </caption>
+  <tr>
+    <td width="30%" align="right">专辑名：</td>
+    <td width="70%" align="left"><input type="text" name="aname"/></td>
+  </tr>
+  <tr>
+    <td align="right">小&nbsp;&nbsp;图：</td>
+    <td align="left"><div class="file-box">
+      <input type="text" name="smallpic" id='textfield' class='txt' />
+      <input type='button' class='btn' value='浏览...' /> 
+      <input type="file"name="small" class="file" id="fileField" size="28"onchange="document.getElementById('textfield').value=this.value" /></div>
+    </td>
+  </tr>
+ 
+  <tr>
+    <td width="30%" align="right">大&nbsp;&nbsp;图：</td>
+    <td width="70%" align="left"><div class="file-box">
+      <input type="text" name="bigpic" id='textfield1' class='txt'/>
+      <input type='button' class='btn' value='浏览...' /> 
+      <input type="file"name="big" class="file" id="fileField" size="28"onchange="document.getElementById('textfield1').value=this.value" /></div>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">点&nbsp;&nbsp;击：</td>
+    <td align="left"><input type="text" name="hits"/></td>
+  </tr>
+ 
+  <tr>
+    <td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+    <td width="70%" align="left">
+    	<input id="state" class="check-box" name="flag" type="radio" value="1" checked><label>正常</label>
+        <input id="state" class="check-box" name="flag" type="radio" value="0"><label>停用</label>
+    </td>
+  </tr>
+   <tr>
+    <td width="30%" align="right">合作商ID：</td>
+    <td width="70%" align="left"><input type="text"  name="parternid"/></td>
+  </tr>
+     <tr>
+    <td width="30%" align="right">合作商：</td>
+    <td width="70%" align="left"><input type="text"  name="partner"/></td>
+  </tr>
+       <tr>
+    <td width="30%" align="right">排&nbsp;&nbsp;序：</td>
+    <td width="70%" align="left"><input type="text"  name="sortid"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><input type="hidden" name="id" /><input type="button" id="btnSave" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+
+<script type="text/javascript">
+
+$(function(){
+	$('#btnSave').click(function(){
+		var aname = $.trim($("input[name='aname']").val());
+		var smallpic = $.trim($("input[name='smallpic']").val());
+		var bigpic = $.trim($("input[name='bigpic']").val());
+		var hits = $.trim($("input[name='hits']").val());
+		var flag = $.trim($("input[name='flag']").val());
+		var parternid = $.trim($("input[name='parternid']").val());
+		var partner = $.trim($("input[name='partner']").val());
+		var sortid = $.trim($("input[name='sortid']").val());
+		var id = $.trim($("input[name='id']").val());
+		if(aname == '')
+		{
+			alert('请输入专辑名');
+			return;
+		}
+		
+		//其他验证
+		$.post(
+			'/res/updatealbum',
+			{'ispost':1,'ajax':1,'aname':aname,'smallpic':smallpic,'bigpic':bigpic,'hits':hits,'flag':flag,'parternid':parternid,'partner': partner, 'sortid': sortid,'id':id},
+			function(res){
+				if(res.result == 'SUCCESS')
+				{ 
+          $('#addfrom').submit();
+					if(confirm('添加成功，点击确定继续添加，点击取消返回列表'))
+					{
+						$("input").val('');
+						
+					}else{
+						document.location.href = '/res/albumlist';
+					}
+				}
+				else
+				{
+					alert(res.msg+'('+res.msgcode+')');
+				}
+			},
+			'json'
+		);
+		
+	});
+});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".datepicker").datePicker({
+		inline:true,
+		selectMultiple:false
+	});
+	
+	$("#datepicker").datePicker({
+		clickInput:true
+	});	
+	
+
+	var $isadd = $('#isadd').html();
+	if($isadd == 1){
+		alert('新增成功');
+	}else if($isadd == -1){
+		alert('参数不正确！');
+	}else if ($isadd == -2){
+		alert('新增失败');
+	}else if ($isadd == -3){
+		alert('卡号重复');
+	}
+});
+</script>
+</head>
+<body>
+<div style="display: none;" id="isadd">{$isadd}</div>
+<form method="post">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>新增SIM卡信息</h3>
+  </caption>
+  <tr>
+    <td width="30%" align="right">卡&nbsp;&nbsp;号：</td>
+    <td width="70%" align="left"><input name="cardnum" type="text" /></td>
+  </tr>
+  <tr>
+    <td align="right">ICCID：</td>
+    <td align="left"><input name="iccid" type="text" /></td>
+  </tr>
+  <tr>
+    <td align="right">PUK：</td>
+    <td align="left"><input name="puk" type="text" /></td>
+  </tr>
+  <tr>
+    <td  align="right">激活日期：</td>
+    <td  align="left">
+    	<input type="text" name="activation" value="" id="datepicker" />
+    </td>
+  </tr>
+  <tr>
+    <td  align="right">续费频率：</td>
+    <td  align="left">
+    	<input id="train-state" class="check-box" name="frequency" type="radio" value="1" checked><label>月</label>
+        <input id="train-state" class="check-box" name="frequency" type="radio" value="2"><label>季度</label>
+        <input id="train-state" class="check-box" name="frequency" type="radio" value="3"><label>半年</label>
+        <input id="train-state" class="check-box" name="frequency" type="radio" value="4"><label>一年</label>
+    </td>
+  </tr>
+   <tr>
+    <td align="right">负责人：</td>
+    <td align="left"><input name="leader" type="text" /></td>
+  </tr>
+  <tr>
+    <td  align="right">备&nbsp;&nbsp;注：</td>
+    <td  align="left">
+    	<input type="text" name="remark" value="" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><input type="submit" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+
+</body>
+</html>

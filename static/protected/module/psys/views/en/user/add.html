@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>TriangulumCMS v1.0 beta</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}colorpicker.css" />
+        <link rel="stylesheet" href="{{$psys_css}}datepicker.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+{{include file="header.html"}}
+<!--sidebar-menu-->
+{{include file="menu.html"}}
+<!--close-left-menu-stats-sidebar-->
+
+    <div id="content">
+        {{include file="breadcrumb.html"}}
+        <div class="container-fluid">
+        
+            <a class="btn btn-mini btn-info" href="/user/index">User Dashboard</a>
+        
+            <hr/>
+            <div class="row-fluid">
+                <div class="span6">
+                    <div class="widget-box">
+                        <div class="widget-title"> 
+                            <span class="icon"> <i class="icon-align-justify"></i> </span>
+                            <h5>Fill in the user information</h5>
+                        </div>
+                        <div class="widget-content nopadding">
+                            <form action="" method="post" class="form-horizontal">
+                            
+                                <div class="control-group">
+                                    <label class="control-label"><i class="icon-info-sign"></i> Required</label>
+                                    <div class="controls">
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="control-group">
+                                    <label class="control-label">Username :</label>
+                                    <div class="controls">
+                                        <input type="text" class="span11" placeholder="Username" name="username" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Password :</label>
+                                    <div class="controls">
+                                        <input type="password" class="span11" placeholder="Password" name="password" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Email :</label>
+                                    <div class="controls">
+                                        <input type="text" class="span11" placeholder="Email" name="email" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Role :</label>
+                                    <div class="controls">
+                                        <select name="role_id">
+                                            {{foreach $role.allrow as $key=>$val}}
+                                                <option value="{{$val.role_id}}">{{$val.rolename}}</option>
+                                            {{/foreach}}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="control-group">
+                                    <label class="control-label"><i class="icon-question-sign"></i> Optional</label>
+                                    <div class="controls">
+                                        
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Nick :</label>
+                                    <div class="controls">
+                                        <input type="text" class="span11" placeholder="Nickname" name="nick" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Phone :</label>
+                                    <div class="controls">
+                                        <input type="text" class="span11" placeholder="Phone" name="phone" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Address :</label>
+                                    <div class="controls">
+                                        <input type="text" class="span11" placeholder="Address" name="address" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Photo :</label>
+                                    <div class="controls">
+                                        <div id="file_upload" ></div><input type="text" class="span6" placeholder="Photo" name="photo" id="photo" /> 
+                                        
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Age :</label>
+                                    <div class="controls">
+                                        <input type="text" class="span2" placeholder="Age" name="age" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Sex :</label>
+                                    <div class="controls">
+                                        <label><input type="radio" name="sex" value="1" checked="checked" /> Male</label><label><input type="radio" name="sex" value="2" /> Female</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+<script src="{{$psys_js}}jquery.min.js"></script> 
+<script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+<script src="{{$psys_js}}bootstrap.min.js"></script> 
+<script src="{{$psys_js}}bootstrap-colorpicker.js"></script> 
+<script src="{{$psys_js}}bootstrap-datepicker.js"></script>
+<script src="{{$psys_js}}masked.js"></script> 
+<script src="{{$psys_js}}jquery.uniform.js"></script> 
+<script src="{{$psys_js}}select2.min.js"></script> 
+<script src="{{$psys_js}}matrix.js"></script> 
+<script src="{{$psys_js}}matrix.form_common.js"></script> 
+<script src="{{$psys_js}}jquery.peity.min.js"></script>
+<script src="{{$psys_js}}jquery.huploadify.js"></script>
+<script type="text/javascript">
+
+$(function() {
+    setTimeout(function(){
+        $('#file_upload').Huploadify({
+            auto:true,
+            fileTypeExts:'*.jpg;*.png;*.JPG;*.PNG',
+            multi:true,
+            formData:{
+                'timestamp' : '{{$timestamp}}',
+                'token'     : '{{$timestamp_token}}'
+            },
+            fileSizeLimit:9999,
+            showUploadedPercent:false,//是否实时显示上传的百分比，如20%
+            showUploadedSize:false,
+            removeTimeout:9999999,
+            uploader:'/uploadOne.php',
+            buttonText : 'upload',
+            onUploadStart:function(){
+                $("#photo").val("Uploading...");
+            },
+            onUploadComplete:function(a,b){
+                var data = eval("("+b+")");
+                if(data.code==1){ //成功
+                    $("#photo").val(data.url);
+                    
+                }else if(data.code==0){//失败
+                    
+                }
+            }
+        });
+    },10);
+});
+
+</script>
+    </body>
+</html>

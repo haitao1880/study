@@ -1,0 +1,32 @@
+<table class="table table-bordered form-horizontal">
+    <thead>
+        <tr>
+            <th>车号</th>
+            <th>日期</th>
+            <th>活动</th>
+            <th>点击次数</th>
+            <th>iOS</th>
+            <th>Android</th>
+        </tr>
+    </thead>
+    <tbody>
+            {{foreach $data as $key=>$val}}
+            
+                {{foreach $val as $key2=>$val2}}
+                    <tr>
+                        <td style="text-align:center;">{{$val2.number}}</td>
+                        <td style="text-align:center;">{{$time}}</td>
+                        <td style="text-align:center;">{{$val2.activityname}}</td>
+                        <td style="text-align:center;">{{$val2.click}}</td>
+                        <td style="text-align:center;">{{$val2.ios}}</td>
+                        <td style="text-align:center;">{{$val2.android}}</td>
+                    </tr>
+                {{/foreach}}
+            {{/foreach}}
+        
+        <tr>
+            <td colspan="10"></td>
+        </tr>
+        
+    </tbody>
+</table>

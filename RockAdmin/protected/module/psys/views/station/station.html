@@ -1,0 +1,12 @@
+
+	    <td>车站选择：</td>
+	    <td colspan="1">
+	      <select name="stationid">
+	      	{foreach $stations as $v}
+	        <option value="{$v.id}" {if $stationid eq $v.id}selected{/if}>{$v.stationname}</option>
+	        {/foreach}
+	      </select>
+	    </td>
+	    <td>
+	      <input type="submit" value="查询" />
+	    </td>

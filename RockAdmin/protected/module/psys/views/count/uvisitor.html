@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+{literal}
+<style type="text/css">
+body{margin:0;padding:0;font-size:12px;}
+dt{padding:10px;}
+i{ font-style:normal;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#ipcno{width: 150px;height: 20px;margin-left: 0;}
+#pointer{
+  cursor:pointer;
+}
+
+</style>
+{/literal}
+{literal}
+<script>
+
+function show(time,ipcno)
+{
+	var $title = '<caption>'
+		  		+	'<h3>每日详情</h3>'
+				+'</caption>'
+		 		+'<tr  bgcolor="#417eb7">'
+		  		+  	'<th>车厢</th>'
+		   		+ 	'<th>应用</th>'
+		   		+ 	'<th>游戏</th>'
+          +   '<th>音乐</th>'
+          +   '<th>电影</th>'
+          +   '<th>时间段</th>'
+		 		+'</tr>'; 
+	$("#detailcon").html($title);
+	var trainno
+	if(ipcno == 'ALL') {
+		trainno = '';
+	}else{
+		trainno = ipcno;
+	}
+	$.ajax({
+        type: "POST",
+        data: { time: time, ajax:1,ipcno:trainno},
+        url: '/count/click',
+        success: function (data) {  
+                      	
+            if (data.allnum >= 0 ) {
+            	
+            	
+            	$.each(data.allrow, function (index, item) {
+            		 $('#detailcon').append(
+            			'<tr bgcolor="#FFFFFF"> '   
+						+   ' <td>'+ipcno+'</td>'
+						+   ' <td>'+item.app+'</td>'
+						+   ' <td>'+item.game+'</td>'
+            +   ' <td>'+item.music+'</td>'
+            +   ' <td>'+item.movie+'</td>'
+            +   ' <td>'+item.time+'</td>'
+						+  '</tr>'	 
+            		 );
+            		
+            		
+            	});
+            	
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+            	
+	popWin("detail");
+}
+
+
+</script>
+{/literal}
+</head>
+
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption >
+  	<h3>{$counttitle}</h3>
+  </caption>
+  <tr>
+    <td>服务器选择：</td>
+    <form method = "post" action="/count/uvisitor" id="countreg">
+    <td colspan="1">
+      <select name="ipcno" id="ipcno">
+        {foreach $ipcno as $v}
+        <option value="{$v['ipcno']}">{$v['ipcno']}</option>
+        {/foreach}
+      </select>
+    </td>
+    <td>
+      <input type="submit" value="查询" id="pointer"/>
+    </td>
+    </form>
+  </tr>
+  <tr  bgcolor="#417eb7">
+    <th>日&nbsp;&nbsp;期</th>
+    <th>车厢</th>
+    <th>应&nbsp;&nbsp;用</th>
+    <th>游&nbsp;&nbsp;戏</th>
+    <th>音&nbsp;&nbsp;乐</th>
+    <th>电&nbsp;&nbsp;影</th>
+    
+  </tr>
+  {if isset($clist)}
+  {foreach $clist as $v}
+  <tr bgcolor="#FFFFFF">    
+    <td>{$v.time}</td>
+    <td>{if $trainno}{$trainno}{else}ALL{/if}</td>
+    <td>{$v.app}</td>
+    <td>{$v.game}</td>
+    <td>{$v.music}</td>
+    <td>{$v.movie}</td>
+  </tr>
+  {/foreach}
+  {/if}
+</table>
+{if isset($clist)} 
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li> 
+
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+  </ul>
+</div>
+{/if}
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:365px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>
+		
+		 
+		</table>
+	</div>
+</div>
+
+
+
+</body>
+</html>

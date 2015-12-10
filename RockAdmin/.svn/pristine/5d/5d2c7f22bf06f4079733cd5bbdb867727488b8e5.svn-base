@@ -1,0 +1,65 @@
+
+/**
+ * 统计图
+ * @param  string thm_title 主标题
+ * @param  number title_x   标题相对位置
+ * @param  string sub_title 副标题
+ * @param  number  sub_x     副标题相对位置
+ * @param  array x_cat      x轴栏目名称
+ * @param  string y_cat     y轴栏说明
+ * @param  array res      生成统计图所需的数据
+ * @param  string id        放置图片的容器id
+ * @param  string drowtype   图的类型
+ */
+function PaiTing(thm_title,title_x,sub_title,sub_x,x_cat,y_cat,res,id,drowtype){
+	var chart;
+    chart = new Highcharts.Chart({ 
+        chart: {  //整体控制
+            renderTo: id,  //图表容器的DIVbar:横向条形图
+            defaultSeriesType: drowtype, //可选，默认为line【line:折线;spline:平滑的线;area:区域图;bar:曲线图;pie:饼图;scatter:点状图;column:柱状图等等;
+            marginRight: 130, //外边距控制 (上下左右空隙)
+            marginBottom: 25  //外边距控制
+        }, 
+        title: { 
+            text: thm_title, //主标题
+            x: title_x           //标题相对位置  默认居中
+        },
+        subtitle: {
+        text: sub_title,//副标题
+        x: sub_x           //标题相对位置 60
+        },
+        xAxis: {          //x轴数据
+            categories: x_cat
+        }, 
+        yAxis: {          //y轴数据
+            title: { 
+                text: y_cat 
+            }, 
+            plotLines: [{  //标线
+                value: 0, 
+                width: 1, 
+                color: '#808080' 
+            }] 
+        }, 
+        tooltip: {        //数据点的提示框
+            formatter: function () { 
+                return '<b>' + this.series.name + '</b><br/>' + this.x + ': ' + this.y; 
+            }  //formatter需要一个回调函数，可以通过this关键字打点得到当前一些图表信息
+        }, 
+        legend: { 
+            layout: 'vertical', 
+            align: 'right', 
+            verticalAlign: 'top', 
+            x: -10, 
+            y: 100, 
+            borderWidth: 0 
+        }, 
+       
+        series:res 
+    }); 
+}
+
+
+
+
+

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-礼包发放统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+
+    <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-briefcase"></i> 礼包发放统计</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 月数据</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <p><b>说 明: </b></p>
+            <p>请选择要查询的游戏以及起始和结束时间，并选择数据展现形式，默认为图表综合显示，图片类型为曲线图。</p>  
+                        <div class="span" style="width:150px">
+                            <select id="gameSearch" name="gameSearch" onchange="dataSearch()">
+                              <option value="-">选择游戏</option>
+                              {{foreach $gamelist as $k=>$v}}
+                                <option value="{{$v.id}}">{{$v.appname}}</option>
+                              {{/foreach}}
+                            </select>
+                        </div>
+                        <span class="manyday dateSpan ">
+                            <input id="d5221" name="bmonth" class="Wdate" type="text" onFocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},maxDate:'%y-%M',dateFmt:'yyyy-MM'})"/> -
+                            <input id="d5222" name="emonth" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:0})}',maxDate:'%y-%M',dateFmt:'yyyy-MM',onpicked:function(){dataSearch()}})"/>
+                        </span>
+            <p></p>   
+            展现形式: <label style="display:inline"><input type="radio" name="show" value="pic" />仅图</label> &nbsp;&nbsp;&nbsp;<label style="display:inline"><input type="radio" checked="checked" name="show" value="form" />仅表</label> &nbsp;&nbsp;&nbsp;<label style="display:inline"><input type="radio" checked="checked" name="show" value="pic_form" />图表</label>
+            <p></p>
+            <p id="checkType">图片类型 : <a class="icon-random btn tip-bottom btn-success" data-original-title="曲线图" onclick="dataSearch()" check-value="spline"></a> <a class="icon-bar-chart btn tip-bottom btn-primary" data-original-title="柱状图" onclick="dataColumnSearch()" check-value="column"></a></p>
+            <hr/>
+            <div id="dateError" class="alert alert-error alert-block hide">
+                <h4 class="alert-heading">提示</h4>
+                查询时间设置错误，请重新设置。
+            </div>
+            
+            
+            <div id="container" style="min-width: 350px; width:98%; margin: 0 auto"></div>
+            <div id="containerTable"></div>
+            
+            
+            <a id="loading" href="#myModal" data-toggle="modal" class="hide"></a> 
+            <div id="myModal" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><img src="{{$psys_img}}loading.gif" /></p>
+                <p style="text-align:center;">加载中...</p>
+                <a id="loading_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+        </div>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+    <script src="{{$psys_js}}highcharts.js"></script>
+    <script src="{{$psys_js}}exporting.js"></script>
+    
+    <script type="text/javascript">
+        $(function(){
+            $("input[name='show']").change(function(){
+                if($("input[name='show']:checked").val() == 'pic'){
+                    $("#container").show();
+                    $("#containerTable").hide();
+                }else if($("input[name='show']:checked").val() == 'form'){
+                    $("#container").hide();
+                    $("#containerTable").show();
+                }else if($("input[name='show']:checked").val() == 'pic_form'){
+                    $("#container").show();
+                    $("#containerTable").show();
+                }
+            })
+        })
+        
+        function dataSearch(){
+            var game = $("#gameSearch").attr("value");
+            var bmonth = $("#d5221").attr("value");
+            var emonth = $("#d5222").attr("value");
+            if(game == '-'){
+                return false;
+            }
+            if(!bmonth || !emonth){
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/package/ajaxMonthlyPackageJson",
+                data: {
+                    start:bmonth,
+                    end:emonth,
+                    game:game
+                },
+                dataType: "json",
+                beforeSend:function(XMLHttpRequest){
+                    loading_func(1);
+                },
+                success: function(data){
+                    var xAxis = "[" + data.xAxis + "]";
+                    var series = "[" + data.series + "]";
+                    getData(eval(xAxis),eval(series));
+                }
+            });
+            
+            $.ajax({
+                type: "POST",
+                url: "/package/ajaxMonthlyPackageHtml",
+                data: {
+                    start:bmonth,
+                    end:emonth,
+                    game:game
+                },
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){},
+                success: function(data){
+                    loading_func();
+                    $("#containerTable").html(data);
+                }
+            });
+            
+        }
+        
+        function dataColumnSearch(){
+            var game = $("#gameSearch").attr("value");
+            var bmonth = $("#d5221").attr("value");
+            var emonth = $("#d5222").attr("value");
+            if(game == '-'){
+                return false;
+            }
+            if(!bmonth || !emonth){
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/package/ajaxMonthlyPackageJson",
+                data: {
+                    start:bmonth,
+                    end:emonth,
+                    game:game
+                },
+                dataType: "json",
+                beforeSend:function(XMLHttpRequest){
+                    loading_func(1);
+                },
+                success: function(data){
+                    var xAxis = "[" + data.xAxis + "]";
+                    var series = "[" + data.series + "]";
+                    getColumnData(eval(xAxis),eval(series));
+                }
+            });
+            
+            $.ajax({
+                type: "POST",
+                url: "/package/ajaxMonthlyPackageHtml",
+                data: {
+                    start:bmonth,
+                    end:emonth,
+                    game:game
+                },
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){},
+                success: function(data){
+                    loading_func();
+                    $("#containerTable").html(data);
+                }
+            });
+            
+        }
+        
+        function getData(xAxis,series) {
+            $('#container').highcharts({
+                chart: {
+                    type: 'spline'
+                },
+                title: {
+                    text: '礼包发放统计',
+                    x: -20
+                },
+                xAxis: {
+                    categories: xAxis
+                },
+                yAxis: {
+                    title: {
+                        text: '次数 (次)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                credits:{
+                    enabled:false
+                },
+                tooltip: {
+                    valueSuffix: '次'
+                },
+                legend: {
+                    align: 'center',
+                    verticalAlign: 'bottom',
+                    borderWidth: 0
+                },
+                series: series
+            });
+        }
+        
+        function getColumnData(xAxis,series){
+            $('#container').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: '礼包发放统计',
+                    x: -20
+                },
+                xAxis: {
+                    categories: xAxis
+                },
+                credits:{
+                    enabled:false
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '次数 (次)'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y} 次</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: series
+            });
+        }
+        
+        function loading_func(s){
+            s == 1 ? $("#loading").click() : $("#loading_c").click();
+        }
+    </script>
+    </body>
+</html>
+  

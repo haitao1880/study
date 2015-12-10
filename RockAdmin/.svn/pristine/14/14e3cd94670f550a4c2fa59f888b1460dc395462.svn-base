@@ -1,0 +1,605 @@
+<?php 
+/**
+ * log日志解析
+ * @author Neil
+ * @modifytime 
+ */
+class LogDo
+{
+	private $dsn_content = "mysql:host=localhost;dbname=rht_admin";
+	private $dbuser_content = 'root';
+	private $dbpasswd_content = 'password';
+	private $db ;
+	
+	private $LOG_BASE_PATH = '/home/upload/nginxlog/';
+	private $PATH ;
+	private $DATE ;
+	private $BASE_PATH ;
+	private $WEB ;
+	
+	private $WLNAME = 'm_wonaonao_record_**.log';
+	
+	private $CAT_FILE_WEB ;
+	
+	public  $STATIONS ;
+	private $IPFILTER ;
+	private $STATIONID;
+	
+	private $TP_MAC ;
+	private $MAC_S ;
+	
+	private $WEB_MAIN =array();
+	private $WEB_DETAIL = array();
+	
+
+	public function __construct()
+	{
+		$this->DATE = date('Y_m_d',strtotime('-1 day'));
+		$this->db = $this->getdb_content();
+		$p = $this->db->query('Select `id`,`logfile`,`logip`,`ifconf`,`logname`,`ap`,`appkey` From `rha_station`');
+		$p->setFetchMode(PDO::FETCH_ASSOC);
+		$this->STATIONS = $p->fetchAll();
+	}
+	/**
+	 * 设置通用文件路径
+	 * @param string $logfile
+	 */
+	public function setPath($logfile,$logname)
+	{
+		$this->PATH = $this->LOG_BASE_PATH.$logfile.'/';
+		$this->BASE_PATH = $this->PATH.$this->DATE;
+		$this->WEB = $this->BASE_PATH . '/web*/www/';
+	}
+	/**
+	 * 获取已经上传的stationid
+	 * @return array
+	 */
+	public function CheckDo()
+	{
+		$s = $this->db->query('Select `stationid` From `rha_scriptlog` Where `type` = 2 And `ctime` = CURRENT_DATE()');
+		$s->setFetchMode(PDO::FETCH_ASSOC);
+		$sid = $s->fetchAll();
+		$ss = array();
+		foreach ($sid as $v)
+		{
+			$ss[] = $v['stationid'];
+		}
+		return $ss;
+	}
+	/**
+	 * 插入已经完成的log
+	 */
+	public function InCheck()
+	{
+		$int = array(
+			'stationid' => 	$this->STATIONID,
+			'type'		=>	2,
+			'ctime'		=>	date('Y-m-d')	
+		);
+		$this->Insert($int,'rha_scriptlog');
+	}
+	
+	
+	public function setStationId($stationid)
+	{
+		$this->STATIONID = $stationid;
+		
+	}
+	/**
+	 * 设置IP过滤规则，且生成打开的文件路径
+	 * @param string $ip
+	 * @param num $conf
+	 */
+	public function setIpFilter($appkey,$ap)
+	{
+		$this->IPFILTER = ' | awk -F "\[\|cut\|\]" \'{if(tolower($3) ~ /'.$appkey.'/) print }\'';
+	
+		$this->CAT_FILE_WEB = ' cat '.$this->WEB.$this->WLNAME.$this->IPFILTER;
+		if($ap == 1){
+			$this->TP_MAC = 'mac=';
+			$this->MAC_S = '4,12';
+		}else{
+			$this->TP_MAC = 'usermac=';
+			$this->MAC_S = '8,27';
+		}
+	}
+
+	//入口页uv
+	public function Ad_uv()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /index\/index/ ) print $8,"[|cut|]",$9}\' | awk -F  "\[\|cut\|\]" \'{if(index($1,"'.$this->TP_MAC.'")) $1=substr($1,index($1,"'.$this->TP_MAC.'")+'.$this->MAC_S.');else $1="-";print $1,"[|cut|]",$2}\' | awk -F "\[\|cut\|\]" \'{if(tolower($2) ~ /window/) $2="else"; else if(tolower($2) ~ /mac /) $2="ios";else if(tolower($2) ~ /android/) $2="android"; else $2="-";print}\' | sort | uniq | awk \'{count[$2]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh , $ad_uv);
+		$result = array();
+		
+		foreach ($ad_uv as $n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode(' ', $n);
+			if($tep['sys'] == '-'){
+				break;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'ad','action'=>'visit','detail'=>'uv','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$result[$tep['sys']] = $tep['dtime'];
+		}
+		
+		
+		$this->ConArrDETAIL($result,'ad_uv');
+		
+
+	}
+	//广告详情
+	public function Ad_Detail()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /record.php/ &&  tolower($7)  ~ /index\/index/ && tolower($8)  ~ /ad\/show/) print $8}\' | awk \'BEGIN{FS=OFS="/"}{count[$3"/"$4]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$ad_detail);
+		
+		foreach ($ad_detail as $n)
+		{
+			$tep = array();
+			list($tep['detail'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'ad','action'=>'show','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$data[$tep['detail']][$tep['sys']] = $tep['dtime'];
+		}
+		if($data){
+			$result = array();
+			foreach ($data as $m=>$n)
+			{
+				$result['android'] = $n['android'];
+				$result['ios'] = $n['ios'];
+				$result['else'] = $n['else'];
+				$this->ConArrDETAIL($result,'ad_'.$m);
+			}
+		}
+		
+	}
+	//注册页uv
+	public function Reg_uv()
+	{
+		$sh = $this->CAT_FILE_WEB. ' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /index\/register/ ) print $7,"[|cut|]",$9}\' | awk -F  "\[\|cut\|\]" \'{if(index($1,"'.$this->TP_MAC.'")) $1=substr($1,index($1,"'.$this->TP_MAC.'")+'.$this->MAC_S.');else $1="-";print $1,"[|cut|]",$2}\' | awk -F "\[\|cut\|\]" \'{if(tolower($2) ~ /window/) $2="else"; else if(tolower($2) ~ /mac /) $2="ios";else if(tolower($2) ~ /android/) $2="android"; else $2="-";print}\'| sort | uniq | awk \'{count[$2]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh , $reg_uv);
+		$result = array();
+		
+		foreach ($reg_uv as $n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode(' ', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'register','action'=>'visit','detail'=>'uv','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$result[$tep['sys']] = $tep['dtime'];
+		}	
+		$this->ConArrDETAIL($result,'reg_uv');
+
+	}
+	//验证码发送
+	public function Reg_verify()
+	{
+		//发送成功
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($5)  ~ /post/  && tolower($6) ~ /member\/againgetphonecode/ && tolower($10) ~ /status=1/) print $8,"[|cut|]",$9}\' | awk -F "\[\|cut\|\]" \'{if(index($1,"phoneNo=")) $1=substr($1,index($1,"phoneNo=")+8,11);else $1="-";print $1,"[|cut|]",$2}\' | awk -F "\[\|cut\|\]" \'{if(tolower($2) ~ /window/) $2="else"; else if(tolower($2) ~ /mac /) $2="ios";else if(tolower($2) ~ /android/) $2="android"; else $2="-"; print}\' | sort | uniq | awk \'{count[$2]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$verify_success);
+		$result = array();
+		
+		foreach ($verify_success as $n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode(' ', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'register','action'=>'verify','detail'=>'success','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$result[$tep['sys']] = $tep['dtime'];
+		}
+			
+		$this->ConArrDETAIL($result,'verify_success');
+		//发送失败
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($5)  ~ /post/  && tolower($6) ~ /member\/againgetphonecode/ && tolower($10) !~ /status=1/)  print $8,"[|cut|]",$9}\' | awk -F "\[\|cut\|\]" \'{if(index($1,"phoneNo=")) $1=substr($1,index($1,"phoneNo=")+8,11);else $1="-";print $1,"[|cut|]",$2}\' | awk -F "\[\|cut\|\]" \'{if(tolower($2) ~ /window/) $2="else"; else if(tolower($2) ~ /mac /) $2="ios";else if(tolower($2) ~ /android/) $2="android"; else $2="-"; print}\' | sort | uniq | awk \'{count[$2]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$verify_error);
+		$result = array();
+		
+		foreach ($verify_error as $n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode(' ', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'register','action'=>'verify','detail'=>'error','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$result[$tep['sys']] = $tep['dtime'];
+		}
+				
+		$this->ConArrDETAIL($result,'verify_error');
+		
+	}
+	//注册
+	public function Reg_login()
+	{
+		//注册成功
+		$sh = $this->CAT_FILE_WEB. ' | awk -F "\[\|cut\|\]" \'{if(tolower($5)  ~ /post/  && tolower($6) ~ /member\/register/ && tolower($10) ~ /success/)  print $8,"[|cut|]",$9}\' | awk -F "\[\|cut\|\]" \'{if(index($1,"uName=")) $1=substr($1,index($1,"uName=")+6,11);else $1="-";print $1,"[|cut|]",$2}\' | awk -F "\[\|cut\|\]" \'{if(tolower($2) ~ /window/) $2="else"; else if(tolower($2) ~ /mac /) $2="ios";else if(tolower($2) ~ /android/) $2="android"; else $2="-"; print}\' | sort | uniq | awk \'{count[$2]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$login_success);
+		$result = array();
+		
+		foreach ($login_success as $n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode(' ', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'register','action'=>'login','detail'=>'success','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$result[$tep['sys']] = $tep['dtime'];
+		}
+			
+		$this->ConArrDETAIL($result,'login_success');
+		//注册失败
+		$sh = $this->CAT_FILE_WEB. ' | awk -F "\[\|cut\|\]" \'{if(tolower($5)  ~ /post/  && tolower($6) ~ /member\/register/ && tolower($10) ~ /error/)  print $8,"[|cut|]",$9}\' | awk -F "\[\|cut\|\]" \'{if(index($1,"uName=")) $1=substr($1,index($1,"uName=")+6,11);else $1="-";print $1,"[|cut|]",$2}\' | awk -F "\[\|cut\|\]" \'{if(tolower($2) ~ /window/) $2="else"; else if(tolower($2) ~ /mac /) $2="ios";else if(tolower($2) ~ /android/) $2="android"; else $2="-"; print}\' | sort | uniq | awk \'{count[$2]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$login_error);
+		$result = array();
+		
+		foreach ($login_error as $n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode(' ', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'register','action'=>'login','detail'=>'error','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$result[$tep['sys']] = $tep['dtime'];
+		}
+				
+		$this->ConArrDETAIL($result,'login_error');
+		
+	}
+	//欢迎页uv
+	public function Welcome_uv()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /index\/welcome/ ) print $8,"[|cut|]",$9}\' | grep -P  "\d{11}" | awk -F "\[\|cut\|\]" \'{if(tolower($2) ~ /window/) $2="else"; else if(tolower($2) ~ /mac /) $2="ios";else if(tolower($2) ~ /android/) $2="android"; else $2="-";print}\' | sort | uniq | awk \'{count[$2]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$wel_uv);	
+		$result = array();
+		
+		foreach ($wel_uv as $n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode(' ', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'welcome','action'=>'visit','detail'=>'uv','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$result[$tep['sys']] = $tep['dtime'];
+		}
+				
+		$this->ConArrDETAIL($result,'welcome_uv');
+		
+	}
+	//sindex uv
+	public function Sindex_uv()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /index\/sindex/ ) print $7,"[|cut|]",$9}\' | grep -P  "\d{11}" | awk -F "\[\|cut\|\]" \'{if(tolower($2) ~ /window/) $2="else"; else if(tolower($2) ~ /mac /) $2="ios";else if(tolower($2) ~ /android/) $2="android"; else $2="-";print}\' | sort | uniq | awk \'{count[$2]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$sindex_uv);
+		$result = array();
+		
+		foreach ($sindex_uv as $n)
+		{
+			$tep = array();
+			list($tep['sys'],$tep['dtime']) = explode(' ', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'sindex','action'=>'visit','detail'=>'uv','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$result[$tep['sys']] = $tep['dtime'];
+		}		
+		$this->ConArrDETAIL($result,'sindex_uv');
+	}
+	//四个页面pv
+	public function Page_pv()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /station|game|movie|music/) print substr($6,0,index($6,"/")),"[|cut|]",$9}\' | awk -F "\[\|cut\|\]" \'{if(tolower($2) ~ /window/) $2="else"; else if(tolower($2) ~ /mac /) $2="ios";else if(tolower($2) ~ /android/) $2="android"; else $2="-"; print}\' | awk \'BEGIN{OFS="/"}{count[$1"/"$2]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$page_pv);
+		
+		foreach ($page_pv as $n)
+		{
+			$tep = array();
+			list($tep['model'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'action'=>'visit','detail'=>'pv','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$data[$tep['model']][$tep['sys']] = $tep['dtime'];
+		}
+		if($data){
+			$result = array();
+			foreach ($data as $m=>$n)
+			{
+				$result['android'] = $n['android'];
+				$result['ios'] = $n['ios'];
+				$result['else'] = $n['else'];
+				$this->ConArrDETAIL($result,$m.'_pv');
+			}
+		}
+	}
+	//our app 弹窗详情
+	public function TrainAlert_pv()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /record.php/ && tolower($8) ~ /alertdown\/trainapp/) print $8}\' | awk \'BEGIN{FS=OFS="/"}{count[$3"/"$4]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$train_alert);
+		
+		foreach ($train_alert as $n)
+		{
+			$tep = array();
+			list($tep['model'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'action'=>'trainAlert','detail'=>'pv','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$data[$tep['model']][$tep['sys']] = $tep['dtime'];
+		}
+		if($data){
+			$result = array();
+			foreach ($data as $m=>$n)
+			{
+				$result['android'] = $n['android'];
+				$result['ios'] = $n['ios'];
+				$result['else'] = $n['else'];
+				$this->ConArrDETAIL($result,$m.'_alert');
+			}
+		}
+			
+	}
+	//our app 下载uv详情
+	public function TrainDown_uv()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /record.php/ && tolower($8) ~ /downapp\/trainapp/) print $8}\' | awk \'BEGIN{FS=OFS="/"}{count[$3"/"$4]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$train_down);
+		
+		foreach ($train_down as $n)
+		{
+			$tep = array();
+			list($tep['model'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'action'=>'trainDown','detail'=>'uv','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$data[$tep['model']][$tep['sys']] = $tep['dtime'];
+		}
+		if($data){
+		$result = array();
+			foreach ($data as $m=>$n)
+			{
+				$result['android'] = $n['android'];
+				$result['ios'] = $n['ios'];
+				$result['else'] = $n['else'];
+				$this->ConArrDETAIL($result,$m.'_down');
+			}
+		}	
+	}
+	//第三方 app 弹窗详情
+	public function OtherAlert_pv()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /record.php/ && tolower($8) ~ /alertdown/ && tolower($8) ~ /sindex/ && tolower($8) !~ /trainapp/) print $8}\' | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$4]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$app_alert);
+		
+		foreach ($app_alert as $n)
+		{
+			$tep = array();
+			list($tep['detail'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'sindex','action'=>'alert','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$data[$tep['detail']][$tep['sys']] = $tep['dtime'];
+		}
+		if($data){
+			$result = array();
+			foreach ($data as $m=>$n)
+			{
+				$result['android'] = $n['android'];
+				$result['ios'] = $n['ios'];
+				$result['else'] = $n['else'];
+				$this->ConArrDETAIL($result,$m.'_alert');
+			}
+		}
+	}
+	//第三方 app 下载详情
+	public function OtherDown_pv()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /record.php/ && tolower($8) ~ /downapp/ && tolower($8) ~ /sindex/ && tolower($8) !~ /trainapp/) print $8}\' | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$4]++}END{for(name in count)print name,count[name]}\' ';
+		exec($sh,$app_down);
+		
+		foreach ($app_down as $n)
+		{
+			$tep = array();
+			list($tep['detail'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'model'=>'sindex','action'=>'down','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$data[$tep['detail']][$tep['sys']] = $tep['dtime'];
+		}
+		if($data){
+			$result = array();
+			foreach ($data as $m=>$n)
+			{
+				$result['android'] = $n['android'];
+				$result['ios'] = $n['ios'];
+				$result['else'] = $n['else'];
+				$this->ConArrDETAIL($result,$m.'_down');
+			}
+		}
+	}
+	//时长
+	public function StayTime()
+	{
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /record.php/ && tolower($8) ~ /time\/webindexindex|webindexregister|webindexwelcome|webindexsindex|webgameindex|webmovieindex|webmusicindex/) print $8}\' | cut -d "/" -f 2,3,4 | awk \'{if($1 ~ /\?/) $1=substr($1,0,index($1,"?")) substr($1,index($1,"/")); print  }\' | awk \'BEGIN{FS=OFS="/"}{sum[$1"/"$3]+=$2}END{for(name in sum)print name,sum[name]}\' ';
+		exec($sh,$time);
+
+		$sh = $this->CAT_FILE_WEB.' | awk -F "\[\|cut\|\]" \'{if(tolower($6) ~ /record.php/ && tolower($8) ~ /time\/webstation/) print $8}\' | cut -d "/" -f 3,4 | awk \'BEGIN{FS=OFS="/"}{sum[$2]+=$1}END{for(name in sum)print name,sum[name]}\' ';
+		exec($sh,$station);
+		foreach ($station as $v)
+		{
+			$time[] = 'webstation/'.$v;
+		}
+		foreach ($time as $n)
+		{
+			$tep = array();
+			list($tep['model'],$tep['sys'],$tep['dtime']) = explode('/', $n);
+			if($tep['sys'] == '-'){
+				continue;
+			}
+			$tep['sys'] = $this->sys_strtolower($tep['sys']);
+			$tep += array('date'=>$this->DATE,'action'=>'stay','detail'=>'timecore','stationid'=>$this->STATIONID,'from'=>2);
+			$this->Insert($tep);
+			$data[$tep['model']][$tep['sys']] = $tep['dtime'];
+		}
+		if($data){
+			$result = array();
+			foreach ($data as $m=>$n)
+			{
+				$result['android'] = $n['android'];
+				$result['ios'] = $n['ios'];
+				$result['else'] = $n['else'];
+				$this->ConArrDETAIL($result,$m.'_time');
+			}
+		}
+	}
+	/**
+	 * 操作系统格式化
+	 */
+	public function sys_strtolower($sys)
+	{
+		$sys = str_replace('&','',strtolower($sys));
+		if($sys == 'andriod'){
+			$sys = 'android';
+		}
+		return $sys;
+	}
+	/**
+	 * 前置流程写入数据库
+	 */
+	public function IntWebData()
+	{
+		$int = array(
+			'date' => $this->DATE,
+			'stationid' => $this->STATIONID,
+			'main' => json_encode($this->WEB_MAIN),
+			'detail' => json_encode($this->WEB_DETAIL),
+			'counttype' => 2
+		);
+		$this->Insert($int,'rha_webcount');
+	}
+
+	/**
+	 * 组合数据 detail
+	 */
+	private function ConArrDetail(array $data,$name)
+	{
+		$data['name'] = $name;
+		$this->WEB_DETAIL[] = $data;
+	}
+	
+	public function clear()
+	{
+		$this->WEB_MAIN = array();
+		$this->WEB_DETAIL = array();
+	}
+	
+	
+	/**
+	 * 插入数据库
+	 * @param array $data 
+	 * @param string $tb
+	 * @return num : >0 插入成功
+	 */
+	private function Insert($data,$tb='rha_count_record')
+	{
+		foreach ($data as $kt=>$vt)
+		{
+			$key.= "`$kt`,";
+			$var.= "?,";
+		}
+		$key = rtrim($key,',');
+		$var = rtrim($var,',');
+		$in_sql = "Insert Into `$tb`($key) Value ($var);";
+		$sth = $this->db->prepare($in_sql);
+		$sth->execute(array_values($data));
+		return $this->db->lastInsertId();
+		
+	}
+	
+	private function getdb_content()
+	{
+		$db = new PDO($this->dsn_content, $this->dbuser_content, $this->dbpasswd_content);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$db->exec('set names utf8');
+	
+		return $db;
+	}
+	
+	
+}
+
+
+error_reporting(E_ALL^E_NOTICE);
+$obj = new LogDo();
+$stations = $obj->STATIONS;
+$check = $obj->CheckDo();
+foreach ($stations as $k=>$v)
+{
+	if (in_array($v['id'], $check)) {
+		continue;
+	}
+	$obj->setPath($v['logfile'],$v['logname']);
+	$obj->setIpFilter($v['appkey'], $v['ap']);
+	$obj->setStationId($v['id']);
+	
+	$obj->clear();
+	//web
+	$obj->Ad_uv();
+	$obj->Ad_Detail();
+	$obj->Reg_uv();
+	$obj->Reg_verify();
+	$obj->Reg_login();
+	$obj->Welcome_uv();
+	$obj->Sindex_uv();
+	$obj->Page_pv();
+	$obj->TrainAlert_pv();
+	$obj->TrainDown_uv();
+	$obj->OtherAlert_pv();
+	$obj->OtherDown_pv();
+	$obj->StayTime();
+	
+	$obj->IntWebData();
+	
+	$obj->InCheck();
+	
+}

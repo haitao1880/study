@@ -1,0 +1,52 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr>
+                            <th>日 期</th><th>开启抽奖页人数</th><th>注册用户数</th><th>新开启人数</th><th>消耗积分</th><th>获取积分</th><th>第一次获取积分</th>
+                            <th>第二次获取积分</th><th>第三次获取积分</th><th>第四次获取积分</th><th>第五次获取积分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                                <td style="text-align:center;">{{$v.startday}} / {{$v.endday}}</td>
+                                <td style="text-align:center;">{{$v.start_num}}</td>
+                                <td style="text-align:center;">{{$v.new_reg}}</td>
+                                <td style="text-align:center;">{{$v.new_num}}</td>
+                                <td style="text-align:center;">{{$v.cost_points}}</td>
+                                <td style="text-align:center;">{{$v.get_points}}</td>
+                                <td style="text-align:center;">{{$v.first_get_points}}</td>
+                                <td style="text-align:center;">{{$v.second_get_points}}</td>
+                                <td style="text-align:center;">{{$v.third_get_points}}</td>
+                                <td style="text-align:center;">{{$v.fourth_get_points}}</td>
+                                <td style="text-align:center;">{{$v.fifth_get_points}}</td>
+                                
+                            </tr>
+                        {{/foreach}}
+                        <tr>
+                            <td style="text-align:center;"><b>总 计</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$start_num}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$new_reg}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$new_num}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$cost_points}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$get_points}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$first_get_points}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$second_get_points}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$third_get_points}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$fourth_get_points}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$fifth_get_points}}</b></td>
+                            
+                        </tr>
+                        <tr><td colspan="11"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

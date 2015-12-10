@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>TriangulumCMS v1.0 beta - {{if $data.type == 'errors'}}ERROR!{{else}}SUCCESS!{{/if}}</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        
+        <script src="{{$psys_js}}jquery.min.js"></script>  
+        <script type="text/javascript">
+            
+            function pageTipLoad(){
+            
+                var time = {{$data.waitSecond}};
+                setInterval(function(){
+                    $("#jumpSecond").html(time);
+                    time--;
+                    if(time==0){
+                        window.location.href = "{{$data.jumpUrl}}";
+                        return;
+                    }
+                },1000)
+                
+            }
+                  
+        </script>
+    </head>
+<body>
+
+<div class="container-fluid">
+<div class="row-fluid">
+<div class="span12">
+<div class="widget-box">
+<div class="widget-content">
+<div class="error_ex">
+<h4 class="{{$data.type}}">{{if $data.type == 'errors'}}ERROR!{{else}}SUCCESS!{{/if}}</h4>
+<h5 class="{{$data.type}}">{{$data.message}}</h5>
+<p>System will automatically jump in <span id="jumpSecond" class="{{$data.type}}" style="font-weight:bold">{{$data.waitSecond}}</span> seconds, if you do not want to wait, direct click <a class="btn btn-warning btn-big"  href="{{$data.jumpUrl}}">here</a> to jump.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+{{include file="footer.html"}}
+<script language="javascript">
+
+    pageTipLoad();
+
+</script>
+</body>
+</html>

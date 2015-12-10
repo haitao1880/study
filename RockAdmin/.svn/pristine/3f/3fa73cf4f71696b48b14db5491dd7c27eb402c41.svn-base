@@ -1,0 +1,439 @@
+<?php
+class stationController extends Psys_AbstractController
+{
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	
+	//车站列表
+	public function stlistAction()
+	{
+		$model = new Psys_StationModel();
+		$list = $model->getlist('', 'id ASC','', '',"*","rha_station");
+		$this->smarty->assign('list',$list['allrow']);
+		$this->forward = "stlist";
+	}
+	//添加车站
+	public function addAction()
+	{
+		$this->forward = "add";
+	}
+	//处理添加车站
+	public function doAddAction()
+	{
+		$station = reqstr('station');
+		$acfile = reqstr('acfile');
+		$logfile = reqstr('logfile');
+		$logip = reqstr('logip');
+		$ifconf = reqstr('ifconf');
+		$data = array(
+				'stationname' => $station,
+				'acfile' => $acfile,
+				'logfile' => $logfile,
+				'logip' => $logip,
+				'ifconf' => $ifconf,
+		);
+		$model = new Psys_StationModel();
+
+		$re=$model->AddOne($data,"rha_station");
+		
+		$this->smarty->assign('ck',$re?1:0);
+		$this->forward = "opration";	
+	}
+	//车站修改
+	public function editAction()
+	{
+		$id = reqnum('id',0);
+		$model = new Psys_StationModel();
+		$where = array('id'=>$id);
+		$list = $model->GetOne($where,"*","rha_station");
+		$this->smarty->assign('list',$list);
+		
+		$this->forward = "edit";
+	}
+	//处理车站修改
+	public function doEditAction()
+	{
+		$id = reqnum('id',0);
+		$station = reqstr('station');
+		$acfile = reqstr('acfile');
+		$logfile = reqstr('logfile');
+		$logip = reqstr('logip');
+		$ifconf = reqstr('ifconf');
+		$data = array(
+				'stationname' => $station,
+				'acfile' => $acfile,
+				'logfile' => $logfile,
+				'logip' => $logip,
+				'ifconf' => $ifconf,
+		);
+		$model = new Psys_StationModel();
+		$where = array('id' => $id);
+		$re = $model->UpdateOne($data,$where,"rha_station");
+		
+		$this->smarty->assign('ck',$re?1:0);
+		$this->forward = "opration";
+
+	}
+	//车站删除
+	public function delAction()
+	{
+		$id = reqnum('id',0);
+		$this->forward = "del";
+		$model = new Psys_StationModel();
+		$where = array('id' => $id);
+		$re = $model->DeleteOne($where,"rha_station");
+		
+		$this->smarty->assign('ck',$re?1:0);
+		$this->forward = "opration";
+	}
+	//查询记录总数
+	public function totalrows()
+	{
+		$model = new Psys_StationModel();
+		return $model->totalrows();
+	}
+	//注册统计
+	public function regAction()
+	{
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",10);
+		$stationid = reqnum('stationid',1);
+
+		$model = new Psys_StationModel();
+		$stations = $model->station();
+		$data = $model->regCount($page,$pagesize,$stationid);
+		foreach ($data as &$v)
+		{
+			$v += array('date'=>'0','getphonecode'=>'0','submitreg'=>'0','regsuccessios'=>'0','regsuccessandroid'=>'0','regsuccesswp'=>'0','regsuccesselse'=>'0');
+		}
+		$allnum = $this->totalrows();
+		self::inidate($allnum,$page,$pagesize,count($data));
+		
+		$this->smarty->assign('stations',$stations);
+		$this->smarty->assign('stationid',$stationid);
+		$this->smarty->assign('data',$data);
+		$this->forward = 'reg';
+	}
+	//导航点击统计
+	public function navhitAction()
+	{
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",10);
+		$stationid = reqnum('stationid',1);
+		
+		$model = new Psys_StationModel();
+		$stations = $model->station();
+		$data = $model->navhitCount($page,$pagesize,$stationid);
+		foreach ($data as &$v)
+		{
+			$v += array('date'=>'0','inquiries'=>'0','station'=>'0','luggage'=>'0','movie'=>'0','music'=>'0','app'=>'0','game'=>'0');
+		}
+		$allnum = $this->totalrows();
+		self::inidate($allnum,$page,$pagesize,count($data));
+
+		$this->smarty->assign('stations',$stations);
+		$this->smarty->assign('stationid',$stationid);
+		$this->smarty->assign('data',$data);
+		$this->forward = 'navhit';
+	}
+	//页面点击统计
+	public function pagehitAction()
+	{
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",10);
+		$stationid = reqnum('stationid',1);
+		
+		$model = new Psys_StationModel();
+		$stations = $model->station();
+		$data = $model->pagehitCount($page,$pagesize,$stationid);
+		foreach ($data as &$v)
+		{
+			$v += array('date'=>'0','index'=>'0','music'=>'0','movie'=>'0','app'=>'0','game'=>'0');
+		}
+		$allnum = $this->totalrows();
+		self::inidate($allnum,$page,$pagesize,count($data));
+
+		$this->smarty->assign('stations',$stations);
+		$this->smarty->assign('stationid',$stationid);
+		$this->smarty->assign('data',$data);
+		$this->forward = 'pagehit';
+	}
+	//影视统计
+	public function movieAction()
+	{
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",10);
+		$stationid = reqnum('stationid',1);
+	
+		$model = new Psys_StationModel();
+		$stations = $model->station();
+		$data = $model->movieCount($page,$pagesize,$stationid);
+		foreach ($data as &$v)
+		{
+			$v += array('date'=>'0','columns'=>'0','play'=>'0','pause'=>'0','view'=>'0','buffer'=>'0','playbar'=>'0','playall'=>'0');
+		}
+		$allnum = $this->totalrows();
+		self::inidate($allnum,$page,$pagesize,count($data));
+
+		$this->smarty->assign('stations',$stations);
+		$this->smarty->assign('stationid',$stationid);
+		$this->smarty->assign('data',$data);
+		$this->forward = 'movie';
+	}
+	//影视播放详情
+	public function movieDetailAction()
+	{
+		$date = reqstr('date','');
+		$stationid = reqnum('stationid', 1);
+		if(!$date){
+			return array('code'=>0);
+		}
+		$nt = new Psys_StationModel();
+		$list = $nt -> moviePlay($date,$stationid);
+
+		return array('code'=>1,'allrow'=>$list);	
+	}
+	//音乐统计
+	public function musicAction()
+	{
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",10);
+		$stationid = reqnum('stationid',1);
+	
+		$model = new Psys_StationModel();
+		$stations = $model->station();
+		$data = $model->musicCount($page,$pagesize,$stationid);
+		foreach ($data as &$v)
+		{
+			$v += array('date'=>'0','addalbum'=>'0','play'=>'0','pause'=>'0','like'=>'0','addsong'=>'0','addsinger'=>'0','singer'=>'0');
+		}
+		$allnum = $this->totalrows();
+		self::inidate($allnum,$page,$pagesize,count($data));
+
+		$this->smarty->assign('stations',$stations);
+		$this->smarty->assign('stationid',$stationid);
+		$this->smarty->assign('data',$data);
+		$this->forward = 'music';
+	}
+	//音乐播放详情
+	public function musicDetailAction()
+	{
+		$date = reqstr('date','');
+		$stationid = reqnum('stationid', 1);
+		if(!$date){
+			return array('code'=>0);
+		}
+		$nt = new Psys_StationModel();
+		$list = $nt -> musicPlay($date,$stationid);
+
+		return array('code'=>1,'allrow'=>$list);	
+	}
+	//App统计
+	public function appAction()
+	{
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",10);
+		$stationid = reqnum('stationid',1);
+	
+		$model = new Psys_StationModel();
+		$stations = $model->station();
+		$data = $model->appCount($page,$pagesize,$stationid);
+		foreach ($data as &$v)
+		{
+			$v += array('date'=>'0','click'=>'0','down'=>'0','downfinish'=>'0','update'=>'0');
+		}
+		$allnum = $this->totalrows();
+		self::inidate($allnum,$page,$pagesize,count($data));
+		
+		$this->smarty->assign('stations',$stations);
+		$this->smarty->assign('stationid',$stationid);
+		$this->smarty->assign('data',$data);
+		$this->forward = 'app';
+	}
+	//下载详情
+	public function downapkAction()
+	{
+		$date = reqstr('date','');
+		$stationid = reqnum('stationid', 1);
+		if(!$date){
+			return array('code'=>0);
+		}
+		$nt = new Psys_StationModel();
+		$list = $nt -> downapkCount($date,$stationid);
+
+		return array('code'=>1,'allrow'=>$list);	
+	}
+
+	//车站wifi
+	public function aclogAction()
+	{
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",10);
+		$stationid = reqnum('stationid', 1);
+		$nt = new Psys_StationModel();
+		$stations = $nt->station();
+		$list = $nt -> AcList($page, $pagesize,$stationid);
+
+// 		self::inidate($list['allnum'],$page,$pagesize,count($list['allrow']));
+		
+		$this->smarty->assign('stations',$stations);
+		$this->smarty->assign('list',$list['allrow']);
+		$this->smarty->assign('stationid',$stationid);
+		$this->smarty->assign('psys_base_url',PSYS_BASE_URL);
+		$this->forward = "aclog";
+	}
+	//独立访客
+	public function uvisitorAction()
+	{
+		$date = reqstr('date','');
+		$obj = new Psys_StationModel();
+		$data = $obj->uVisitor($date);
+		$this->smarty->assign('totallist',$data);
+		$this->forward = 'uv';
+	}
+	//榜单点击
+	public function albumhitAction()
+	{
+		$date = reqstr('date','');
+		$obj = new Psys_StationModel();
+		$data = $obj->albumHit($date);
+		return $data;
+	}
+	
+	//伙伴每日数据
+	public function everydayAction()
+	{
+		$date = reqstr('date','2015_01_11');
+		$stationid = reqnum('stationid',1);
+		$obj = new Psys_StationModel();
+		$stations = $obj->station();
+		$data = $obj->everyday($date,$stationid);
+		$link = $data['link'] ? $data['link'] : '0';
+		$list = $data['detail'];
+		
+		$this->smarty->assign('stations',$stations);
+		$this->smarty->assign('date',$date);
+		$this->smarty->assign('stationid',$stationid);
+		$this->smarty->assign('link',$link);
+		$this->smarty->assign('list',$list);
+		$this->forward = 'stateTable';
+	}
+	
+	
+	public function webcountAction()
+	{
+		$date = reqstr('date','');
+		$stationid = reqnum('stationid', 1);
+		$obj = new Psys_StationModel();
+		$stations = $obj->station();
+		$data = $obj->webCount($date,$stationid);
+		
+		$this->smarty->assign('stations',$stations);
+		$this->smarty->assign('date',$date);
+		$this->smarty->assign('stationid',$stationid);
+		$this->smarty->assign('totallist',$data);
+		$this->forward = 'list';
+	}
+	
+	public function apkAction()
+	{
+		$date = reqstr('date','');
+		$obj = new Psys_StationModel();
+		$data = $obj->downCount($date);
+	
+		$this->smarty->assign('totallist',$data);
+		$this->forward = 'apk';
+	}
+	
+	//每日分时段
+	function actimeAction()
+	{
+		$date = reqstr('date','');
+		$stationid = reqnum('stationid', 1);
+		if (!$date) {
+			return array('code'=>0);
+		}
+		$nt = new Psys_StationModel();
+		$list = $nt -> AcTime($date,$stationid);
+		
+		return array('code'=>1,'allrow'=>$list);
+		
+	}
+	
+	function aplogAction()
+	{
+		$date = reqstr('date','');
+		$stationid = reqnum('stationid', 1);
+		if (!$date) {
+			return array('code'=>0);
+		}
+		$nt = new Psys_StationModel();
+		$list = $nt -> ApLog($date,$stationid);
+	
+		return array('code'=>1,'allrow'=>$list);
+	
+	}
+	function apdetailAction()
+	{
+		$date = reqstr('date','');
+		$stationid = reqnum('stationid', 1);
+		if (!$date) {
+			return array('code'=>0);
+		}
+		$nt = new Psys_StationModel();
+		$list = $nt -> ApDetail($date,$stationid);
+	
+		return array('code'=>1,'allrow'=>$list);
+	
+	}
+	/**
+	 * 分页数据显示
+	 * @param num $allcount 总条数
+	 * @param num $page
+	 * @param num $pagesize
+	 * @param num $cursize  当前页的数据条数
+	 */
+	private function inidate($allcount,$page,$pagesize,$cursize){
+		$this->smarty->assign('allcount',$allcount);   //总数
+		$allpage = ceil($allcount/$pagesize);
+		$this->smarty->assign('allpage',$allpage);  //总页数
+		$pagesize = ($pagesize%2)?$pagesize:$pagesize+1; //页码取偶数 = 步长
+		$pageoffset =($pagesize-1)/2; //当前页 左右偏移
+		$this->smarty->assign('cur_page',$page); //当前页
+		if($allcount>$pagesize)
+		{
+			//如果当前页小于等于左偏移
+			if($page<=$pageoffset)
+			{
+				$startNum=1;
+				$endNum = $pagesize;
+			}
+			else
+			{//如果当前页大于左偏移
+				//如果当前页码右偏移超出最大分页数
+				if($page+$pageoffset>=$allcount+1)
+				{
+					$startNum = $allcount-$pagesize+1;
+				}
+				else
+				{
+					//左右偏移都存在时的计算
+					$startNum = $page-$pageoffset;
+					$endNum = $page+$pageoffset;
+				}
+			}
+		}
+		else
+		{
+			$startNum=1;
+			$endNum = $allcount;
+		}
+	
+		$this->smarty->assign('startNum',$startNum);  //当前从几开始
+		$this->smarty->assign('endNum',$endNum);  //当前到几结束
+		$this->smarty->assign('sli',(($pagesize*($page-1)+1)));  //当前页的起始第多少条
+		$this->smarty->assign('eli',($pagesize*($page-1)+$cursize));  //当前页最后一条是第多少条
+	}
+}

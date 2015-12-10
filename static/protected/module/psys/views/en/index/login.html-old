@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>login</title>
+        <link rel="stylesheet" href="{{$psys_css}}login.css" />
+        <script type="text/javascript" src="{{$psys_js}}jquery.min.js"></script>
+        <script type="text/javascript" src="{{$psys_js}}script.js"></script>
+        <script language="javascript">
+            $(function(){
+                $("#username").focus();	
+            })
+        </script>
+    </head>
+    <body>
+        <div class="floater"></div>
+        <div class="login">
+            <div class="logo"><img src="{{$psys_img}}login_logo.jpg"/></div>
+            <form action="/index/login" method="post"  >
+                    <dl>
+                        <dt>Username</dt>
+                        <dd>
+                            <input type="text" name="username" id="username" size="20" class="input_box"/>
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>Password</dt>
+                        <dd>
+                            <input type="password" name="password" id="password" size="20" class="input_box"/>
+                        </dd>
+                    </dl>
+                <div class="msg">ERROR:00x001002</div>
+                    <dl>
+                        <dt>&nbsp;</dt>
+                        <dd class="d1">
+                            <a href="#" style="display:none">Forget Password?</a><input name="submit" type="submit" value="login" class="btnInput3" />
+                        </dd>
+                    </dl>
+            </form>
+        </div>
+    </body>
+</html>
+

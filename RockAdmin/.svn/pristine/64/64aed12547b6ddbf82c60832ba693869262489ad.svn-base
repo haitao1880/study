@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>应用游戏下载统计</title>
+<link href="{$psys_css}bootstrap.min.css" rel="stylesheet" type="text/css" >
+<!-- <link href="{$psys_css}style.css" rel="stylesheet" type="text/css" > -->
+<!-- <link rel="stylesheet" type="text/css" href="{$psys_css}paiting/public.css"/>
+<link rel="stylesheet" type="text/css" href="{$psys_css}paiting/flexigrid.css" /> -->
+
+<link rel="stylesheet" type="text/css" href="{$psys_css}paiting/tinybox.css" />
+<link href="{$psys_css}paiting/flexigrid-extent.css" media="all" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="{$psys_js}lib/jquery-boottrap.min.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/tinybox.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/WdatePicker.js"></script>
+
+<script type="text/javascript" src="{$psys_js}lib/bootstrap.min.js"></script> 
+<script type="text/javascript" src="{$psys_js}paiting/highcharts.js"></script>
+<!-- <script type="text/javascript" src="{$psys_js}paiting/highstock.js"></script> -->
+<script type="text/javascript" src="{$psys_js}paiting/exporting.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/export-excel.js"></script>
+
+<script type="text/javascript" src="{$psys_js}paiting/function.js"></script>
+{literal}
+<style type="text/css">
+    .table th,.table td{
+        text-align: center;
+    }
+</style>
+<script type="text/javascript">
+
+$(function(){
+    var data = {};
+        data.ajax = 1;
+        data.data =  $('#form').serialize();
+    $(document).ready(function(){
+        tablewifiinfo(data);
+    });
+    $('#searchs').click(function(){
+        data.data =  $('#form').serialize();
+        data.page = 1;
+        tablewifiinfo(data);
+    });
+    $('#paging').delegate('div','click',function(){
+        data.data =  $('#form').serialize();
+        data.page = $(this).attr('page');
+        tablewifiinfo(data);
+    });
+  
+    $('#tbody').delegate('.detail','click',function(){
+        $.post('/resource/activitydownapp',data,function(res){ 
+            PaiTing('下载详情',-20,'',60,res.x_cat,'下载数',res.y_data,'pie','column');
+            graphpie('wifinum','下载占比',res.y_cat);
+        },'json');
+    });
+
+    function tablewifiinfo(data){
+       $.post('/resource/UserLotteryInfo',data,function(res){
+            //画图
+            PaiTing('抽奖流程统计',-20,'',60,res.x_cat,'下载数',res.y_data,'graph','spline',550);
+
+            //异步表格展示
+            var tr = '';          
+            tr = '<tr class="info">'+
+                        '<td>'+res.table.redpacket+'</td>'+
+                        '<td>'+res.table.activity+'</td>'+
+                        '<td>'+res.table.message+'</td>'+
+                        '<td>'+res.table.question+'</td>'+
+                        '<td>'+res.table.lottery+'</td>'+
+                        '<td style="cursor:pointer;" data-toggle="modal" data-target="#myModal" appid=""  class="detail">查看游戏下载</td>'+
+                  '</tr>';
+
+            $('.table tbody').html(tr);
+            //$('#paging').html(res.paging);
+        },'json');
+    }
+});
+
+</script>
+{/literal}
+</head>
+<body>
+
+<div class="content container-fluid sidebarRight animated fadeInUp">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-6" style="width:100%">
+            <div class="panel panel-pink">
+              <form id="form">
+               <div class="panel-heading" style="float: left;margin-top: 10px;">
+                   <!-- <h3 class="panel-title">时间</h3> -->
+                   <label style="font-size: 16px;">日期：</label>
+               </div>
+               
+                <div class="panel-body" data-toggle="buttons">
+                      
+                    {literal}
+                    <input class="Wdate" type="text" onFocus="WdatePicker()" name="sdate" style="height:30px;line-height: 30px; font-size: 16px;" />&nbsp;&nbsp;TO&nbsp;&nbsp;
+                    <input class="Wdate" type="text" onFocus="WdatePicker()" name="edate" style="height:30px;line-height: 30px; font-size: 16px;" />
+                    {/literal}
+                </div>
+
+                <div class="panel-heading" style="float: left;margin-top: 10px;">
+                   <!-- <h3 class="panel-title">时间</h3> -->
+                   <label style="font-size: 16px;">时间：</label>
+                </div>
+               
+                <div class="panel-body" data-toggle="buttons">
+                      
+                   <select name="time" style="float: left;margin-top: 2px;line-height: 31px;height:31px;">
+                        <option class="reset" value="">可选查询时间段</option>
+                        {for $i = 0 to 23}
+                            {if $i < 10}
+                             <option value="0{$i}">0{$i}点</option>
+                            {else}
+                             <option value="{$i}">{$i}点</option>
+                            {/if}
+                        {/for}
+                    </select>
+                </div>
+
+                <div class="panel-heading" style="float: left;margin-top: 10px;">
+                   <!-- <h3 class="panel-title">时间</h3> -->
+                   <label style="font-size: 16px;">车站：</label>
+                </div>
+               
+                 <div class="panel-body" data-toggle="buttons">
+                    <!-- <label style="font-size: 16px;">时间：</label> -->
+
+                    <button title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips active" type="button" data-original-title="Tooltip on top">
+                        <input type="radio" name="station" value="0">全部
+                    </button>
+                    {foreach $stations as $v}
+                    <button title="" data-placement="left" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="Tooltip on left">
+                        <input type="radio" name="station" value="{$v.id}">{$v.stationname}
+                    </button>
+                   {/foreach}
+                    
+                     
+                </div>
+
+                <div class="panel-heading" style="float: left;margin-top: 10px;">
+                   <!-- <h3 class="panel-title">时间</h3> -->
+                   <label style="font-size: 16px;">类型：</label>
+                </div>
+
+                <div class="panel-body" data-toggle="buttons">
+                    <button title="" data-placement="left" data-toggle="tooltip" class="btn btn-default tooltips active" type="button" data-original-title="Tooltip on left">
+                        <input type="radio" name="type" id="week" value="pv"> 次数（PV）
+                    </button>
+                    <button data-original-title="Tooltip on bottom" title="" data-placement="bottom" data-toggle="tooltip " class="btn btn-default tooltips" type="button">
+                        <input type="radio" name="type" id="month" value="uv">人数(UV)
+                    </button>
+                </div>
+
+                <div class="panel-body">
+                    <section class="btn-group pull-left">
+                         <a target="_blank" class="btn btn-info" id="searchs">搜索</a> 
+                    </section>
+                    
+                </div>
+              </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="content container-fluid sidebarRight animated fadeInUp">
+   <div class="row">
+                
+        <div class="col-md-6" style="width:40%;">
+            <div class="panel panel-purple">
+                <div class="panel-heading">
+                    <h3 class="panel-title"></h3>
+                </div>
+                <div class="panel-body" style="min-height: 500px;">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>红包点击</th>
+                                <th>活动页面</th>
+                                <th>短信发送</th>
+                                <th>问卷调查</th>
+                                <th>抽奖统计</th>
+                                <th>游戏下载</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                          <!--  <tr class="active">
+                                <td>爱奇艺</td>
+                                <td>济南</td>
+                                <td>5</td>                        
+                                <td style="cursor:pointer;" data-toggle="modal" data-target="#myModal" class="detail">详情</td>                       
+                            </tr> -->
+                        </tbody>
+                    </table>
+                   <div class="btn-toolbar" role="toolbar" aria-label="..." id="paging">
+                      
+                  </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-md-6" style="width:60%;">
+            <div class="panel panel-light-orange">
+                <div class="panel-heading">
+                    <h3 class="panel-title"></h3>
+                </div>
+                <div class="panel-body" style="min-height: 500px;" id="graph"> 
+                    
+                </div>
+            </div>
+        </div>
+    
+    </div>
+</div>
+    <!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true" >
+   <div class="modal-dialog" style="min-height: 400px;min-width: 850px;">
+      <div class="modal-content">
+         
+         <div class="modal-body">
+            <div style="min-height: 400px;min-width: 800px;text-align:center;margin:0 auto;border:1px solid #ccc;" id="wifinum"></div>
+            <div style="min-height: 300px;min-width: 800px;text-align:center;margin:0 auto;border:1px solid #ccc;" id="pie"></div>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary" 
+               data-dismiss="modal">关闭
+            </button>
+         </div>
+      </div>
+      <!-- /.modal-content -->
+</div>
+<!-- /.modal -->
+
+
+</body>
+
+</html>
+

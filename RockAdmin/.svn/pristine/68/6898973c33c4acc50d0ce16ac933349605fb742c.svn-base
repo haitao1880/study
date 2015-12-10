@@ -1,0 +1,44 @@
+<!doctype html> 
+<html> 
+<head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>济南铁路局免费Wi-Fi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	{literal}
+	<style>
+		html {font-family: '微软雅黑', arial, helvetica;-webkit-text-size-adjust: none;-webkit-tap-highlight-color:rgba(255,255,255,0);height:100%;width:100%;overflow-x:hidden;}
+		body{-webkit-backface-visibility: hidden;height:100%;width:100%;overflow-x:hidden;}
+		.wrapper{max-width:32rem;overflow-x:hidden;margin: 0 auto;position:relative;width:100%;height:100%;}
+		.overflowH{overflow:hidden;}
+		.header {background:#00B0A6;width:100%;position: relative;height:4rem;line-height:4rem;}
+		.title {color: #fff;font-size: 1.5rem;height: 100%;text-align: center;}
+		.back{height:100%;width: 4rem;left:0px;top:0px;position:absolute;cursor:pointer;text-align:center;/*background: url(../images/icon_back.png) center no-repeat;*/background-size: 30%;}
+		.back img{height:100%;}
+		.newsinfo{padding:1rem;}
+		.newsinfo h3{font-size:1.9rem;text-align:left;margin-top:2rem;}
+		.newsinfo_remark time{display:block;font-size:1.4rem;color:#979898;margin-top: 1.2rem;}
+		.newsinfo_remark span{display:block;font-size:1.4rem;color:#343434;}
+		.newsinfo_content{font-size:1.6rem;text-align:left;color:#343434;margin-top:3rem;line-height:2.5rem;}
+		.newsinfo_content img{margin:auto;width:90%;}
+		.newsinfo_content p{text-align:justify;	-webkit-text-align-last:justify; /*text-indent:2em;chrome 20+*/word-break: break-all;}
+		.light_gray{background-color: #FAFAFA;}
+	</style>
+	{/literal}
+</head>
+<body>
+<div class="wrapper light_gray" pagelevel="2">
+    <div class="header">
+        <div class="back" onclick="javascript:history.back();"></div>
+        <div class="title">新闻详情</div>
+    </div>
+    <div class="newsinfo">
+    	<h3>{$newsinfo.title} </h3>	
+        <div class="newsinfo_remark"><time>{$newsinfo.ctime|date_format:"%Y-%m-%d %H:%I"}</time><span>来源： {$newsinfo.nfrom}</span></div>
+    	
+        <div class="newsinfo_content">
+        	{$newsinfo.content}
+        </div>
+    </div>
+</div>
+</body>
+</html>

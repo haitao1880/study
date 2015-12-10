@@ -1,0 +1,18 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_URI} \.(gif|jpg|png|swf|flv|css|js|mp4|xml|apk|3gp|ogg|mp3|m4a|rar|zip|doc|xls|docx|xlsx|ico|m4u)$
+RewriteRule ^.*$ - [NC,L]
+
+RewriteCond %{REQUEST_FILENAME} -f 
+RewriteRule ^.*$ - [NC,L]
+
+RewriteCond %{REQUEST_URI} ^/([a-z-A-Z]+)/([a-z-A-Z]+)/(\d+)$
+RewriteRule ^.*$ /index.php?prj=psys&act=%2&mod=%1&id=%3 [NC,L]
+
+RewriteCond %{REQUEST_URI} ^/([a-z-A-Z]+)/([a-z-A-Z]+)/([a-z-A-Z]+)$
+RewriteRule ^.*$ /index.php?prj=psys&act=%2&mod=%1&id=%3 [NC,L]
+
+#RewriteCond %{REQUEST_URI} ^/([a-z-A-Z]+)/([a-z-A-Z]+)$
+#RewriteRule ^.*$ /index.php?prj=psys&act=%2&mod=%1 [NC,L]
+
+RewriteRule ^.*$ /index.php [NC,L]

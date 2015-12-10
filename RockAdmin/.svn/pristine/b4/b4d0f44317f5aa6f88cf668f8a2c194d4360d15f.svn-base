@@ -1,0 +1,73 @@
+{include file="include/header.html"}
+{literal}
+<script type="text/javascript">
+
+$(function(){
+    $(document).ready(function(){
+        checkloginfo();
+        var data = {};
+            data.ajax=1;
+        SingleGraph(data,'所有车站7天连接统计','spline','在线人数','/station/wifiweekinfo?ajax=1&isgrahp=1','container');     
+    });
+
+    $('#search').click(function(){
+        var pictype = $('#pictype').val();
+        var data = {};
+            data.ajax=1;
+        SingleGraph(data,'所有车站7天连接统计',pictype,'在线人数','/station/wifiweekinfo?ajax=1&isgrahp=1','container'); 
+    });
+
+});
+
+</script>
+{/literal}
+</head>
+<body>
+
+<table id="flex1" style="display:none"></table>
+<div id="container" style="height:500px;width:1300px;margin:10px auto;border:1px solid #ccc;background:white;">
+<div style="display:none" id="date">{$date}</div>
+
+
+
+</body>
+{literal}
+<script type="text/javascript">
+function checkloginfo(){
+         $("#flex1").flexigrid
+        (
+            {
+
+                url: '/station/wifiweekinfo?ajax=1',
+
+                dataType: 'json',
+                colModel : [
+                    {display: '时间段', name : 'datearea', width : 300, sortable : true, align: 'center'},
+                    {display: 'WIFI连接总人数', name : 'total', width : 300, sortable : true, align: 'center'},
+                    {display: '日均在线人数(d)', name : 'avghour', width : 300, sortable : true, align: 'center'},
+                    {display: '平均在线人数(h)', name : 'avgtop', width : 300, sortable : true, align: 'center'},
+                    {display: '高峰时段在线人数(h)', name : 'maxhour', width : 300, sortable : true, align: 'center'}
+                    
+                    ],
+                buttons : [       
+                    {separator: true}
+                    //{name: 'A', onpress: sortAlpha},
+
+                    ],
+                sortname: "date",
+                sortorder: "desc",
+                usepager: true,
+                title: '所有车站7天连接统计',
+                useRp: true,
+                rp: 10,
+                showTableToggleBtn: true,
+                //onSuccess: stationgraph,
+                // width: document.body.clientWidth ,
+                // height: document.body.clientHeight - 400
+            }
+        ); 
+}
+
+</script>
+{/literal}
+</html>

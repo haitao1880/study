@@ -1,0 +1,80 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr><th>序 号</th><th>手机号码</th><th>用户昵称</th><th>性别</th><th>注册时间</th><th>注册IP</th><th>火车标识</th><th>当前积分</th><th>积分明细</th></tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                            <td style="text-align:center;">{{$v.key}}</td>
+                            <td style="text-align:center;">{{$v.phoneno}}</td><td style="text-align:left;">{{$v.nickname}}</td><td style="text-align:center;">{{$v.sex}}</td>
+                            <td style="text-align:center;">{{$v.regtime|date_format:'%Y-%m-%d %H:%M:%S'}}</td><td style="text-align:center;">{{$v.regip}}</td><td style="text-align:center;">{{$v.trainno}}</td>
+                            <td style="text-align:center;">{{$v.points}}</td>
+                            <td style="text-align:center;">
+                                <div class="btn-group">
+                                    <a href="#choice" data-toggle="modal" onclick="getPointDetails('{{$v.username}}');" class="btn btn-group">查看明细 <span class="caret"></span></a>
+                                </div>
+                            </td>
+                            </tr>
+                        {{/foreach}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:center;">
+    <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default">共 {{$total_num}} 个</button>
+        <button type="button" class="btn btn-default" onclick="searchMember(1)">首页</button>
+        <button type="button" class="btn btn-default" onclick="searchMember({{$pre}})">上一页</button>
+        <button type="button" class="btn btn-default" onclick="searchMember({{$next}})">下一页</button>
+        <button type="button" class="btn btn-default" onclick="searchMember({{$last}})">末页</button>
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span id="currentpage">选择页码</span>
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                {{section name=loop loop=$last}}
+                    <li style="padding:0; margin:0;"><a href="javaScript:void(0)" onclick="searchMember({{$smarty.section.loop.index+1}})">{{$smarty.section.loop.index+1}}</a></li>
+                {{/section}}
+            </ul>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div id="choice" class="modal hide" style="display: none;" aria-hidden="true">
+<div class="modal-header">
+    <h3>积分明细</h3>
+</div>
+<div class="modal-body" id="pointDetails">
+    
+</div>
+<div class="modal-footer">
+    <a class="btn" href="javascript:;" id="Cancel" data-dismiss="modal">关 闭</a>
+</div>
+</div>
+  
+<script type="text/javascript">
+    function getPointDetails(username){
+        $.ajax({
+            type: "POST",
+            url: "/member/ajaxPointDetailsHtml",
+            data: {
+                username:username
+            },
+            dataType: "html",
+            beforeSend:function(XMLHttpRequest){},
+            success: function(data){
+                $("#pointDetails").html(data);
+            }
+        });
+        
+    }
+</script>
+            
+         

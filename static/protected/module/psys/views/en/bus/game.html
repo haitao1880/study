@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-浏览数据统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/style/en/default/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/style/en/default/css/bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="/style/en/default/css/uniform.css" />
+        <link rel="stylesheet" href="/style/en/default/css/select2.css" />
+        <link rel="stylesheet" href="/style/en/default/css/matrix-style.css" />
+        <link rel="stylesheet" href="/style/en/default/css/matrix-media.css" />
+        <link rel="stylesheet" href="/style/en/default/css/font-awesome/css/font-awesome.css" />       
+
+    </head>
+    <body>
+
+    <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> web端数据统计</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 游戏模块数据统计</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <p><b>说 明: </b></p>
+            <p>以下是交运车上游戏模块数据统计，使用时请确保，查询时间段不要过长或车辆不要过多。</p>  
+            <hr>
+            <form id="form">
+                <span class="manyday dateSpan">
+                日期选择：
+                    <input id="d5221" class="Wdate" type="text" onfocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},maxDate:'#F{$dp.$D(\'d5222\',{d:-1})}'})" name="bmanyday">
+                        -
+                    <input id="d5222" class="Wdate" type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:1})}'})" name="emanyday">
+                </span>
+                <hr/>
+        
+                汽车类型: 
+                
+               <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" id="t1" onchange="checkAlls('form','t1')" />全部</a></label> 
+               
+               <p></p>
+               公交：
+               
+               <div id="bus1">
+               
+               <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" id="t2" onchange="checkAlls('bus1','t2')" />全部</a></label>
+               
+               {{foreach $bus1 as $key=>$val}}
+               
+                    <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" name="carid[]" value="{{$val.id}}" />{{$val.number}}</a></label>
+               
+               {{/foreach}}
+               
+               </div>
+               
+               <p></p>
+               长途汽车：
+               
+               <div id="bus2">
+               
+               <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" id="t3" onchange="checkAlls('bus2','t3')" />全部</a></label>
+               
+               {{foreach $bus2 as $key=>$val}}
+               
+                    <label style="display:inline"><a class="btn" style="margin-bottom: 10px;margin-right: 5px;"><input type="checkbox" name="carid[]" value="{{$val.id}}" />{{$val.number}}</a></label>
+               
+               {{/foreach}}
+               
+               </div>
+               
+               <hr/>
+               
+               
+                
+                访问类别: <label style="display:inline"><input type="radio" name="v" checked="checked" value="uv" />UV</label>  &nbsp;&nbsp;&nbsp;&nbsp;  <label style="display:inline"><input type="radio" name="v" value="pv" />PV</label>
+                <p></p>
+                
+                
+                <p>
+                   <span class="btn btn-info am-icon-lg"><i class="icon icon-search"></i>搜索</span> <span class="btn btn-danger am-icon-dc"><i class="icon icon-list-alt"></i>导出</span> 
+                </p>
+                
+            </form>
+            
+            
+            
+            <hr/>
+            
+            <div id="containerTable">
+            
+            </div>
+            
+            <a id="timeerror" href="#mytimeerror" data-toggle="modal" class="hide"></a> 
+            <div id="mytimeerror" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;">请设置查询时间！</p>
+                <a id="timeerror_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+            
+            <a id="carerror" href="#mycarerror" data-toggle="modal" class="hide"></a> 
+            <div id="mycarerror" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;">请选择至少一辆车！</p>
+                <a id="carerror_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+            
+            
+            <a id="loading" href="#myModal" data-toggle="modal" class="hide"></a> 
+            <div id="myModal" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><img src="/style/en/default/img/loading.gif" /></p>
+                <p style="text-align:center;">加载中...</p>
+                <a id="loading_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+        </div>
+    </div>
+    
+<!--Footer-part-->
+<div class="row-fluid">
+  <div id="footer" class="span12"> 2015 &copy; Rorkhippo v1.0 beta </div>
+</div><!--end-Footer-part--> 
+    <script src="/style/en/default/js/jquery.min.js"></script> 
+    <script src="/style/en/default/js/jquery.ui.custom.js"></script> 
+    <script src="/style/en/default/js/bootstrap.min.js"></script> 
+    <script src="/style/en/default/js/jquery.uniform.js"></script> 
+    <script src="/style/en/default/js/select2.min.js"></script> 
+    <script src="/style/en/default/js/jquery.dataTables.min.js"></script> 
+    <script src="/style/en/default/js/DatePicker/datePicker.js"></script>
+    <script src="/style/en/default/js/matrix.js"></script> 
+    <script src="/style/en/default/js/matrix.tables.js"></script>
+    <script src="/style/en/default/js/highcharts.js"></script>
+    <script src="/style/en/default/js/exporting.js"></script>
+    <script src="/style/en/default/js/export-excel.js"></script>
+
+    <script src="/style/en/default/js/function.js"></script>
+    <script src="/style/en/default/js/icheck.min.js"></script>
+    
+
+    
+    <script type="text/javascript"> 
+        $(function(){
+            
+            $(".am-icon-lg").click(function(){
+                
+                if($("#d5221").val() == '' && $("#d5222").val() == ''){
+                    
+                    $("#timeerror").click();
+                    return false;
+                
+                }
+                
+                
+                var carModel=[];
+                
+                 $("[name='carid[]']").each(function () {
+                    if ($(this).prop("checked") == true){
+                        carModel.push($(this).val());
+                    }
+                 });
+                 
+                 if(carModel == ''){
+                    
+                    $("#carerror").click();
+                    return false;
+                
+                }
+                 
+                
+                $.post('/bus/getgamedata',{bmanyday:$("input[name=bmanyday]").val(),emanyday:$("input[name=emanyday]").val(),carid:carModel,v:$("input[name=v]:checked").val(),ios:$("#t3").prop("checked"),android:$("#t4").prop("checked")},function(datas){
+                    $('#containerTable').html(datas);
+                },'html');
+                
+                
+            })
+            
+            $(".am-icon-dc").click(function(){
+                
+                if($("#d5221").val() == '' && $("#d5222").val() == ''){
+                    
+                    $("#timeerror").click();
+                    return false;
+                
+                }
+                
+                var carModel=[];
+                
+                 $("[name='carid[]']").each(function () {
+                    if ($(this).prop("checked") == true){
+                        carModel.push($(this).val());
+                    }
+                 });
+                 
+                 if(carModel == ''){
+                    
+                    $("#carerror").click();
+                    return false;
+                
+                }
+                
+                window.location.href="/bus/getgamedataoutput?bmanyday="+$("input[name=bmanyday]").val()+"&emanyday="+$("input[name=emanyday]").val()+"&carid="+carModel+"&v="+$("input[name=v]:checked").val();
+                
+            })
+            
+        });  
+
+
+        
+
+
+        function loading_func(s){
+            s == 1 ? $("#loading").click() : $("#loading_c").click();
+        }
+    </script>
+    </body>
+</html>
+  

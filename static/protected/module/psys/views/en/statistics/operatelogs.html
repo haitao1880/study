@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>TriangulumCMS v1.0 beta</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+{{include file="header.html"}}
+<!--sidebar-menu-->
+{{include file="menu.html"}}
+<!--close-left-menu-stats-sidebar-->
+
+    <div id="content">
+        {{include file="breadcrumb.html"}}
+        <div class="container-fluid">
+
+            <a class="btn btn-mini btn-info" href="/statistics/index">Statistics Dashboard</a>
+
+
+            <hr/>  
+            
+            <div class="widget-box">
+                <div class="widget-title"> 
+                    <span class="icon"><i class="icon-list"></i></span>
+                    <h5>Operate Logs</h5>
+                </div>
+                <div class="widget-content nopadding">
+                
+                    <form method="post" action="" >
+                    
+                        
+                
+                        <table class="table table-bordered form-horizontal">
+                        
+                            <thead>
+                            
+                                <tr>
+                                
+                                    <td colspan="6"> 
+                                        Search : <input type="text" name="keys" placeholder="Username/Operate" class="span3" />
+                                        <button class="icon-search icon-white btn btn-success" type="submit" data-original-title="Search"></button>
+                                    </td>
+                                
+                                </tr>
+                            
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Status</th>
+                                    <th>User(ID / Name)</th>
+                                    <th>Operate(Controller - Action)</th>
+                                    <th>Values</th>
+                                    <th>Logtime</th>
+                                </tr>
+                            
+                            </thead>
+                            
+                            <tbody>
+                                {{foreach $logslist.allrow as $key=>$val}}
+                                    <tr>
+                                        <td style="text-align:center;">{{$val.id}}</td>
+                                        <td style="text-align:center;">{{if $val.status == 1}}<i class="icon-ok-sign btn-success"></i>{{else}}<i class="icon-remove-sign btn-danger"></i>{{/if}}</td>
+                                        <td style="text-align:center;"><span class="btn-danger">{{$val.userid}}</span> / <span class="btn-danger">{{$val.username}}</span></td>
+                                        <td style="text-align:center;">{{$val.operate}}</td>
+                                        <td><code>{{$val.values|nl2br}}</code></td>
+                                        <td style="text-align:center;">{{$val.logtime|date_format:"%Y-%m-%d %H:%M:%S"}}</td>
+                                    </tr>
+                                {{/foreach}}
+                                
+                                <tr>
+                                
+                                    <td colspan="6">
+
+                                        {{$logslist.pageView}}
+                                    
+                                    </td>
+                                
+                                
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    
+                    </form>
+                    
+                </div>
+            </div>        
+        </div>
+    </div>
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+    </body>
+</html>
+  

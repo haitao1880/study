@@ -1,0 +1,74 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-12 18:01:52
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//station/edit.html" */ ?>
+<?php /*%%SmartyHeaderCode:1641401136548abd109d2bf9-54871161%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '8bf5d79cfb9a672724e77d0abecfe466ec6fbd97' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//station/edit.html',
+      1 => 1418375746,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '1641401136548abd109d2bf9-54871161',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>修改车站</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+</head>
+<body>
+<div style="display: none;" id="isadd">0</div>
+<form action="/station/doEdit" method="POST" enctype="multipart/form-data">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>修改车站</h3>
+  </caption>
+  <tr>
+    <td align="right">车站ID：</td>
+    <td align="left"><input type="text" name="id" readonly="readonly" value="<?php echo $_smarty_tpl->getVariable('list')->value['id'];?>
+"/></td>
+  </tr>
+  <tr>
+    <td align="right">站&nbsp;&nbsp;名：</td>
+    <td align="left"><input type="text" name="station" value="<?php echo $_smarty_tpl->getVariable('list')->value['stationname'];?>
+"/></td>
+  </tr>
+  <tr>
+    <td align="right">AC日志：</td>
+    <td align="left"><input type="text" name="acfile" value="<?php echo $_smarty_tpl->getVariable('list')->value['acfile'];?>
+"/></td>
+  </tr>
+  <tr>
+    <td align="right">车站日志：</td>
+    <td align="left"><input type="text" name="logfile" value="<?php echo $_smarty_tpl->getVariable('list')->value['logfile'];?>
+"/></td>
+  </tr>
+  <tr>
+    <td  align="right">日志IP：</td>
+    <td align="left"><input type="text" name="logip" value="<?php echo $_smarty_tpl->getVariable('list')->value['logip'];?>
+"/></td>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">是否包含IP：</td>
+    <td align="left"><input type="text" name="ifconf" value="<?php echo $_smarty_tpl->getVariable('list')->value['ifconf'];?>
+"/></td>	
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan="2" align="center"><input type="submit" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

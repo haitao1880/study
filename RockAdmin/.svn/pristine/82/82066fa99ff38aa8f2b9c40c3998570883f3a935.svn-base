@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>全屏广告列表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+{literal}
+<style type="text/css">
+.black_box{
+display:none;
+position:absolute;
+top:0;
+left:0;
+width:99.9%;
+height:99.9%;
+}
+.black_box_1{
+position:absolute;
+top:0;
+left:0;
+width:99.9%;
+height:99.9%;
+filter:alpha(opacity=50);  
+      -moz-opacity:0.5;  
+      -khtml-opacity: 0.5;  
+      opacity: 0.5;  
+background:#303030;
+}
+.black_box_2 ul{
+position:absolute;
+z-index:1000;
+border:4px #FFFFFF solid;
+padding:0;
+width:350px;
+margin:auto;
+margin-top:30px;
+background:#FFFFFF;
+cursor:pointer;
+border-radius:3px;
+}
+.black_box_2 ul li{
+list-style:none;
+padding:0;
+margin:0;
+height:155px;
+}
+.black_box_2 ul li img{
+height:155px;
+padding:0;
+margin:0;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+	//浏览窗口偏移到正中
+	var leftWidth = ($(document).width()-400)/2
+	$(".black_box_2").find("ul").css("left",leftWidth+"px");
+	$(".black_box_2").find("ul").click(function(){
+		$(".black_box").css("display","none");
+	});
+	//图片原地址
+	var imgsrc = $(".black_box_2").find("img").eq(0).attr("src");
+	$(".delads").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var id= $(this).attr('fullads_id');
+			$.ajax({
+	            type: "POST",
+	            url: "/ads/deletefullads",
+	            data: {'ajax':1,'ispost':1,'id':id},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('删除成功！');
+						window.location.href = '/ads/fulladsindex';
+					}
+					else
+					{
+						alert('删除失败！');				
+					}
+	            }       
+	        });	
+		}
+	});
+	$(".toggleads").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var id= $(this).attr('fullads_id');
+			var flag= $(this).attr('flag');
+			$.ajax({
+	            type: "POST",
+	            url: "/ads/toggleads",
+	            data: {'ajax':1,'ispost':1,'id':id,'flag':flag},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('审核状态切换成功！');
+						window.location.href = '/ads/fulladsindex';
+					}
+					else
+					{
+						alert('审核状态切换失败！');				
+					}
+	            }       
+	        });	
+		}
+	});
+	//图片浏览
+	$(".imgview").click(function(){
+		for(var i=0;i<4;i++){
+			$(".black_box_2").find("img").eq(i).attr("src","");
+		}
+		var url = $(this).parents().siblings("#id_imgurl").html();
+		var urls = url.split(',');
+		for(var i=0;i<urls.length;i++){
+			$(".black_box_2").find("img").eq(i).attr("src",imgsrc+urls[i]);
+		}
+		$(".black_box").css("display","block");
+	});
+});
+</script>
+{/literal}
+</head>
+<body>
+<form action="/ads/delete" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>全屏广告列表</h4></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>ID</th>
+    <th>广告名称</th>
+    <th>图片地址</th>
+    <th>访问地址</th>
+    <th>广告一位置</th>
+    <th>广告二位置</th>
+    <th>操作</th> 
+</tr>
+{foreach $list as $v}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><input name="id[]" type="checkbox"  value="{$v.id}">{$v.id}</td>
+    <td>{$v.adname}</td>
+    <td id="id_imgurl">{$v.imgurl}</td>
+    <td>{$v.actionurl}</td>
+    <td>{if $v.adsone eq 1}显示{else}不显示{/if}</td>
+    <td>{if $v.adstwo eq 1}显示{else}不显示{/if}</td>
+    <td><a href="/ads/fulladsedit?id={$v.id}">编辑</a>
+    	<a class='delads' fullads_id="{$v.id}">删除</a>
+    	<a class='toggleads' fullads_id="{$v.id}" flag="{$v.flag}">{if $v.flag eq 1} 禁用{else} 发布{/if}</a>
+    	<a href="javascript:;" fullads_id="{$v.id}" class="imgview">图片预览</a>	
+    </td>
+</tr>
+{/foreach}
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+    <li class="del">
+   		<button type="submit" name="submit" class="but">DELETE</button>
+    </li>    
+  </ul>
+</div>
+<div class="black_box">
+	<div class="black_box_1"></div>
+	<div class="black_box_2">
+			<ul>
+				<li><img src="http://bill.wonaonao.com/" class="img_1" width="350"></li>
+				<li><img src="http://bill.wonaonao.com/" class="img_1" width="350"></li>
+				<li><img src="http://bill.wonaonao.com/" class="img_1" width="350"></li>
+				<li><img src="http://bill.wonaonao.com/" class="img_1" width="350"></li>
+			</ul>
+		</div>
+</div>
+</form>
+</body>
+</html>

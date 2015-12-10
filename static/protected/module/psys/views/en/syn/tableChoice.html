@@ -1,0 +1,15 @@
+<form action="{{$action}}" method="post" class="">
+	<p><b>说 明: </b></p>
+	<hr/>
+    <p>请选择表</p>  
+	
+    {{foreach $tbNames as $key=>$v}}
+          	<input name="tableName[]" type="checkbox" value="{{$v.updatetype}}" style="margin-bottom:6px; margin-right:3px;"/>{{$v.updatetype}}&nbsp;
+    {{/foreach}}
+    <p></p>
+    <p>请选择站点</p>  
+    {{foreach $cites as $key=>$c}}
+          	<input name="citeId[]" type="checkbox" value="{{$c.id}}" style="margin-bottom:6px; margin-right:3px;"/>{{$c.citename}}&nbsp;
+    {{/foreach}}
+<input type="hidden" value="1" name="ispost" />
+</form>

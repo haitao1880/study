@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-音乐编辑</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+<style type="text/css">
+input{
+	margin:5px 0;
+}
+#state{
+	margin:0 2px 0 5px;
+}
+</style>
+    </head>
+    <body>
+
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 资源管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 音乐编辑</a>
+            </div>
+        </div>
+        <form class="add">
+		<table class="add-table" width="100%" border="0" cellpadding="0"  >
+		  <caption>
+		  <h3>音乐添加</h3>
+		  </caption>
+		  <tr>
+		    <td width="30%" align="right">选择专辑：</td>
+		    <td width="70%" align="left"><select name="albumid">
+		      <option value="">请选择所属专辑</option>
+		       {{foreach $alist as $av}}
+		       <option value="{{$av.id}}" {{if $av.id eq $info.albumid}}selected="selected"{{/if}} >{{$av.aname}}</option>
+		       {{/foreach}}
+		     </select></td>
+		  </tr>
+		  <tr>
+		    <td align="right">音乐ID：</td>
+		    <td align="left"><input type="text" name="musicid" value="{{$info.musicid}}"/></td>
+		  </tr>
+		  <tr>
+		    <td width="30%" align="right">音乐名称：</td>
+		    <td width="70%" align="left"><input type="text" name="mname" value="{{$info.mname}}"/></td>
+		  </tr>
+		  <tr>
+		    <td align="right">歌手：</td>
+		    <td align="left"><input type="text" name="singer" value="{{$info.singer}}"/></td>
+		  </tr>
+		    <tr>
+		    <td width="30%" align="right">排序：</td>
+		    <td width="70%" align="left"><input type="text"  name="sortid" value="{{$info.sortid}}"/></td>
+		  </tr>
+		  <tr>
+		    <td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+		    <td width="70%" align="left">
+		    	<input id="state" class="check-box" name="flag" type="radio" value="1" {{if $info.flag eq 1}}checked{{/if}}>显示
+		        <input id="state" class="check-box" name="flag" type="radio" value="0" {{if $info.flag eq 0}}checked{{/if}}>隐藏
+		    </td>
+		  </tr>
+		   <tr>
+		    <td width="30%" align="right">点击：</td>
+		    <td width="70%" align="left"><input type="text"  name="hits" value="{{$info.hits}}"/></td>
+		  </tr>
+		     <tr>
+		    <td width="30%" align="right">价钱：</td>
+		    <td width="70%" align="left"><input type="text"  name="price" value="{{$info.price}}"/></td>
+		  </tr>
+		       <tr>
+		    <td width="30%" align="right">路径：</td>
+		    <td width="70%" align="left"><input type="text"  name="mpath" value="{{$info.mpath}}"/></td>
+		  </tr>
+		  <tr>
+		    <td colspan="2" align="center"><input type="hidden" name="id" value="{{$info.id}}"/><input type="button" id="btnSave" value="保 存"/></td>
+		  </tr>
+		</table>
+		</form>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+	<script>
+    $(document).ready(function(){
+    	$('.submenu > a').click(function(e)
+    			{
+    				e.preventDefault();
+    				var submenu = $(this).siblings('ul');
+    				var li = $(this).parents('li');
+    				var submenus = $('#sidebar li.submenu ul');
+    				var submenus_parents = $('#sidebar li.submenu');
+    				if(li.hasClass('open'))
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenu.slideUp();
+    					} else {
+    						submenu.fadeOut(250);
+    					}
+    					li.removeClass('open');
+    				} else 
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenus.slideUp();			
+    						submenu.slideDown();
+    					} else {
+    						submenus.fadeOut(250);			
+    						submenu.fadeIn(250);
+    					}
+    					submenus_parents.removeClass('open');		
+    					li.addClass('open');	
+    				}
+    			});
+    	$('#btnSave').click(function(){
+    		var mname = $.trim($("input[name='mname']").val());
+    		var albumid = $.trim($("select[name='albumid']").val());
+    		var musicid = $.trim($("input[name='musicid']").val());
+    		var singer  = $.trim($("input[name='singer']").val());
+    		var sortid = $.trim($("input[name='sortid']").val());
+    		var hits = $.trim($("input[name='hits']").val());
+    		var flag = $.trim($("input[name='flag']").val());
+    		var price = $.trim($("input[name='price']").val());
+    		var mpath = $.trim($("input[name='mpath']").val());
+    		
+    		var id = $.trim($("input[name='id']").val());
+    		if(mname == '')
+    		{
+    			alert('请输入音乐名');
+    			return;
+    		}
+    		
+    		//其他验证
+    		$.post(
+    			'/res/updatemusic',
+    			{'ispost':1,'ajax':1,'mname':mname,'albumid':albumid,'musicid':musicid,'singer':singer,'hits':hits,'flag':flag, 'sortid': sortid,'price':price,'mpath': mpath,'id':id},
+    			function(res){
+    				if(res.result == 'SUCCESS')
+    				{
+    					if(confirm('编辑成功，点击确定继续添加，点击取消返回列表'))
+    					{
+    						$("input").val('');
+    						
+    					}else{
+    						document.location.href = '/res/mlist';
+    					}
+    				}
+    				else
+    				{
+    					alert(res.msg+'('+res.msgcode+')');
+    				}
+    			},
+    			'json'
+    		);
+    		
+    	});
+    })
+    </script>
+    </body>
+</html>

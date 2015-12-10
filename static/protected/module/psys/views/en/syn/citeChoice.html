@@ -1,0 +1,9 @@
+<form action="{{$action}}" method="post" class="">
+	<p><b>说 明: </b></p>
+    <p>请选择服务器进行同步。</p>  
+
+    {{foreach $tree as $key=>$v}}
+          	<input name="citeId[]" type="checkbox" value="{{$v.id}}" style="margin-bottom:6px; margin-right:3px;"/>{{$v.citename}}&nbsp;
+    {{/foreach}}
+<input type="hidden" value="1" name="ispost" />
+</form>

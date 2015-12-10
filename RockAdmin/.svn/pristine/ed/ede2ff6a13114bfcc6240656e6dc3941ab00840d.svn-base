@@ -1,0 +1,141 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-15 12:19:24
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//account/index.html" */ ?>
+<?php /*%%SmartyHeaderCode:1352903243548e614c7e0713-14055714%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '643eb76a424a64d0d6f77f665778aa191ce36067' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//account/index.html',
+      1 => 1407132458,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '1352903243548e614c7e0713-14055714',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+public.css" />
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+</head>
+<body>
+<form action="/account/del" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h3>用户列表</h3></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>ID</th>
+    <th>帐号</th>
+    <th>姓名</th>
+    <th>公司</th>
+    <th>部门</th>
+    <th>状态</th>
+    <th>权限</th>
+    <th>操作</th> 
+</tr>
+<?php  $_smarty_tpl->tpl_vars['v'] = new Smarty_Variable;
+ $_From = $_smarty_tpl->getVariable('list')->value; if (!is_array($_From) && !is_object($_From)) { settype($_From, 'array');}
+if ($_smarty_tpl->_count($_From) > 0){
+    foreach ($_From as $_smarty_tpl->tpl_vars['v']->key => $_smarty_tpl->tpl_vars['v']->value){
+?>
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><input name="id[]" type="checkbox"  value="<?php echo $_smarty_tpl->tpl_vars['v']->value['id'];?>
+"><?php echo $_smarty_tpl->tpl_vars['v']->value['id'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['username'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['realname'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['corp'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['depart'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['flag'];?>
+</td>
+     <td><?php echo $_smarty_tpl->tpl_vars['v']->value['qxlist'];?>
+</td>
+    <td><?php if ($_smarty_tpl->tpl_vars['v']->value['id']!=1){?><a href="/account/edit?id=<?php echo $_smarty_tpl->tpl_vars['v']->value['id'];?>
+">编辑</a> <a href="/account/del?id=<?php echo $_smarty_tpl->tpl_vars['v']->value['id'];?>
+">删除</a><?php }else{ ?>系统帐号<?php }?></td>
+</tr>
+<?php }} ?>
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+<?php if ($_smarty_tpl->getVariable('cur_page')->value>1){?>
+  <li class="previous"><a href="?page=<?php echo $_smarty_tpl->getVariable('cur_page')->value-1;?>
+">&laquo;Previous</a></li>
+<?php }else{ ?>
+  <li class="previous-off"> &laquo;Previous</li>
+<?php }?>
+	<?php if ($_smarty_tpl->getVariable('endNum')->value<$_smarty_tpl->getVariable('allpage')->value){?>	
+         <?php $_smarty_tpl->tpl_vars['p'] = new Smarty_Variable;$_smarty_tpl->tpl_vars['p']->step = 1;$_smarty_tpl->tpl_vars['p']->total = (int)ceil(($_smarty_tpl->tpl_vars['p']->step > 0 ? $_smarty_tpl->getVariable('endNum')->value+1 - ($_smarty_tpl->getVariable('startNum')->value) : $_smarty_tpl->getVariable('startNum')->value-($_smarty_tpl->getVariable('endNum')->value)+1)/abs($_smarty_tpl->tpl_vars['p']->step));
+if ($_smarty_tpl->tpl_vars['p']->total > 0){
+for ($_smarty_tpl->tpl_vars['p']->value = $_smarty_tpl->getVariable('startNum')->value, $_smarty_tpl->tpl_vars['p']->iteration = 1;$_smarty_tpl->tpl_vars['p']->iteration <= $_smarty_tpl->tpl_vars['p']->total;$_smarty_tpl->tpl_vars['p']->value += $_smarty_tpl->tpl_vars['p']->step, $_smarty_tpl->tpl_vars['p']->iteration++){
+$_smarty_tpl->tpl_vars['p']->first = $_smarty_tpl->tpl_vars['p']->iteration == 1;$_smarty_tpl->tpl_vars['p']->last = $_smarty_tpl->tpl_vars['p']->iteration == $_smarty_tpl->tpl_vars['p']->total;?>
+                
+                     <?php if ($_smarty_tpl->getVariable('cur_page')->value==$_smarty_tpl->tpl_vars['p']->value){?>
+                     <li class="active"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</li>
+                     <?php }else{ ?>
+                     <li><a href="?page=<?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</a></li> 
+                     <?php }?>
+                   
+          <?php }} ?> 
+     <?php }else{ ?>
+        <?php $_smarty_tpl->tpl_vars['p'] = new Smarty_Variable;$_smarty_tpl->tpl_vars['p']->step = 1;$_smarty_tpl->tpl_vars['p']->total = (int)ceil(($_smarty_tpl->tpl_vars['p']->step > 0 ? $_smarty_tpl->getVariable('allpage')->value+1 - ($_smarty_tpl->getVariable('startNum')->value) : $_smarty_tpl->getVariable('startNum')->value-($_smarty_tpl->getVariable('allpage')->value)+1)/abs($_smarty_tpl->tpl_vars['p']->step));
+if ($_smarty_tpl->tpl_vars['p']->total > 0){
+for ($_smarty_tpl->tpl_vars['p']->value = $_smarty_tpl->getVariable('startNum')->value, $_smarty_tpl->tpl_vars['p']->iteration = 1;$_smarty_tpl->tpl_vars['p']->iteration <= $_smarty_tpl->tpl_vars['p']->total;$_smarty_tpl->tpl_vars['p']->value += $_smarty_tpl->tpl_vars['p']->step, $_smarty_tpl->tpl_vars['p']->iteration++){
+$_smarty_tpl->tpl_vars['p']->first = $_smarty_tpl->tpl_vars['p']->iteration == 1;$_smarty_tpl->tpl_vars['p']->last = $_smarty_tpl->tpl_vars['p']->iteration == $_smarty_tpl->tpl_vars['p']->total;?>
+                
+                     <?php if ($_smarty_tpl->getVariable('cur_page')->value==$_smarty_tpl->tpl_vars['p']->value){?>
+                     <li class="active"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</li>
+                     <?php }else{ ?>
+                     <li><a href="?page=<?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</a></li> 
+                     <?php }?>
+                   
+          <?php }} ?>     
+     <?php }?>     
+        
+<?php if ($_smarty_tpl->getVariable('cur_page')->value<$_smarty_tpl->getVariable('allpage')->value){?>
+    <li class="next">
+    <a href="?page=<?php echo $_smarty_tpl->getVariable('cur_page')->value+1;?>
+">Next &raquo;</a>
+    </li>
+<?php }else{ ?>
+    <li class="next-off">
+    Next &raquo;
+    </li>
+<?php }?>
+   <li class="next">
+    <a href="?page=<?php echo $_smarty_tpl->getVariable('allpage')->value;?>
+">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   <?php echo $_smarty_tpl->getVariable('cur_page')->value;?>
+/<?php echo $_smarty_tpl->getVariable('allpage')->value;?>
+ Page
+    </li>
+    <li class="del">
+   		<button type="submit" name="submit" class="but">DELETE</button>
+    </li>    
+  </ul>
+</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<form action="{{$action}}" method="post" class="">
+<div class="control-group">
+    <label class="control-label">菜单名称 :</label>
+    <div class="controls">
+        <input type="text" class="span6"  value="{{$last.name}}"  placeholder="菜单名称" name="name" />
+    </div>
+</div>
+<div class="control-group">
+     <label class="control-label">地址 :</label>
+     <div class="controls">
+         <input type="text" class="span6"  value="{{$last.action}}"  placeholder="地址" name="action" />
+     </div>
+ </div>
+ <div class="control-group">
+     <label class="control-label">图片样试 :</label>
+     <div class="controls">
+         <input type="text" class="span6"  value="{{$last.class}}"  placeholder="图片样试" name="class" />
+     </div>
+ </div>
+<div class="control-group">
+	<label class="control-label">父id :</label>	
+    <select name="pid">
+      	<option value="0">根目录</option>
+      {{foreach $all as $k=>$v}}    
+      　		<option value="{{$v.id}}" {{if $v.id eq $last.pid}}selected{{/if}} style="color:red">{{$v.name}}</option>
+      	 {{foreach $v['submenu'] as $sk=>$sv}}
+	      	<option value="{{$sv.id}}" {{if $sv.id eq $last.pid}}selected{{/if}}>&nbsp;--{{$sv.name}}</option>
+	     {{/foreach}}
+      {{/foreach}}
+    </select>
+</div>
+<input type="hidden" value="{{$last.id}}" name="id" />
+<input type="hidden" value="1" name="ispost" />
+</form>
+

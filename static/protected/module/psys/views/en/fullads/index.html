@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-浏览数据统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+<style type="text/css">
+.carTr:hover{
+	background:#417eb7;
+}
+</style>
+    </head>
+    <body>
+
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 广告管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 全屏广告</a>
+            </div>
+        </div>
+        <table class="hovertable" width="100%" border="1" cellpadding="0" cellspacing="1" bgcolor="#417eb7" bordercolor="#417eb7">
+<caption><h4>车站全屏广告列表</h4></caption>
+<tr bgcolor="#417eb7" class="carTr">
+    <form method="post" action="/fullads/index" enctype="multipart/form-data">
+	    <td></td>
+	    <td>
+	   		<select name="appkey" style="height:27px; width:150px;">
+	   			<option value="" {{if $appkey eq ''}} selected {{/if}}>所有站</option>
+	   		 	{{foreach $stations as $key=>$v}}
+	   		 	<option value="{{$v.appkey}}" {{if $appkey eq $key}} selected {{/if}}>{{$v.name}}</option> 
+				{{/foreach}}
+    		</select> 
+	    </td>
+	    <td>
+	      <input type="submit" value="查询" />
+	    </td>
+	    <td></td>
+    </form> 
+</tr>
+<tr class="table-head" bgcolor="#2d68a0">
+    <th>车站名</th>
+    <th>广告一</th>
+    <th>广告二</th>
+    <th>操作</th> 
+</tr>
+{{foreach $list as $key=>$v}}
+<tr class="tbody" bgcolor="#FFFFFF">
+    <td>{{$key}}:{{$v.name}}</td>
+    <td>{{$v.adsone}}</td>
+    <td>{{$v.adstwo}}</td>
+    <td><a href="/fullads/edit/{{$v.id}}">编辑</a> <a href="/ads/adsallot/">广告分配</a><a class='toggleads' stationads_id="{{$v.id}}" flag="{{$v.flag}}">{{if $v.flag eq 1}} 禁用{{else}} 通过{{/if}}</a></td>
+</tr>
+{{/foreach}}
+</table>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script type="text/javascript">
+$(document).ready(function(){
+	$('.submenu > a').click(function(e)
+			{
+				e.preventDefault();
+				var submenu = $(this).siblings('ul');
+				var li = $(this).parents('li');
+				var submenus = $('#sidebar li.submenu ul');
+				var submenus_parents = $('#sidebar li.submenu');
+				if(li.hasClass('open'))
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenu.slideUp();
+					} else {
+						submenu.fadeOut(250);
+					}
+					li.removeClass('open');
+				} else 
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenus.slideUp();			
+						submenu.slideDown();
+					} else {
+						submenus.fadeOut(250);			
+						submenu.fadeIn(250);
+					}
+					submenus_parents.removeClass('open');		
+					li.addClass('open');	
+				}
+			});
+	
+	$(".delads").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var id= $(this).attr('stationads_id');
+			$.ajax({
+	            type: "POST",
+	            url: "/fullads/delete",
+	            data: {'ajax':1,'ispost':1,'id':id},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('删除成功！');
+						window.location.href = '/fullads/index';
+					}
+					else
+					{
+						alert('删除失败！');				
+					}
+	            }       
+	        });	
+		}
+		});
+	$(".toggleads").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var id= $(this).attr('stationads_id');
+			var flag= $(this).attr('flag');
+			$.ajax({
+	            type: "POST",
+	            url: "/fullads/toggleads",
+	            data: {'ajax':1,'ispost':1,'id':id,'flag':flag},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('审核状态切换成功！');
+						window.location.href = '/fullads/index';
+					}
+					else
+					{
+						alert('审核状态切换失败！');				
+					}
+	            }       
+	        });	
+		}
+		});
+});
+</script>
+    </body>
+</html>

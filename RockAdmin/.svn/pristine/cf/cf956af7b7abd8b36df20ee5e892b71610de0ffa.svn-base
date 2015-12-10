@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>站台修改添加</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+{literal}
+<script language="javascript" type="text/javascript">
+$(document).ready(function(){
+	$("#fm input").change(function(){
+		 var filename = '';
+		 var files = this.files;
+		 $.each(files, function(i, file){     
+			filename = filename ? filename+','+file.name : file.name;
+		 });
+		 $("#headpath_tips").text('已选择图片：'+filename);
+	});
+	$("#imgs input").change(function(){
+		 var filename = '';
+		 var files = this.files;
+		 $.each(files, function(i, file){     
+			filename = filename ? filename+','+file.name : file.name;
+		 });
+		 $("#imgs_tips").text('已选择图片：'+filename);
+	});
+	$("#map input").change(function(){
+		 var filename = '';
+		 var files = this.files;
+		 $.each(files, function(i, file){     
+			filename = filename ? filename+','+file.name : file.name;
+		 });
+		 $("#mapimg_tips").text('已选择图片：'+filename);
+	});
+	$("#fm_action").click(function(){
+		var filename = $("#headpath_tips").text();
+		if(filename == '')
+		{
+			alert("请选择上传图片");
+		}
+		else
+		{
+			$("#fm").submit();
+		}
+	});
+	$("#imgs_action").click(function(){
+		var filename = $("#imgs_tips").text();
+		if(filename == '')
+		{
+			alert("请选择上传图片");
+		}
+		else
+		{
+			$("#imgs").submit();
+		}
+	});
+	$("#map_action").click(function(){
+		var filename = $("#mapimg_tips").text();
+		if(filename == '')
+		{
+			alert("请选择上传图片");
+		}
+		else
+		{
+			$("#map").submit();
+		}
+	});
+	
+ });
+function callbackFunction(str)
+{
+	var jsonobj=eval('('+str+')');
+	if(jsonobj.result == 'success')
+	{
+		$("input[name='"+jsonobj.whe+"']").val(jsonobj.img_name);
+		$("#"+jsonobj.whe+"_tips").css('color','green').text(jsonobj.msg);
+	}
+	else
+	{
+		$("#"+jsonobj.whe+"_tips").css('color','red').text(jsonobj.msg);
+	}
+}
+
+</script>
+<style type="text/css">
+*
+{
+	margin:0px;
+	padding:0px;
+	border:0px;
+}
+#wrap
+{
+	position:relative;
+	width:1400px;
+}
+#addform table tr td input
+{
+	height:26px;
+}
+
+
+#addform table tr td label span
+{
+	border:1px solid gray;
+	margin-left:20px;
+	padding:5px;
+	font-size:16px;
+}
+#img_form input
+{
+	width:74px;
+	filter: alpha(opacity : 0);
+	opacity: 0;
+}
+#fm,#imgs,#map
+{
+	position:absolute;
+	left:685px;
+}
+#fm
+{
+	top:279px;
+}
+#imgs
+{
+	top:324px;
+}
+#map
+{
+	top:234px;
+}
+#mapimg_tips,#imgs_tips,#headpath_tips
+{
+	margin-left:10px;
+}
+textarea
+{
+	border:1px solid rgb(169, 169, 169);
+	width: 400px;
+	height: 100px;
+	max-width: 400px;
+	max-height: 100px;
+	margin-top:15px;
+}
+</style>
+{/literal}
+</head>
+<body>
+	<div id="wrap">
+		<form class="add" id="addform" action="/trip/cityEdit" method="POST" enctype="multipart/form-data">
+			<table class="add-table" width="100%" border="0" cellpadding="0">
+				<caption>
+					<h1>城市简介编辑</h1>
+				</caption>
+				<tr>
+					<td width="30%" align="right">站点名：</td>
+					<td width="70%" align="left"><input type="text" name="cityname" value="{$data_station.cityname}"/></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">城市名：</td>
+					<td width="70%" align="left"><input type="text" name="name" value="{$data_station.city.name}"/></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">站点图片：</td>
+					<td width="70%" align="left"><input type="text"	name="mapimg"  value="{$data_station.city.mapimg}" /><label><span>选择图片</span><span id="map_action">图片上传</span></label><span id="mapimg_tips"></span></td>
+				</tr>
+				
+				<tr>
+					<td width="30%" align="right">城市封面：</td>
+					<td width="70%" align="left"><input type="text" name="headpath" value="{$data_station.city.headpath}"><label><span>选择图片</span><span id="fm_action">图片上传</span></label><span id="headpath_tips"></span></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">城市图片集：</td>
+					<td width="70%" align="left"><input type="text" name="imgs" value="{$data_station.city.imgs}"/><label><span>选择图片</span><span id="imgs_action">图片上传</span></label><span id="imgs_tips"></span></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">最佳浏览时段：</td>
+					<td width="70%" align="left"><input type="text" name="besttime"  value="{$data_station.city.besttime}" /></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">城市简介：</td>
+					<td width="70%" align="left"><textarea></textarea></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">备注：</td>
+					<td width="70%" align="left"><input type="text"	name="remark"  value="{$data_station.city.remark}" /></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+					<td width="70%" align="left">
+						<input id="state" class="check-box" name="flag" type="radio" value="1" {if $citys.flag == 1}checked{/if}><label>正常</label>
+						<input id="state" class="check-box" name="flag" type="radio" value="0" {if $citys.flag == 0}checked{/if}><label>停用</label>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<input type="hidden" name="station_id" value="{$data_station.id}" />
+						<input type="hidden" name="city_id"  value="{$data_station.city.id}" />
+						<input type="button" id="btnSave" value="保 存" />
+					</td>
+				</tr>
+			</table>
+		</form>
+		<div id="img_form">
+			<form id="fm" action="/trip/upload" target="img_iframe" method="post" enctype= "multipart/form-data"><input type="hidden" name="whe" value="headpath" /><input type="hidden" name="type" value="1" /><input type="file" name='file[]' ></form>
+			<form id="imgs" action="/trip/upload" target="img_iframe" method="post" enctype= "multipart/form-data"><input type="hidden" name="whe" value="imgs" /><input type="hidden" name="type" value="1" /><input type="file" name='file[]' multiple="multiple"></form>
+			<form id="map" action="/trip/upload" target="img_iframe" method="post" enctype= "multipart/form-data"><input type="hidden" name="whe" value="mapimg" /><input type="hidden" name="type" value="1" /><input type="file" name='file[]'></form>
+			<iframe name="img_iframe"></iframe>
+		</div>
+	</div>
+	
+	{literal}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("input[name='name']").blur(function(){
+				var name = $(this).val();
+				$.ajax({
+		            type: "POST",
+		            url: "/trip/citysearch",
+		            data: {'ajax':1,'name':name},
+		            dataType: "json",
+		            success: function(data){
+						if(data.result == 'SUCCESS')
+						{
+							$("input[name='mapimg']").val(data.city.mapimg);
+							$("input[name='headpath']").val(data.city.headpath);
+							$("input[name='imgs']").val(data.city.imgs);
+							$("input[name='besttime']").val(data.city.besttime);
+							$("input[name='cityinfo']").val(data.city.cityinfo);
+							$("input[name='remark']").val(data.city.remark);
+							$("input[name='city_id']").val(data.city.id);
+						}
+						else
+						{
+							$("input[name='mapimg']").val('');
+							$("input[name='headpath']").val('');
+							$("input[name='imgs']").val('');
+							$("input[name='besttime']").val('');
+							$("input[name='cityinfo']").val('');
+							$("input[name='remark']").val('');
+							$("input[name='city_id']").val('');
+						}
+		            }       
+		        });				
+				});
+			
+			$("#btnSave").click(function(){
+				var station_id = $("input[name='station_id']").val();
+				var city_id = $("input[name='city_id']").val();
+				var name = $("input[name='name']").val();
+				var trainid = $("input[name='cityname']").val();
+				var headpath = $("input[name='headpath']").val();
+				var imgs = $("input[name='imgs']").val();
+				var cityinfo = $("textarea").val();
+				var besttime = $("input[name='besttime']").val();
+				var mapimg = $("input[name='mapimg']").val();
+				var remark = $("input[name='remark']").val();
+				var state = $("input[name='flag']:checked").val();
+
+				if(!name)
+				{
+					alert('请输入站点名！');return;
+				}
+				if(!trainid)
+				{
+					alert('请选择站点所属城市！');return;
+				}
+				if(!headpath)
+				{
+					alert('请上传城市封面图片！');return;
+				}
+				if(!imgs)
+				{
+					alert('请上传城市图片集！');return;
+				}
+				if(!cityinfo)
+				{
+					alert('请编辑城市简介！');return;
+				}
+				if(!besttime)
+				{
+					alert('请输入最佳旅游时段！');return;
+				}
+				if(!mapimg)
+				{
+					alert('请上传站点图片！');return;
+				}
+				$.ajax({
+		            type: "POST",
+		            url: "/trip/citydetailupdate",
+		            data: {'ajax':1,'ispost':1,'station_id':station_id,'city_id':city_id,'name':name,'trainid':trainid,'headpath':headpath,'imgs':imgs,'cityinfo':cityinfo,'besttime':besttime,'mapimg':mapimg,'remark':remark,'state':state},
+		            dataType: "json",
+		            success: function(data){
+			            alert(data.result);return;
+						if(data.result == 'SUCCESS')
+						{
+							alert('编辑成功');
+						}
+						else
+						{
+							alert('编辑失败');
+						}
+		                }             
+		        });
+
+
+				
+				});
+			});
+	</script>
+	{/literal}
+
+</body>
+</html>

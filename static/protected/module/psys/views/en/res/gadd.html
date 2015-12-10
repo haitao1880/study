@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>后台游戏添加</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}swfupload/swfupload.js"></script>
+<script type="text/javascript" src="{$psys_js}swfuploadjs/swfupload.queue.js"></script>
+<script type="text/javascript" src="{$psys_js}swfuploadjs/fileprogress.js"></script>
+<script type="text/javascript" src="{$psys_js}swfuploadjs/handlers.js"></script>
+
+<link type="text/css" rel="stylesheet" href="{$psys_css}swfupload.css">
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+
+<style type="text/css">
+.file-box {
+	position: relative;
+	width: 340px
+}
+
+.txt {
+	height: 22px;
+	border: 1px solid #cdcdcd;
+	width: 180px;
+}
+
+.btn {
+	background-color: #FFF;
+	border: 1px solid #CDCDCD;
+	height: 24px;
+	width: 70px;
+}
+
+.file {
+	position: absolute;
+	top: 0;
+	right: 80px;
+	height: 24px;
+	filter: alpha(opacity : 0);
+	opacity: 0;
+	width: 260px
+}
+#appishiden{
+	display: none;
+}
+.ios{
+	display:none;
+}
+.android
+{
+	display:none;
+}
+.not{
+	color:red;
+}
+</style>
+</head>
+<body>
+
+	<form class="add" id="addfrom" action="/res/uploadfile" method="POST" enctype="multipart/form-data">
+		<table class="add-table" width="100%" border="0" cellpadding="0">
+			<caption>
+				<h3>新增游戏信息</h3>
+			</caption>
+			<tr>
+				<td align="right">APP类型：</td>
+				<td align="left">
+					<select id="appcol" name="appcol">
+							<option value="1">游戏</option>
+							<option value="2">应用</option>
+					</select>
+					<select id="typeinfo" name="typeinfo">
+							<option value="其他">其他</option>
+							<option value="动作">动作</option>
+							<option value="跑酷">跑酷</option>
+							<option value="消除">消除</option>
+							<option value="网游RPG">网游RPG</option>
+							<option value="网络浏览">网络浏览</option>
+					</select>
+				</td>
+			</tr>
+			<tr id="appishiden">
+				<td width="30%" align="right">运营商编号：</td>
+				<td width="70%" align="left"><input type="text" id="appid" name="appid" value="" /></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">APP名称：</td>
+				<td width="70%" align="left"><input type="text" name="appname" placeholder="请输入APP名称" /><span class="not">&nbsp;*</span></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">开发商：</td>
+				<td width="70%" align="left"><input type="text" name="develop" id="develop" placeholder="请输入开发商" /></td>
+			</tr>
+			<tr><td align="right" style="font-size:12px">温馨提示：&nbsp;</td><td style="font-size:12px" align="left"><span>请选择规格150*150或者等比例规格图片上传</span></td></tr>
+			<tr>
+				<td align="right">logo：</td>
+				<td align="left">
+					<div class="file-box"  style="position:relative">
+						<input type="text" name="logoimg" id="logoimg" readonly style="height:24px"/><span class="not">&nbsp;*</span>
+						<div class="fieldset flash" id="logoProgress">
+							<span class="legend">快速上传</span>
+						</div>
+					
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="logoPlaceHolder"></span>
+							<input id="logoCancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">操作系统：</td>
+				<td align="left">
+					<input type="radio" name="systerm" value="1" checked="checked"/>android
+					<input type="radio" name="systerm" value="2" />ios
+					<!-- <input type="radio" name="systerm" value="3" />winphone
+					<input type="radio" name="systerm" value="4" />other -->
+				</td>
+			</tr>
+			<tr class="android"><td align="right">图片上传：</td><td align="left" style="color:red">android系统</tr>
+
+			<tr class="android"><td align="right" style="font-size:12px">温馨提示：&nbsp;</td><td style="font-size:12px" align="left"><span>请选择规格1080*570或者等比例规格图片上传</span></td></tr>
+			<tr class="android">
+				<td align="right">APP封面：</td>
+				<td align="left">
+					<div class="file-box" style="position:relative">
+						<input type="text" name="fmandroidimg" id="fmandroidimg" readonly style="height:24px"/><span class="not">&nbsp;</span>
+						<div class="fieldset flash" id="fmandroidProgress">
+							<span class="legend">快速上传</span>
+						</div>
+						
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="fmandroidPlaceHolder"></span>
+							<input id="fmandroidCancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr class="android" style="font-size:12px;"><td style="font-size:12px" align="right">温馨提示：&nbsp;</td><td style="font-size:12px" align="left"><span>请选择规格480*800或者等比例规格图片上传</span></td></tr>
+			<tr class="android">
+				<td align="right">幻灯片集：</td>
+				<td align="left">
+					<div class="file-box"  style="position:relative">
+						<input type="text" name="pptandroidimg" id="pptandroidimg" placeholder="选择时按住ctrl键进行多选上传" readonly style="height:24px"/><span class="not">&nbsp;*</span>
+						<div class="fieldset flash" id="pptandroidProgress">
+							<span class="legend">快速上传</span>
+						</div>
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="pptandroidPlaceHolder"></span>
+							<input id="pptandroidCancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+					
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr class="ios"><td align="right">图片上传：</td><td align="left" style="color:red">ios系统</tr>
+			<tr class="ios" style="font-size:12px;"><td style="font-size:12px" align="right">温馨提示：&nbsp;</td><td style="font-size:12px" align="left"><span>请选择规格570*960或者等比例规格图片上传</span></td></tr>
+			
+			<tr class="ios">
+				<td align="right">APP封面：</td>
+				<td align="left">
+					<div class="file-box" style="position:relative">
+						<input type="text" name="fmiosimg" id="fmiosimg" readonly style="height:24px"/><span class="not">&nbsp;*</span>
+						<div class="fieldset flash" id="fmiosProgress">
+							<span class="legend">快速上传</span>
+						</div>
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="fmiosPlaceHolder"></span>
+							<input id="fmiosCancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+							
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr class="ios">
+				<td style="font-size:12px" align="right">幻灯片集：</td>
+				<td style="font-size:12px" align="left">请按照像素对应上传</td>
+			</tr>
+			
+			<tr class="ios">
+				<td align="right">780*1344：</td>
+				<td align="left">
+					<div class="file-box" style="position:relative">
+						<input type="text" name="pptios1img" id="pptios1img" placeholder="选择时按住ctrl键进行多选上传" readonly style="height:24px"/><span class="not">&nbsp;*</span>
+						<div class="fieldset flash" id="pptios1Progress">
+							<span class="legend">快速上传</span>
+						</div>
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="pptios1PlaceHolder"></span>
+							<input id="pptios1Cancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+						
+						</div>
+					</div>				
+				</td>
+			</tr>
+			<tr class="ios">
+				<td align="right">780*1080：</td>
+				<td align="left">
+					<div class="file-box" style="position:relative">
+						<input type="text" name="pptios2img" id="pptios2img" placeholder="选择时按住ctrl键进行多选上传" readonly style="height:24px"/><span class="not">&nbsp;*</span>
+						<div class="fieldset flash" id="pptios2Progress">
+							<span class="legend">快速上传</span>
+						</div>
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="pptios2PlaceHolder"></span>
+							<input id="pptios2Cancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+							
+						</div>
+					</div>				
+				</td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">安装文件：</td>
+				<td width="70%" align="left">
+					<div class="file-box">
+						<input type="text" name="installfileimg" id="installfileimg" readonly style="height:24px" placeholder="请输入完整的文件名"/><span class="not">&nbsp;*</span>
+						<div class="fieldset flash" id="installfileProgress">
+							<span class="legend">快速上传</span>
+						</div>
+						<div style="position:absolute;left:230px;top:0px">
+							<span id="installfilePlaceHolder"></span>
+							<input id="installfileCancel" type="button" value="取消所有上传" onclick="swfu.cancelQueue();" disabled="disabled" style="display:none;margin-left: 2px; font-size: 8pt; height: 29px;" />
+					
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">版本号：</td>
+				<td width="70%" align="left"><input type="text" name="ver" placeholder="仅允许数字和小数点输入"/><span class="not">&nbsp;*</span></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">数字版本号：</td>
+				<td width="70%" align="left"><input type="text" name="vernum" placeholder="仅允许数字和小数点输入"/></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">文件大小：</td>
+				<td width="70%" align="left"><input type="text" name="filesize" placeholder="请上传安装文件获取文件大小"/><span class="not">&nbsp;*</span></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">包名：</td>
+				<td width="70%" align="left"><input type="text" name="package" placeholder="请输入完整的包名"/><span class="not">&nbsp;*</span></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">签名：</td>
+				<td width="70%" align="left">
+					<textarea cols="20" id="sig" name="sig"	rows="2" style="width: 500px; height: 88px;resize:none;"></textarea>
+					<span class="not">&nbsp;*</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">语言：</td>
+				<td width="70%" align="left"><select id="lang" name="lang">
+						<option value="简体中文">简体中文</option>
+						<option value="英文">英文</option>
+				</select></td>
+			</tr>
+
+			<tr>
+				<td width="30%" align="right">是否推荐：</td>
+				<td width="70%" align="left"><input id="state"
+					class="check-box" name="iftj" type="radio" value="1" checked><label>是</label>
+					<input id="state" class="check-box" name="iftj" type="radio"
+					value="0"><label>否</label></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+				<td width="70%" align="left"><input id="state"
+					class="check-box" name="flag" type="radio" value="1" checked><label>正常</label>
+					<input id="state" class="check-box" name="flag" type="radio"
+					value="0"><label>停用</label></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">描述：</td>
+				<td width="70%" align="left"><textarea cols="20" id="adesc" name="adesc"
+						rows="2" style="width: 565px; height: 88px;resize:none;"></textarea></td>
+			</tr>
+			<tr>
+				<td width="30%" align="right">详情：</td>
+				<td width="70%" align="left"><textarea cols="20" id="adetail" name="adetail"
+						rows="2" style="width: 565px; height: 88px;resize:none;"></textarea></td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center"><input type="hidden" name="id" /><input
+					type="button" id="btnSave" value="保 存" /></td>
+			</tr>
+		</table>
+	</form>
+	{literal}
+	<script type="text/javascript"><!--
+		$(function() {
+			var appcol = $("#appcol ").val();
+			var appid = $.trim($("input[name='appid']").val());
+			var logosettings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/res/uploadfile",	
+					post_params: {'flag':'logo','appcol':appcol},
+					file_size_limit : "100 MB",
+					file_types : "*.png;*.jpeg;*.jpg;*.gif",
+					file_types_description : "All Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "logoProgress",
+						cancelButtonId : "logoCancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "logoPlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : uploadStartlogo,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : logouploadSuccess
+				};
+			function uploadStartlogo(file)
+			{
+				var appcol = $("#appcol ").val();
+				this.setPostParams({'appcol':appcol,'flag':'logo'});
+			}
+			function logouploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('logoimg');
+					serverData = JSON.parse(serverData); 
+					if(serverData.msg == 'SUCCESS')
+					{
+						progress.setStatus("上传成功");
+						input.value = serverData.files;
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			}  
+			var fmandroidsettings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/res/uploadfile",	
+					file_size_limit : "100 MB",
+					file_types : "*.png;*.jpeg;*.jpg;*.gif",
+					file_types_description : "All Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "fmandroidProgress",
+						cancelButtonId : "fmandroidCancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "fmandroidPlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : uploadStartfmandroid,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : fmandroiduploadSuccess,
+				};
+			function uploadStartfmandroid(file)
+			{
+				var appcol = $("#appcol ").val();
+				this.setPostParams({'appcol':appcol,'flag':'fmandroid'});
+			}
+			function fmandroiduploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('fmandroidimg');
+					serverData = JSON.parse(serverData);
+					if(serverData.msg == 'SUCCESS')
+					{
+						input.value = input.value ? input.value + ';'+serverData.files : serverData.files;
+						progress.setStatus("上传成功");
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			}  
+			var pptandroidsettings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/res/uploadfile",	
+					file_size_limit : "100 MB",
+					file_types : "*.png;*.jpeg;*.jpg;*.gif",
+					file_types_description : "All Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "pptandroidProgress",
+						cancelButtonId : "pptandroidCancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "pptandroidPlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : uploadStartpptandroid,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : pptandroiduploadSuccess
+				};
+			function uploadStartpptandroid(file)
+			{
+				var appcol = $("#appcol ").val();
+				this.setPostParams({'appcol':appcol,'flag':'pptandroid'});
+			}
+			function pptandroiduploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('pptandroidimg');
+					serverData = JSON.parse(serverData);
+					if(serverData.msg == 'SUCCESS')
+					{
+						input.value = input.value ? input.value + ';'+serverData.files : serverData.files;
+						progress.setStatus("上传成功");
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			}  
+			var fmiossettings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/res/uploadfile",	
+					file_size_limit : "100 MB",
+					file_types : "*.png;*.jpeg;*.jpg;*.gif",
+					file_types_description : "All Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "fmiosProgress",
+						cancelButtonId : "fmiosCancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "fmiosPlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : uploadStartfmios,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : fmiosuploadSuccess
+				};
+			function uploadStartfmios(file)
+			{
+				var appcol = $("#appcol ").val();
+				this.setPostParams({'appcol':appcol,'flag':'fmios'});
+			}
+			function fmiosuploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('fmiosimg');
+					if(serverData.msg == 'SUCCESS')
+					{
+						input.value = input.value ? input.value + ';'+serverData.files : serverData.files;
+						progress.setStatus("上传成功");
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			}  
+			var pptios1settings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/res/uploadfile",	
+					file_size_limit : "100 MB",
+					file_types : "*.png;*.jpeg;*.jpg;*.gif",
+					file_types_description : "All Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "pptios1Progress",
+						cancelButtonId : "pptios1Cancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "pptios1PlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : uploadStartpptios1,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : pptios1uploadSuccess
+				};
+			function uploadStartpptios1(file)
+			{
+				var appcol = $("#appcol ").val();
+				this.setPostParams({'appcol':appcol,'flag':'pptios1'});
+			}
+			function pptios1uploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('pptios1img');
+					serverData = JSON.parse(serverData);
+					if(serverData.msg == 'SUCCESS')
+					{
+						input.value = input.value ? input.value + ';'+file.name : file.name;
+						progress.setStatus("上传成功");
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			}  
+			var pptios2settings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/res/uploadfile",	
+					file_size_limit : "100 MB",
+					file_types : "*.png;*.jpeg;*.jpg;*.gif",
+					file_types_description : "All Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "pptios2Progress",
+						cancelButtonId : "pptios2Cancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "pptios2PlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : uploadStartpptios2,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : pptios2uploadSuccess	
+				};
+			function uploadStartpptios2(file)
+			{
+				var appcol = $("#appcol ").val();
+				this.setPostParams({'appcol':appcol,'flag':'pptios2'});
+			}
+			function pptios2uploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('pptios2img');
+					if(serverData == 'SUCCESS')
+					{
+						input.value = input.value ? input.value + ';'+file.name : file.name;
+						progress.setStatus("上传成功");
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			}
+					//文件上传屏蔽
+			var installlfilesettings = {
+					flash_url : "{/literal}{$psys_js}{literal}swfupload/swfupload.swf",
+					upload_url: "/res/uploadfile",	
+					file_size_limit : "200 MB",
+					file_types : "*.apk;*.deb;*.ipa;*.pxl;*.xap",
+					file_types_description : "resource Files",
+					file_upload_limit : 10,  //配置上传个数
+					file_queue_limit : 0,
+					custom_settings : {
+						progressTarget : "installfileProgress",
+						cancelButtonId : "installfileCancel"
+					},
+					debug: false,
+
+					// Button settings
+					button_image_url: "{/literal}{$psys_img}{literal}swfImages/TestImageNoText_65x29.png",
+					button_width: "65",
+					button_height: "29",
+					button_placeholder_id: "installfilePlaceHolder",
+					button_text: '<span class="theFont">浏览</span>',
+					button_text_style: ".theFont { font-size: 16; }",
+					button_text_left_padding: 12,
+					button_text_top_padding: 3,
+					
+					file_queued_handler : fileQueued,
+					file_queue_error_handler : fileQueueError,
+					file_dialog_complete_handler : fileDialogComplete,
+					upload_start_handler : uploadStartinstallfile,
+					upload_progress_handler : uploadProgress,
+					upload_error_handler : uploadError,
+					upload_success_handler : installfileuploadSuccess	
+				};
+			function uploadStartinstallfile(file)
+			{
+				var appcol = $("#appcol ").val();
+				this.setPostParams({'appcol':appcol,'flag':'installfile'});
+			}
+			function installfileuploadSuccess(file, serverData) 
+			{
+				try {  
+					var progress = new FileProgress(file, this.customSettings.progressTarget);
+					var input = document.getElementById('installfileimg');
+					var filesize = $("input[name='filesize']");
+					serverData = JSON.parse(serverData);
+					if(serverData.msg == 'SUCCESS')
+					{
+						input.value = serverData.files;
+						filesize.val((Math.ceil(100*file.size/1024/1024))/100);
+						progress.setStatus("上传成功");
+					}
+					else
+					{
+						progress.setError();
+						progress.setStatus(serverData);
+					}
+					progress.toggleCancel(false);  
+			  
+				} catch (ex) {  
+					this.debug(ex);  
+				}  
+			} 
+			
+			swfu = new SWFUpload(logosettings);
+			swfu = new SWFUpload(fmandroidsettings);
+			swfu = new SWFUpload(pptandroidsettings);
+			swfu = new SWFUpload(fmiossettings);
+			swfu = new SWFUpload(pptios1settings);
+			swfu = new SWFUpload(pptios2settings);
+			swfu = new SWFUpload(installlfilesettings);
+			
+			var check = $("input[name='systerm']:checked").val();
+			$("input[name='systerm']").click(function(){
+				var value = $(this).val();
+				if(value == 1)
+				{
+					$(".android").show();
+					$(".ios").hide();
+				}
+				else if(value == 2)
+				{
+					$(".ios").show();
+					$(".android").hide();
+				}
+			});
+			if(check == 1)
+			{
+				$(".android").show();
+			}
+			else if(check == 2)
+			{
+				$(".ios").show();
+			}
+
+			$("input[name='ver']").keydown(function(event){
+				var num = event.which;
+				if((num >= 96 && num <=105) || num == 8 || (num >= 48 && num <= 57) || num == 116 || (num >=37 && num <=40) || num == 9 || num == 190 || num == 110)
+				{
+					return true;
+				}else
+				{
+					return false;
+				}
+			});
+			$("input[name='vernum']").keydown(function(event){
+				var num = event.which;
+				if((num >= 96 && num <=105) || num == 8 || (num >= 48 && num <= 57) || num == 116 || (num >=37 && num <=40) || num == 9 || num == 190 || num == 110)
+				{
+					return true;
+				}else
+				{
+					return false;
+				}
+			});
+			$('#btnSave').click(function() {
+				var appname = $.trim($("input[name='appname']").val());
+				
+				var logourl = $("#logoimg").val();
+				//var imgurl = $("#fmandroidimg").val();
+				var pptfilenames = $('#pptandroidimg').val();
+				var pptfilenames1 = $('#pptios1img').val();
+
+				
+				var appurl = $("#installfileimg").val();
+				var fmios = $("#fmiosimg").val();
+				var pptios1 = $("#pptios1img").val();
+				var pptios2 = $("#pptios2img").val();
+				
+				var ver = $.trim($("input[name='ver']").val());
+				var vernum = $.trim($("input[name='vernum']").val());
+				var filesize = $.trim($("input[name='filesize']").val());
+				var apppackage = $.trim($("input[name='package']").val());
+				var appcol = $("#appcol ").val();
+				var lang = $("#lang ").val();
+				var iftj = $('input[name="iftj"]:checked').val();
+				var flag = $('input[name="flag"]:checked').val();
+				var adesc = $('#adesc').val();
+				var adetail = $('#adetail').val();
+				var sig = $.trim($("#sig").val());
+				var $typeinfo = $("#typeinfo").val();
+				var $develop = $("#develop").val();
+
+				var apptype=$("input[name='systerm']:checked").val();
+				var id = $.trim($("input[name='id']").val());
+				
+				if (appname == '') {
+					alert('请输入APP名称！');
+					return;
+				}
+				if(logourl == '')
+				{
+					alert('请确认已选择APPlogo图片或者待logo图片上传完毕');
+					return;
+				}
+				
+				if(apptype == '')
+				{
+					alert('请选择应用所属系统！');
+					return;
+				}
+				
+	
+				if(apptype == 1)
+				{
+					/*if (imgurl == '') {
+						alert('请确认已选择APP封面图片或者待封面图片上传完毕');
+						return;
+					}*/
+					if(!pptfilenames)
+					{
+						alert('请选择android系统幻灯片图片！')
+						return;
+					}
+					else
+					{
+						var ppts = pptfilenames.split(';');
+						if(ppts.length <5)
+						{
+							alert('请确认幻灯片已经全部上传或者等待幻灯片上传完毕');
+							return;
+						}
+					}
+				}
+				else if(apptype == 2)
+				{
+					if(!fmios)
+					{
+						alert('请选择ios系统封面图片!');
+						return;
+					}
+					if(!pptios1)
+					{
+						alert('请选择ios系统幻灯片图片！');
+						return;
+					}
+					else
+					{
+						var iosppts1 = pptios1.split(';');
+						if(ppt.length < 5)
+						{
+							alert('请确认幻灯片已经全部上传或者等待幻灯片上传完毕');
+							return;
+						}
+					}
+					if(!pptios2)
+					{
+						alert('请选择ios系统的另一幻灯片图片！')
+						return;
+					}
+					else
+					{
+						var iosppts2 = pptios2.split(';');
+						if(ppt.length < 5)
+						{
+							alert('请确认全部幻灯片已经全部上传或者等待幻灯片上传完毕');
+							return;
+						}
+					}
+				}				
+				if (appurl == '') {
+					alert('请确认已选择APP安装文件或者待安装文件上传完毕');
+					return;
+				}
+		
+				if(ver == '')
+				{
+					alert('请输入版本号！');
+					return;
+				}
+				if(filesize == '')
+				{
+					alert('请输入文件大小！');
+					return;
+				}
+				if(apppackage == '')
+				{
+					alert('请输入完整的包名！');
+					return;
+				}
+								
+				if(sig == '')
+				{
+					alert('请输入签名');
+					return;
+				}    
+				$.post('/res/gupdate', {
+					'ispost' : 1,
+					'ajax' : 1,
+					'appname' : appname,
+					'logourl' : logourl,
+					'appurl' : appurl,
+					'ver' : ver,
+					'vernum' : vernum,
+					'filesize' : filesize,
+					'package' : apppackage,
+					'appcol' : appcol,
+					'apptype' : apptype,
+					'lang' : lang,
+					'iftj' : iftj,
+					'flag' : flag,
+					'adesc' : adesc,
+					'adetail' : adetail,
+					'sig' : sig,
+					'pptfilenames':pptfilenames,
+					'pptios':pptfilenames1,
+					'typeinfo':$typeinfo,
+					'develop':$develop,
+					'id' : id
+				}, function(res) {
+					if (res.result == 'SUCCESS') {
+						if (confirm('上传成功，点击【确定】继续添加，点击【取消】返回列表页')) {
+							window.location.reload();
+						} else {
+							document.location.href = '/res/glist';
+						}
+					} else {
+						alert(res.msg + '(' + res.msgcode + ')');
+					}
+				}, 'json');
+			});
+		});
+	--></script>
+	{/literal}
+
+</body>
+</html>

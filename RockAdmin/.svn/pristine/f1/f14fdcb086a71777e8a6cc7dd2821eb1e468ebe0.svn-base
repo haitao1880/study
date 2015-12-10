@@ -1,0 +1,29 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-09-22 15:53:14
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//station/index.html" */ ?>
+<?php /*%%SmartyHeaderCode:2093610221541fd56acf4325-97259405%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '47462483fd98d23a46a4eb0390c5752b26e015cb' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//station/index.html',
+      1 => 1411371340,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '2093610221541fd56acf4325-97259405',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+</body>
+</html>

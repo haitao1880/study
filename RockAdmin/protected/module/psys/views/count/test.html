@@ -1,0 +1,81 @@
+{include file="include/head.html"}
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $("#flex1").flexigrid(
+            {
+
+            url: '/statis/ajaxGetMonthList?begintime=&overtime=',
+
+            dataType: 'json',
+            colModel : [
+                {display: 'id', name : 'id', width : 100, sortable : true, align: 'center'},
+                {display: 'date', name : 'date', width : 100, sortable : true, align: 'center'},
+                {display: 'New Unique Visitor', name : 'nupv', width : 100, sortable : true, align: 'center'},
+                {display: 'Register', name : 'sortid', width : 100, sortable : true, align: 'center'},
+                {display: 'New RIP', name : 'sortid', width : 100, sortable : true, align: 'center'},
+                {display: 'New DIP', name : 'colid', width : 100, sortable : true, align: 'center'},
+                {display: 'New Launcher', name : 'colid', width : 100, sortable : true, align: 'center'}
+                ],
+            buttons : [       
+                {separator: true}
+                //{name: 'A', onpress: sortAlpha},
+
+                ],
+            usepager: true,
+            title: 'Monthly Web and Users',
+            useRp: true,
+            rp: 10,
+            showTableToggleBtn: true,
+            width: document.body.clientWidth ,
+            height: document.body.clientHeight - 174 ,
+            // onSuccess: trSelected
+            //onRowSelect: //选中时触发的函数
+            }
+    );   
+
+    // $.post('./test.php',{},function(res){
+    //     console.info(res);
+        var cat = ['首页','注册','全屏广告','首次打开'];
+        PaiTing('测试统计',-20,'副标题',60,cat,'数据',res,'container');  
+    // },'json');
+    $.ajax({
+            type : "POST",
+            url : './test.php',
+            data : {
+                ajax : 1
+            },
+            success : function(data) {
+               console.log(data); 
+            }
+        },'json');
+  
+
+});
+</script>
+
+</head>
+<body>
+
+<form>
+
+<div class="search">
+Search:
+    <input id="begintime" class="Wdate" name="begintime" value="" type="text" onFocus="var overtime=$dp.$('overtime');WdatePicker({onpicked:function(){overtime.focus();},dateFmt:'yyyy',maxDate:'#F{$dp.$D(\'overtime\')}'})"/>
+    -
+    <input id="overtime" class="Wdate" name="overtime" value="" type="text" onFocus="WdatePicker({dateFmt:'yyyy',minDate:'#F{$dp.$D(\'begintime\')}'})"/>
+<input type="submit" class="button2" value="search" />
+</div>
+
+</form>
+<div id="container" style="width:1500px;overflow-x:auto;margin:50px auto;border:1px solid #ccc;background:white;">
+
+    <div style="text-align:center;"><img src="/style/en/default/visualize/images/loading.gif" /></div>
+
+</div>
+<table id="flex1" style="display:none"></table>
+
+
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备状态-RTAC</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+</head>
+
+<body>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  <h3>管理日志</h3>
+  </caption>
+  <tr  bgcolor="#417eb7" id="t_title">
+   
+    <th>记录详情</th>
+    <th>操作人</th>
+    <th>IP编号</th>
+    <th>时间</th>
+  </tr>
+  {foreach $list as $v}
+  <tr bgcolor="#FFFFFF">    
+    
+    <td>{$v.logdetail}</td>
+    <td>{$v.user}</td>
+    <td>{$v.ipcno}</td>
+    <td>{$v.ctime|date_format:'%Y-%m-%d %H:%M:%S'}</td>
+  </tr>
+  {/foreach}
+  <tr bgcolor="#FFFFFF" id = 'addone' style = 'display: none;'>    
+    <td>编号：<input type="text" id="ipcno"/></td>
+    <td>记录详情：<br /><textarea id="indetail" cols="100" rows="4" style = "border: 2px ;border-color:#bfeaf5;margin-top: 8px;"></textarea> <input type = "button" value="保存" id="insert"></td>
+    <td>-</td>
+    <td>-</td>
+    <td>-</td>
+  </tr>
+  
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+    
+    <li class="del">
+   		<button type="button" name="submit" class="but">AddOne</button>
+    </li> 
+      
+  </ul>
+</div>
+
+{literal}
+<script>
+$(function(){
+	$('.but').click(function(){
+		$('#addone').toggle('slow'); 
+	});
+	
+	$('#insert').click(function(){
+		var $detail = $('#indetail').val();
+    var $ipcno = $('#ipcno').val();
+		if(!$detail){
+			alert('不能提交空数据！');
+			return;
+		}
+    if(!$ipcno){
+      alert('编号不能为空！');
+      return;
+    }
+		$.ajax({
+			type: 'POST',
+			url	: '/ipc/logadd',
+			data : {ajax:1,logdetail:$detail,ipcno:$ipcno},
+			success : function(data) {  
+		          
+                if(data.code == 1){
+                	var $int = '<tr bgcolor="#FFFFFF">'
+				                 // +   '<td>'+data.data.id+'</td>'
+				                 +   '<td>'+data.data.logdetail+'</td>'
+				                 +   '<td>'+data.data.user+'</td>'
+				                 +   '<td>'+data.data.ipcno+'</td>'
+				                 +   '<td>'+data.data.ctime+'</td>'
+			                  	'</tr>	';
+			        alert('添加成功！');
+			        $('#t_title').after($int);
+			        $('#indetail').val('');
+			        $('#addone').hide();
+                }else{
+                	alert('添加失败！');
+                }
+            }
+		});
+	});
+	
+});
+
+document.onkeydown=function(){
+    if (event.keyCode == 13  && event.srcElement.tagName.toUpperCase() == "TEXTAREA"){
+    	
+    	var int = $('#indetail').val()+'<br>';
+    	$('#indetail').val(int);
+    }
+}
+</script>
+{/literal}
+</body>
+</html>

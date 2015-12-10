@@ -1,0 +1,24 @@
+                  
+<caption>
+                              <h3>每日详情</h3>
+                        </caption>
+                        <tr  bgcolor="#417eb7">
+                         <th>操作</th>'
+                         <th>Android</th>
+                         <th>Ios</th>
+                         <th>Else</th>
+                       </tr>
+                       
+                       {foreach $totallist['detail'][$date] as $key=> $v}
+                       
+                    <tr bgcolor="#FFFFFF">  
+                        <td>{$v.name}</td>
+                        <td>{$v.data.1.num}</td>
+                        <td>{$v.data.2.num}</td>
+                        <td>{$v.data.3.num}</td>
+                    </tr>
+                     {/foreach}
+                    
+                    
+                    
+                  

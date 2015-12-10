@@ -1,0 +1,55 @@
+<?php
+class Psys_ResourceModel extends Psys_AbstractModel
+{
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	/**
+	 * 游戏或app下载概况数据
+	 * @param [type] $sdate   起始时间
+	 * @param [type] $edate   结束时间
+	 * @param [type] $station 车站id
+	 * @param [type] $type    类型
+	 */
+	public function DownAppData($sdate,$edate,$station,$type,$page,$pagesize,$is_graph=0){
+		$obj = new Psys_ResourceRule();
+  		return $obj -> DownAppData($sdate,$edate,$station,$type,$page,$pagesize,$is_graph);
+	}
+
+	/**
+	 * 游戏或app下载详情
+	 * @param [type] $appid   app或游戏的id
+	 * @param [type] $station 车站id
+	 * @param [type] $sdate   起始时间
+	 * @param [type] $edate   结束时间
+	 */
+	public function DwonAppInfo($appid,$station,$sdate,$edate)
+	{
+		$db = new Psys_ResourceRule();
+		return $db->DwonAppInfo($appid,$station,$sdate,$edate);
+	}
+
+	/**
+	 * 
+	 * @param 车站列表
+	 * @return 
+	 */
+	public function station()
+	{
+		$db = new Psys_StationRule();
+		return $db->stationList();
+	}
+
+	/**
+	 * 根据下载记录表中的id获取对应的标题和提示信息
+	 */
+	public function EventRecordInfo($id)
+	{
+		$where = array('id'=>$id);
+		return $this->GetOne($where,'title,descript','rha_eventrecord');
+	}
+
+	
+}

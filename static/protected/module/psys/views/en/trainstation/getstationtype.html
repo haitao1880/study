@@ -1,0 +1,9 @@
+{{foreach $stations as $station}}
+<a id="close-station-1" class="btn checi" style="margin-bottom: 10px;margin-right: 5px;">
+    <div id="uniform-square-checkbox-1" class="checker">
+        <span {{if $station.id eq 1}}class="checked"{{/if}}>
+            <input style="opacity: 0;" tabindex="9" id="square-checkbox-1" name="stationid[]" type="checkbox" value="{{$station.id}}" {{if $station.id eq 1}}checked="checked"{{/if}}>
+        </span>
+    </div>{{$station.stationname}}
+</a>
+{{/foreach}}

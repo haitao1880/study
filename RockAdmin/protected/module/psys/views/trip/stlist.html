@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>列车时刻表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+</head>
+<body>
+<form action="/trip/stlist" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>列车时刻表</h4></caption>
+<tr>
+	<td colspan="8" align="left" style="color:#FFF">&nbsp;&nbsp;&nbsp;&nbsp;		
+     	车次查询：<input type="text" value="{$sno}" name="trainno" id="trainno" onblur="this.style.color = '#666';if ( this.value =='' ) this.value = '请输入车次！'; " onfocus="this.style.color='black';if (this.value == '请输入车次！' )  this.value=''; " >&nbsp;&nbsp;&nbsp;&nbsp;
+     	<input type="submit"  id="btnSave" name="btnSave" value="查询"/>&nbsp;&nbsp;&nbsp;&nbsp;
+     	<a href="/trip/stlist">反回全部列表</a>
+	</td>
+</tr>
+<tr class="table-head" bgcolor="#2d68a0">	
+	<th>ID</th>
+    <th>车次</th>
+    <th>发站</th>
+    <th>到站</th>
+    <th>发站时间</th>
+    <th>到站时间</th>
+    <th>到站顺序</th>
+    <th>是否启用</th>
+    <th>操作</th>  
+</tr>
+	
+	{foreach $list as $v}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><input name="id[]" type="checkbox"  value="{$v.id}">{$v.id}</td>
+    <td><a href="/trip/stlist?trainno={$v.sno}">{$v.sno}</a></td>
+    <td>{$v.fz}</td>
+    <td>{$v.dz}</td>
+    <td>{$v.stime}</td>
+    <td>{$v.dtime}</td>
+    <td>{$v.dzxh}</td>
+    <td>{if $v.flag eq 0}否{else}是{/if}</td>
+    <td><a href="/trip/stationedit?id={$v.id}">编辑</a> <!-- <a href="/station/del?id={$v.id}">删除</a> --></td>
+</tr>
+{/foreach}
+
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+    <!--  
+    <li class="del">
+   		<button type="submit" name="submit" class="but">DELETE</button>
+    </li> 
+    -->   
+  </ul>
+</div>
+</form>
+</body>
+</html>

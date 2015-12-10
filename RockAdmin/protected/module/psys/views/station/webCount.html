@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>新流程2</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+
+{literal}
+<script>
+
+function show_detail(date)
+{
+  var $title = '<caption>'
+          + '<h3>每日详情</h3>'
+        +'</caption>'
+        +'<tr  bgcolor="#417eb7">'
+          +   '<th>操作</th>'
+          +   '<th>Android</th>'
+          +   '<th>Ios</th>'
+          +   '<th>Else</th>'
+        +'</tr>'; 
+  $("#detailcon").html($title);
+  
+  $.ajax({
+        type: "POST",
+        data: { date: date, ajax:1,stationid:{/literal}{$stationid}{literal}},
+        url: '/station/webCountND',
+        dataType:"json",
+        success: function (data) {  
+        
+            if (data.code == 1 ) {
+             
+              $.each(data.allrow, function (index, item) {
+            	  if(!item.android){
+            		  item.android = 0;
+            	  }
+            	  if(!item.ios){
+            		  item.ios = 0;
+            	  }
+            	  if(!item.Else){
+            		  item.Else = 0;
+            	  }
+                 $('#detailcon').append(
+                  '<tr bgcolor="#FFFFFF"> '   
+            +   ' <td>'+item.name+'</td>'
+            +   ' <td>'+item.android+'</td>'
+            +   ' <td>'+item.ios+'</td>'
+            +   ' <td>'+item.Else+'</td>'
+            +  '</tr>'   
+                 );     
+                
+              });
+              
+                return;
+            } else  {
+            	
+                alert('未知错误！');
+            }
+        }
+    });
+              
+  popWin("detail");
+}
+
+$(function()
+		{
+		  $('.close').click(function(){
+		    $('#maskLayer').hide();
+		  });
+
+      $('#export').click(function(){
+        var stationid = $('#stationid option:selected').val();        
+        window.location.href = '/station/webcountexport?stationid='+stationid;
+      });
+		  
+		});
+
+</script>
+{/literal}
+
+{literal}
+<style type="text/css">
+*{margin:0;padding:0;font-size:14px;text-decoration:none}
+td{width:190px;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#pointer{
+  cursor:pointer;
+}
+</style>
+{/literal}
+</head>
+
+<body>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  	<h3>WEB流程</h3>
+  </caption>
+  
+  <tr bgcolor="#ABCDEF">
+    <form method="post" action="/station/webCountNew" enctype="multipart/form-data">
+	   	<td>车站选择：</td>
+      <td colspan="1">
+        <select name="stationid" id="stationid">
+          {foreach $stations as $v}
+          <option value="{$v.id}" {if $stationid eq $v.id}selected{/if}>{$v.stationname}</option>
+          {/foreach}
+        </select>
+      </td>
+      <td>
+        <input type="submit" value="查询" style=" height:20px; padding: 0px 5px; cursor: pointer;margin-right: 20px;" />
+        <input type="button" value="导出" id="export" style=" height:20px; padding: 0px 5px; cursor: pointer;" />
+      </td>
+    </form>
+   
+  </tr>
+
+  <tr bgcolor="#417eb7">
+  	<td>日 &nbsp; 期</td>
+  	<td>WIFI连接</td>
+  	<td>广告页1/uv</td>
+  	<td>注册页/uv</td>
+  	<td>注册成功数/uv</td>
+  	<!-- <td>广告页2/uv</td> -->
+  	<td>sindex/uv</td>
+    <td>train下载/uv</td>
+    <!-- <td style="width:150px">详情</td> -->
+  </tr>
+  {foreach $totallist as $v}
+  <tr bgcolor="#FFF">
+  	<td>{$v.date}</td>
+  	<td>{$v.link}</td>
+  	<td>{$v.ad}</td>
+  	<td>{$v.reg}</td>
+  	<td>{$v.login}</td>
+  	<!-- <td>{$v.wel}</td> -->
+  	<td>{$v.sindex}</td>
+  	<td>{$v.down}</td>
+    <!-- <td><a href="javascript:;" onclick="show_detail('{$v.date}')">查看</a></td> -->
+  </tr>
+  {/foreach}
+</table>
+
+<div class="pages">
+  <ul class="pagination-digg">
+  
+ <li class="previous"><a href="?page=1&stationid={$stationid}">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}&stationid={$stationid}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+  {if $endNum lt $allpage}  
+        {for $p=$startNum to $endNum}
+             {if $cur_page eq $p}
+             <li class="active">{$p}</li>
+             {else}
+             <li><a href="?page={$p}&stationid={$stationid}">{$p}</a></li> 
+             {/if}      
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+            {if $cur_page eq $p}
+            <li class="active">{$p}</li>
+            {else}
+            <li><a href="?page={$p}&stationid={$stationid}">{$p}</a></li> 
+            {/if}       
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}&stationid={$stationid}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}&stationid={$stationid}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>    
+  </ul>
+</div>
+
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:365px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>	
+
+		</table>
+	</div>
+</div>
+</body>
+</html>

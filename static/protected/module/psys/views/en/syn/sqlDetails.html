@@ -1,0 +1,39 @@
+<form action="{{$action}}" method="post" class="">
+<div class="control-group">
+    <label class="control-label">SQL编号:</label>
+    <div class="controls">
+        <input type="text" class="span6"  value="{{$sql.id}}"  placeholder="SQL编号" name="id" readonly/>
+    </div>
+</div>
+<div class="control-group">
+     <label class="control-label">SQL语句详情 :</label>
+     <div class="controls">
+         <textarea style="width:570px; height:100px; padding:0;" readonly>
+         	{{$sql.sqlcontent}}
+         </textarea>
+     </div>
+ </div>
+ <div class="control-group">
+     <label class="control-label">执行表名 :</label>
+     <div class="controls">
+         <input type="text" class="span6"  value="{{$sql.updatetype}}"  placeholder="执行表名" name="tablename" readonly/>
+     </div>
+ </div>
+  <div class="control-group">
+     <label class="control-label">已同步服务器 :</label>
+     <div class="controls">
+         {{foreach $trueCites as $t}}
+         <span style="margin-right:10px;">{{$t.citename}}</span>
+         {{/foreach}}
+     </div>
+ </div>
+ <div class="control-group">
+     <label class="control-label">未同步服务器 :</label>
+     <div class="controls">
+         {{foreach $falseCites as $f}}
+         <input type="checkbox" name="cid[]" value="{{$f.id}}" style="margin-top:-1px; margin:0 3px 0 0;"/>{{$f.citename}}
+         {{/foreach}}
+     </div>
+ </div>
+<input type="hidden" value="1" name="ispost" />
+</form>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>app统计</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+{literal}
+<style type="text/css">
+body{margin:0;padding:0;font-size:12px;}
+dt{padding:10px;}
+i{ font-style:normal;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#ipcno{width: 150px;height: 20px;margin-left: 0;}
+#pointer{
+  cursor:pointer;
+}
+</style>
+{/literal}
+{literal}
+<script>
+
+function reset1()
+{
+	var ob = document.getElementsByClassName('search');
+	for(i=0;i<3;i++){
+		ob[i].value='';
+	}
+	
+}
+</script>
+{/literal}
+</head>
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+    <h3>订票统计</h3>
+  </caption>
+  
+  <tr>
+    <form method="post" action="/station/order" enctype="multipart/form-data">
+    	<td>订单时间：</td>
+	    <td>
+	      <input class="search" type="text" name="order_time" value="{$order_time}" />
+	    </td>
+	    <td>订单号：</td>
+	    <td>
+	      <input class="search" type="text" name="order_number" value="{$order_number}" />
+	    </td>
+	    <td>订单状态：</td>
+	    <td>
+	    	<select class="search" name="order_state">
+	    		<option value='0' {if $order_state eq 0}selected{/if}>未选择</option>
+	    		<option value='1' {if $order_state eq 1}selected{/if}>超时未付</option>
+	        	<option value='2' {if $order_state eq 2}selected{/if}>待支付</option>
+	        	<option value='3' {if $order_state eq 3}selected{/if}>已支付</option>
+	        	<option value='4' {if $order_state eq 4}selected{/if}>已退款</option>
+	        	<option value='5' {if $order_state eq 5}selected{/if}>已成交</option>
+	      	</select>
+	    </td>
+	    <!-- 
+	    <td>车次类型：</td>
+	    <td>
+	      <input type="text" name="train_number" value="{$train_number}" />
+	    </td>
+	    <td>坐席类别：</td>
+	    <td>
+	      <input type="text" name="seat_name" value="{$seat_name}" />
+	    </td>
+	     -->
+	    <td>
+	      <input type="submit" value="查询" /><button style="margin-left:10px;border:0;padding:0" onclick="reset1()">重置</button>
+	    </td>
+    </form>
+  </tr>
+  
+  <tr  bgcolor="#417eb7">
+    <th style="width:250px">订单时间</th>
+    <th>订单号</th>
+    <th>出发地</th>
+    <th>到达地</th>
+    <th>车次类型</th>
+    <th>坐席类别</th>
+    <th>订单总额/￥</th>
+    <th>车票数量</th>
+    <th>订单状态</th>
+  </tr>
+  
+  {foreach $data as $v}
+  <tr bgcolor="#FFFFFF">    
+    <td>{$v.order_time}</td>
+    <td>{$v.order_number}</td>
+    <td>{$v.from}</td>
+    <td>{$v.to}</td>
+    <td>{$v.train_number}</td>
+    <td>{$v.seat_name}</td>
+    <td>{$v.total_price}</td>
+    <td>{$v.ticket_count}</td>
+    <td>{$v.state}</td>
+  </tr>
+  {/foreach}
+</table>
+
+<div class="pages">
+  <ul class="pagination-digg">
+  
+ <li class="previous"><a href="?page=1&order_time={$order_time}&order_number={$order_number}&order_state={$order_state}">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}&order_time={$order_time}&order_number={$order_number}&order_state={$order_state}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+  {if $endNum lt $allpage}  
+         {for $p=$startNum to $endNum}
+            {if $cur_page eq $p}
+            <li class="active">{$p}</li>
+            {else}
+            <li><a href="?page={$p}&order_time={$order_time}&order_number={$order_number}&order_state={$order_state}">{$p}</a></li> 
+            {/if}           
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+            {if $cur_page eq $p}
+            <li class="active">{$p}</li>
+            {else}
+            <li><a href="?page={$p}&order_time={$order_time}&order_number={$order_number}&order_state={$order_state}">{$p}</a></li> 
+            {/if}              
+        {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}&order_time={$order_time}&order_number={$order_number}&order_state={$order_state}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}&order_time={$order_time}&order_number={$order_number}&order_state={$order_state}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+      
+  </ul>
+</div>
+
+<div id="detail">
+  <div class="tit"><i class="close">关闭</i></div>
+  <div class="showdetail" style="height:365px; overflow-y:auto;">
+    <table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>
+    
+     
+    </table>
+  </div>
+</div>
+</body>
+</html>

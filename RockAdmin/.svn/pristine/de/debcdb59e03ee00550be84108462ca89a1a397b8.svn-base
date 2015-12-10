@@ -1,0 +1,29 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-21 22:59:38
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//shared/header.html" */ ?>
+<?php /*%%SmartyHeaderCode:19556569165496e05abed5a8-05652570%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '11ab637e6998373defe45f0c5577237d1f09221d' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//shared/header.html',
+      1 => 1407132457,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '19556569165496e05abed5a8-05652570',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title><?php echo $_smarty_tpl->getVariable('pagetitle')->value;?>
+</title>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.11.1.js"></script>
+</head>
+<body>

@@ -1,0 +1,35 @@
+{include file="shared/header.html" pagetitle="车次途经站点列表"}
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<form action="/account/del" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>{$trainno}--车次途经站点列表---><a href="/train/stationadd?tid={$tid}">添加途经站</a></h4></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>站次</th>
+    <th>站名</th>
+    <th>日期</th>
+    <th>到达时间</th>
+    <th>开车时间</th>
+    <th>停留时间</th>
+    <th>里程</th>
+    <th>参考票价</th>
+    <th>操作</th> 
+</tr>
+{foreach $list as $kv=>$vv}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td>{$vv.orderid}</td>
+    <td>{$vv.station}</td>
+    <td>{$vv.datestr}</td>
+    <td>{$vv.btime}</td>
+    <td>{$vv.etime}</td>
+    <td>{$vv.staytime}</td>
+    <td>{$vv.mileage}</td>
+    <td>{$vv.price}</td>
+    <td><a href="/train/stationadd?id={$vv.id}&tid={$vv.tid}" target="_blank">编辑</a>&nbsp;&nbsp;
+    <a href="/train/stationdel?id={$vv.id}&tid={$vv.tid}">删除</a></td>
+</tr>
+{/foreach}
+</table>
+</form>
+
+{include file="shared/footer.html"}

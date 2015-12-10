@@ -1,0 +1,39 @@
+{include file="shared/header.html" pagetitle="车次列表"}
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<form action="/account/del" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>车次列表</h4></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>ID</th>
+    <th>车次</th>
+    <th>类型</th>
+    <th>始发站</th>
+    <th>终到站</th>
+    <th>始发时间</th>
+    <th>终到时间</th>
+    <th>运行时间</th>
+    <th>参考票价</th>
+    <th>操作</th> 
+</tr>
+{foreach $list as $kv=>$vv}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td>{$vv.id}</td>
+    <td>{$vv.trainno}</td>
+    <td>{$vv.traintypestr}</td>
+    <td>{$vv.bstation}</td>
+    <td>{$vv.estation}</td>
+    <td>{$vv.btime}</td>
+    <td>{$vv.etime}</td>
+    <td>{$vv.runtime}</td>
+    <td>{$vv.price}</td>
+    <td><a href="/train/add?id={$vv.id}" target="_blank">编辑</a>&nbsp;&nbsp;<a href="/train/station?tid={$vv.id}">途经站</a></td>
+</tr>
+{/foreach}
+</table>
+<div class="pages">
+  {$pagestr}
+</div>
+</form>
+
+{include file="shared/footer.html"}

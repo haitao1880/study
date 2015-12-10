@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>一键上网报警值设定</title>
+<link href="{$psys_css}bootstrap.min.css" rel="stylesheet" type="text/css" >
+<link href="{$psys_css}alertify.core.css" rel="stylesheet" type="text/css" >
+<link href="{$psys_css}alertify.default.css" rel="stylesheet" type="text/css" >
+<!-- <link href="{$psys_css}style.css" rel="stylesheet" type="text/css" > -->
+<!-- <link rel="stylesheet" type="text/css" href="{$psys_css}paiting/public.css"/>
+<link rel="stylesheet" type="text/css" href="{$psys_css}paiting/flexigrid.css" /> -->
+
+<link rel="stylesheet" type="text/css" href="{$psys_css}paiting/tinybox.css" />
+<link href="{$psys_css}paiting/flexigrid-extent.css" media="all" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="{$psys_js}lib/jquery-boottrap.min.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/alertify.min.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/tinybox.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/WdatePicker.js"></script>
+
+<script type="text/javascript" src="{$psys_js}lib/bootstrap.min.js"></script> 
+<script type="text/javascript" src="{$psys_js}paiting/highcharts.js"></script>
+<!-- <script type="text/javascript" src="{$psys_js}paiting/highstock.js"></script> -->
+<script type="text/javascript" src="{$psys_js}paiting/exporting.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/export-excel.js"></script>
+
+<script type="text/javascript" src="{$psys_js}paiting/function.js"></script>
+{literal}
+<style type="text/css">
+    .table th,.table td{
+        text-align: center;
+    }
+</style>
+<script type="text/javascript">
+
+$(function(){
+    var data = {};
+        data.ajax = 1;
+    var list = {};
+        list.ajax = 1;        
+    $(document).ready(function(){
+        GonetAlarmtList(list);
+    });
+    $('#submit').click(function(){
+
+        data.data =  $('#form').serialize();        
+        data.page = 1;
+        gonetalarmadd(data);
+    });
+    $('#paging').delegate('div','click',function(){
+        list.page = $(this).attr('page');
+        GonetAlarmtList(list);
+    });
+
+     $('#tbody').delegate('.modify','click',function(){
+        var id = $(this).attr('logid');
+        $.post('/resource/delgonetalarm',{'ajax':1,'id':id},function(res){
+           if (res.code == '0') {
+                alertmsg(res.msg);
+           }else{
+                list.page = 1;
+                GonetAlarmtList(list);
+           }
+        },'json');
+
+    });
+
+    //添加修改记录
+    function gonetalarmadd(data){
+       $.post('/resource/gonetalarmadd',data,function(res){
+                if (res.code == '1') {
+                    GonetAlarmtList(list);
+                    $(':input','#form').removeAttr('checked');
+                    $('input[name=trigger]').val('');
+                    $('.reset').prop('selected',true);
+                    $('.btn').removeClass('active');
+                }
+                alertmsg(res.msg);
+
+        },'json');
+    }
+
+
+    function GonetAlarmtList(list){
+        $.post('/resource/gonetalarmlist',list,function(res){
+             //异步表格展示
+            var tr = '';
+            var color = '';
+            $.each(res.allrow,function(k,v){
+                if (k%2) {
+                    color = ' class="active"';
+                }else{
+                    color = ' class="info"';
+                }
+                tr += '<tr '+color+'>'+
+                            '<td>'+v.stationid+'</td>'+
+                            '<td>'+v.type+'</td>'+
+                            '<td>'+v.stime+'</td>'+
+                            '<td>'+v.etime+'</td>'+
+                            '<td>'+v.trigger+'</td>'+
+                            '<td style="cursor:pointer;" data-toggle="modal" logid="'+v.id+'"  class="modify">删除</td>'+
+                      '</tr>';
+            });
+
+            $('.table tbody').html(tr);
+            $('#paging').html(res.paging);
+        },'json');
+    }
+    
+});
+
+</script>
+{/literal}
+</head>
+<body>
+<div class="content container-fluid sidebarRight animated fadeInUp">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-6" style="width:50%;">            
+            <div class="panel panel-pink" style="height:50px;margin-bottom: -10px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">一键上网报警触发值设定</h3>
+                </div>
+                
+            </div>
+
+        </div>
+
+
+         <div class="col-md-6" style="width:50%;">
+            <div class="panel panel-purple" style="height:50px;margin-bottom: -10px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">一键上网报警触发值列表</h3>
+                </div>
+               
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="content container-fluid sidebarRight animated fadeInUp" style="padding-top: 5px;">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-6" style="width:50%;">            
+            <div class="panel panel-pink" style="min-height:555px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title"></h3>
+                </div>
+                <form id="form">
+                    <div class="panel-heading" style="float: left;margin-top: 10px;">
+                       <!-- <h3 class="panel-title">时间</h3> -->
+                       <label style="font-size: 16px;">选择车站：</label>
+                    </div>
+                   
+                     <div class="panel-body" data-toggle="buttons">
+                        
+                        {foreach $stations as $v}
+                        <button title="" data-placement="left" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="Tooltip on left" style="margin-bottom: 8px;">
+                            <input type="radio" name="stationid" class="station" value="{$v.id}">{$v.stationname}
+                        </button>
+                       {/foreach}
+                        
+                         
+                    </div>
+
+                    <div class="panel-heading" style="float: left;margin-top: 10px;">
+                       <!-- <h3 class="panel-title">时间</h3> -->
+                       <label style="font-size: 16px;">触发类型：</label>
+                    </div>
+
+                    <div class="panel-body" data-toggle="buttons">
+                        <button data-original-title="Tooltip on bottom" title="" data-placement="bottom" data-toggle="tooltip " class="btn btn-default tooltips" type="button">
+                            <input type="radio" name="type" id="month" value="1">失败次数过多触发
+                        </button>
+
+                        <button title="" data-placement="left" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="Tooltip on left">
+                            <input type="radio" name="type" id="week" value="2"> 成功次数不足触发
+                        </button>
+                    </div>
+
+                    <div class="panel-heading" style="float: left;margin-top: 10px;">
+                       <!-- <h3 class="panel-title">时间</h3> -->
+                       <label style="font-size: 16px;">起始时间：</label>
+                    </div>
+                    <div class="panel-body" data-toggle="buttons">
+                        
+                        <select name="stime" style="float: left;margin-top: 2px;line-height: 31px;height:31px;">
+                            <option class="reset">选择报警起始时间</option>
+                            {for $i = 0 to 23}
+                                {if $i < 10}
+                                 <option value="0{$i}">0{$i}点</option>
+                                {else}
+                                 <option value="{$i}">{$i}点</option>
+                                {/if}
+                            {/for}
+                        </select>
+                    </div>
+                    <div class="panel-heading" style="float: left;margin-top: 10px;">
+                       <!-- <h3 class="panel-title">时间</h3> -->
+                       <label style="font-size: 16px;">结束时间：</label>
+                    </div>
+                    <div class="panel-body" data-toggle="buttons">
+                        <select name="etime" style="float: left;margin-top: 2px;line-height: 31px;height:31px;">   
+                        <option class="reset">选择报警结束时间</option>
+                            {for $i = 0 to 23}
+                                {if $i < 10}
+                                 <option value="0{$i}">0{$i}点</option>
+                                {else}
+                                 <option value="{$i}">{$i}点</option>
+                                {/if}
+                            {/for}
+                        </select>
+                    </div>
+                    <div class="panel-heading" style="float: left;margin-top: 10px;">
+                       <label style="font-size: 16px;">报警设定:</label>
+                    </div>
+                    <div class="panel-body" data-toggle="buttons">
+                        <input  type="text" name="trigger" placeholder="预警值 如 100" style="height:30px;line-height: 30px; font-size: 16px;" />
+                    </div>
+                    <div class="panel-body">
+                        <section class="btn-group pull-left">
+                             <a target="_blank" class="btn btn-info" id="submit">提交</a> 
+                        </section>
+                        
+                    </div>
+                    <input type="hidden" name="isupdate" value="0" />
+                    <input type="hidden" name="id" value="0" />
+                  </form>
+            </div>
+
+        </div>
+
+
+         <div class="col-md-6" style="width:50%;">
+            <div class="panel panel-purple">
+                <div class="panel-heading">
+                    <h3 class="panel-title"></h3>
+                </div>
+                <div class="panel-body" style="min-height: 530px;">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>车站</th>
+                                <th>触发类型</th>
+                                <th>起始时间</th>
+                                <th>结束时间</th>
+                                <th>触发值</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                          <tr class="active">
+                                <td>爱奇艺</td>
+                                <td>济南</td>
+                                <td>5</td>                        
+                                <td>5</td>                        
+                                <td style="cursor:pointer;" data-toggle="modal" data-target="#myModal" id="2">修改</td>                       
+                            </tr>
+                        </tbody>
+                    </table>
+                   <div class="btn-toolbar" role="toolbar" aria-label="..." id="paging">
+                      
+                  </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+
+</html>
+

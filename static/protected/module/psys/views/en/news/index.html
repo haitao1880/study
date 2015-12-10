@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-浏览数据统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+        <style type="text/css">
+/* detail */
+#detail{position:absolute;width:620px;height:550px;border:1px solid #ccc;background:#efefef;display:none;top:200px;}
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#ipcno{width: 150px;height: 20px;margin-left: 0;}
+#news_select input{padding:4px;}
+#news_select select{padding:4px;}
+
+.adsAdd{
+	background:#FFF;
+	width:90px;
+	line-height:30px;
+	border:1px solid #417eb7;
+	text-align:center;
+	margin-top:20px;
+	margin-left:88px;
+	color:#000;
+}
+.carTr:hover{
+		background:#417eb7;
+}
+input[type="text"]{
+	height:20px;
+}
+</style>
+    </head>
+    <body>
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 新闻管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 新闻</a>
+            </div>
+        </div>
+        <form action="/news/index" method="post" id="news_select">
+		<table class="hovertable" class="hovertable" border="1" cellpadding="0" cellspacing="1" bgcolor="#417eb7" bordercolor="#2d68a0">
+		<caption><h4>新闻列表</h4></caption>
+		<tr bgcolor="#417eb7" class="carTr">
+			<td colspan="8" align="left" style="color:#FFF">&nbsp;&nbsp;&nbsp;&nbsp;		
+				类别：<select name="news_type" id='news_type' onChange="chuanHuoSelect(this)">
+		 			 <option value="0" {{if $new.newstype eq 0}}selected="selected"{{/if}}>请选择</option>
+		 			{{foreach $newstype as $key=>$item}}
+					  <option value="{{$key}}" {{if $key eq $cid}}selected="selected"{{/if}} {{if $key eq $select.news_type}}selected="selected"{{/if}}>{{$item}}</option>
+					{{/foreach}}
+		     	</select>&nbsp;&nbsp;&nbsp;&nbsp;
+		     	关建词：<input type="text" value="{{$select.keyword}}" name="keyword" id="keyword" onblur="this.style.color = '#666';if ( this.value =='' ) this.value = '请输入关建词！'; " onfocus="this.style.color='black';if (this.value == '请输入关建词！' )  this.value=''; " >&nbsp;&nbsp;&nbsp;&nbsp;
+     			<span class="manyday dateSpan">
+                     	 开始时间:<input id="d5221" name="indate" value="{{$select.indate}}" class="Wdate" type="text" onFocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},firstDayOfWeek:1,maxDate:'%y-%M-%d'})" autocomplete="off"/>
+                      	结束时间:<input id="d5222" name="todate" value="{{$select.todate}}" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:0})}',firstDayOfWeek:1,maxDate:'%y-%M-%d',onpicked:function(){dataSearch()}})" autocomplete="off"/>
+                </span>
+		     	<input type="submit"  id="btnSave" name="btnSave" value="查询"/>
+			</td>
+		</tr>
+		<tr class="table-head" bgcolor="#2d68a0" style="line-height:25px;">
+			
+			<th>id编号</th>
+		    <th>新闻标题</th>
+		    <th>作者</th>
+		    <th>新闻类型</th>
+			<th>新闻来源</th>
+		    <th>发布日期</th>
+		    <th>是否启用</th>
+		    <th>操作</th>  
+		</tr>
+		{{foreach $list as $v}}
+		<tr class="tbody" bgcolor="#FFFFFF">
+		    <td>{{$v.id}}</td>
+		    <td>{{$v.title}}</td>
+		    <td>{{$v.author}}</td>
+			<td><font color='red'>{{$v.newstype}}</font></td>
+		    <td>{{$v.nfrom}}</td>
+		    <td>{{$v.ctime|date_format:"%Y-%m-%d %H:%I:%S"}}</td>
+		    <td id='list{$v.id}'>{{if $v.flag eq 1}}是{{else}}否{{/if}}</td>
+		    <td>
+		    	<a href="javascript:;" onClick="return display({{$v.id}});">预览</a> / 
+		    	<a href="/news/edit?id={{$v.id}}">编辑</a> / 
+		    	<a href="javascript:;" vid='{{$v.id}}' isflg='{{$v.flag}}' class="editflag" id="flag{{$v.id}}">{{if $v.flag eq 1}}禁用{{else}}启用{{/if}}</a>
+		    	<!--  / <a href="javascript:;" onClick="return delNews({$v.id});">删除</a> -->
+		    </td>
+		</tr>
+		{{/foreach}}
+		</table>
+		
+		<a href="/news/add"><div class="adsAdd">新闻添加</div></a>
+		
+		<div class="pages">
+		  <ul class="pagination-digg">
+		    
+		   
+		 <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+		{{if $cur_page gt 1}}
+		  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+		{{else}}
+		  <li class="previous-off"> &laquo;Previous</li>
+		{{/if}}
+			{{if $endNum lt $allpage}}	
+		         {{for $p=$startNum to $endNum}}
+		                
+		                     {{if $cur_page eq $p}}
+		                     <li class="active">{{$p}}</li>
+		                     {{else}}
+		                     <li><a href="?page={{$p}}">{{$p}}</a></li> 
+		                     {{/if}}
+		                   
+		          {{/for}}
+		     {{else}}
+		        {{for $p=$startNum to $allpage}}
+		                
+		                     {{if $cur_page eq $p}}
+		                     <li class="active">{{$p}}</li>
+		                     {{else}}
+		                     <li><a href="?page={{$p}}">{{$p}}</a></li> 
+		                     {{/if}}
+		                   
+		          {{/for}}     
+		     {{/if}}     
+		        
+		{{if $cur_page lt $allpage}}
+		    <li class="next">
+		    <a href="?page={{$cur_page+1}}">Next &raquo;</a>
+		    </li>
+		{{else}}
+		    <li class="next-off">
+		    Next &raquo;
+		    </li>
+		{{/if}}
+		   <li class="next">
+		    <a href="?page={{$allpage}}">Last &raquo;</a>
+		    </li>
+		    <li class="next-off">
+		   {{$cur_page}}/{{$allpage}} Page
+		    </li>
+		    <!--  
+		    <li class="del">
+		   		<button type="submit" name="submit" class="but">DELETE</button>
+		    </li> 
+		    -->   
+		  </ul>
+		</div>
+		</form>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script>
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    <script type="text/javascript" src="{{$psys_js}}mytc.js"></script>
+   <script type="text/javascript">
+$(document).ready(function(){
+	var keyword = $('#keyword');
+	if ( keyword.val() == '' ){
+		keyword.val('请输入关建词！');
+		keyword.css("color","#666");
+	}
+	$('.submenu > a').click(function(e)
+			{
+				e.preventDefault();
+				var submenu = $(this).siblings('ul');
+				var li = $(this).parents('li');
+				var submenus = $('#sidebar li.submenu ul');
+				var submenus_parents = $('#sidebar li.submenu');
+				if(li.hasClass('open'))
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenu.slideUp();
+					} else {
+						submenu.fadeOut(250);
+					}
+					li.removeClass('open');
+				} else 
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenus.slideUp();			
+						submenu.slideDown();
+					} else {
+						submenus.fadeOut(250);			
+						submenu.fadeIn(250);
+					}
+					submenus_parents.removeClass('open');		
+					li.addClass('open');	
+				}
+			});
+});
+function delNews(id)
+{
+	  if(confirm("确定要删除吗？"))
+	  {
+		  window.location.href = '/news/del?id='+id;
+	  }
+}
+function display(id){
+	$("#detailcon").load('/news/display?id='+id);
+	popWin("detail");
+}
+$('.editflag').click(function(){
+	 var id = $(this).attr('vid');
+	 var isflg = $(this).attr('isflg');
+	 var list = $('#list'+id);
+    var flag = $('#flag'+id);
+	 $.ajax({
+		   type: "POST",
+		   url: "/news/isflg",
+		   dataType:"json",
+		   data:"ajax=1&id="+id+"&isflg="+isflg,
+		   success: function(msg){
+		     if(msg.res==1){
+			     alert('修改成功！');			    
+			     if(isflg==1){
+			    	list.html('否');
+			     	flag.html('启用');
+			     	flag.attr('isflg',0);
+			     }else{
+			    	list.html('是');
+			     	flag.html('禁用');
+			     	flag.attr('isflg',1);
+				 }
+			 }
+		   }
+		});
+});
+function chuanHuoSelect(selObj){
+	 var selectd = selObj.options[selObj.selectedIndex].value;
+	 $('#news_select').submit();
+}
+</script>
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:490px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#efefef" id='detailcon'>
+		
+		 
+		</table>
+	</div>
+</div>
+    </body>
+</html>

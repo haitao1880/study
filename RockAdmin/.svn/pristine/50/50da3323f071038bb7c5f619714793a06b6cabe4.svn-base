@@ -1,0 +1,73 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-21 19:17:52
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//station/stlist.html" */ ?>
+<?php /*%%SmartyHeaderCode:7621205815496ac6098ad86-69594351%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'a15f0b94f00cf35518fdcff235bc4ef41687edee' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//station/stlist.html',
+      1 => 1418374935,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '7621205815496ac6098ad86-69594351',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?>
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>车站列表</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+public.css" />
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+</head>
+<body>
+<form action="/sim/del" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>车站列表</h4></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	
+	<th>ID</th>
+    <th>站名</th>
+    <th>Ac日志</th>
+    <th>车站日志</th>
+    <th>日志IP</th>
+    <th>是否包含Ip</th>
+    <th>操作</th>  
+</tr>
+	
+	<?php  $_smarty_tpl->tpl_vars['v'] = new Smarty_Variable;
+ $_From = $_smarty_tpl->getVariable('list')->value; if (!is_array($_From) && !is_object($_From)) { settype($_From, 'array');}
+if ($_smarty_tpl->_count($_From) > 0){
+    foreach ($_From as $_smarty_tpl->tpl_vars['v']->key => $_smarty_tpl->tpl_vars['v']->value){
+?>
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><input name="id[]" type="checkbox"  value="<?php echo $_smarty_tpl->tpl_vars['v']->value['id'];?>
+"><?php echo $_smarty_tpl->tpl_vars['v']->value['id'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['stationname'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['acfile'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['logfile'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['logip'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['ifconf'];?>
+</td>
+    <td><a href="/station/edit?id=<?php echo $_smarty_tpl->tpl_vars['v']->value['id'];?>
+">编辑</a> <a href="/station/del?id=<?php echo $_smarty_tpl->tpl_vars['v']->value['id'];?>
+">删除</a></td>
+</tr>
+<?php }} ?>
+
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-专辑编辑</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+<style type="text/css">
+input{
+	margin-top:5px;
+}
+#state{
+	margin-bottom:6px;
+	margin-left:10px;
+	margin-right:2px;
+}
+#aa{
+	margin-bottom:6px;
+	margin-left:10px;
+	margin-right:2px;
+}
+.btn{
+	display:none;
+}
+#img_form{
+display:none;
+}
+</style>
+    </head>
+    <body>
+
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 资源管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 专辑编辑</a>
+            </div>
+        </div>
+		<table class="add-table" width="100%" border="0" cellpadding="0"  >
+		  <caption>
+		  <h3>专辑添加</h3>
+		  </caption>
+		  <tr>
+		    <td width="30%" align="right">专辑名：</td>
+		    <td width="70%" align="left"><input type="text" name="aname" value="{{$info.aname}}"/></td>
+		  </tr>
+		  <tr>
+		    <td align="right">小&nbsp;&nbsp;图：</td>
+		    <td align="left">
+					<input type="text" name="imgurl_1" id="smallimg" readonly style="height:24px" value="{{$info.smallpic}}"/>
+                    <input type="button" class="clickImg" value="图片选择" id="Img_1"/>
+                    <label id="st_tips_1"></label>
+			</td>
+		  </tr>
+		 
+		  <tr>
+		    <td width="30%" align="right">大&nbsp;&nbsp;图：</td>
+		     <td align="left">
+					<input type="text" name="imgurl_2" id="bigimg" readonly style="height:24px" value="{{$info.bigpic}}"/>
+                    <input type="button" class="clickImg" value="图片选择" id="Img_2"/>
+                    <label id="st_tips_2"></label>
+			</td>
+		  </tr>
+		  <tr>
+		    <td align="right">点&nbsp;&nbsp;击：</td>
+		    <td align="left"><input type="text" name="hits"/></td>
+		  </tr>
+		 
+		  <tr>
+		    <td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+		    <td width="70%" align="left">
+		    	<input id="state" class="check-box" name="flag" type="radio" value="1" {{if $info.flag eq 1}}checked{{/if}}>正常
+		        <input id="state" class="check-box" name="flag" type="radio" value="0" {{if $info.flag eq 0}}checked{{/if}}>停用
+		    </td>
+		  </tr>
+		   <tr>
+		    <td width="30%" align="right">合作商ID：</td>
+		    <td width="70%" align="left"><input type="text"  name="parternid" value="{{$info.parternid}}"/></td>
+		  </tr>
+		     <tr>
+		    <td width="30%" align="right">合作商：</td>
+		    <td width="70%" align="left"><input type="text"  name="partner" value="{{$info.partner}}"/></td>
+		  </tr>
+		       <tr>
+		    <td width="30%" align="right">排&nbsp;&nbsp;序：</td>
+		    <td width="70%" align="left"><input type="text"  name="sortid" value="{{$info.sortid}}"/></td>
+		  </tr>
+		  <tr>
+		    <td colspan="2" align="center"><input type="hidden" name="id" value="{{$info.id}}"/><input type="button" id="btnSave" value="保 存"/></td>
+		  </tr>
+		</table>
+        <div id="img_form">
+			<form id="form1" action="/res/uploadalbum" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file[]" multiple='true' class="file1" />
+				<input type="hidden" name='num' value='1'/>
+			</form>
+			
+			<form id="form2" action="/res/uploadalbum" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file[]" multiple='true' class="file2" />
+				<input type="hidden" name='num' value='2'/>
+			</form>		
+			<iframe name="img_iframe"></iframe>
+		</div>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+	<script>
+    $(document).ready(function(){
+    	$('.submenu > a').click(function(e)
+    			{
+    				e.preventDefault();
+    				var submenu = $(this).siblings('ul');
+    				var li = $(this).parents('li');
+    				var submenus = $('#sidebar li.submenu ul');
+    				var submenus_parents = $('#sidebar li.submenu');
+    				if(li.hasClass('open'))
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenu.slideUp();
+    					} else {
+    						submenu.fadeOut(250);
+    					}
+    					li.removeClass('open');
+    				} else 
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenus.slideUp();			
+    						submenu.slideDown();
+    					} else {
+    						submenus.fadeOut(250);			
+    						submenu.fadeIn(250);
+    					}
+    					submenus_parents.removeClass('open');		
+    					li.addClass('open');	
+    				}
+    			});
+    	
+    	$('#btnSave').click(function(){
+    		var aname = $.trim($("input[name='aname']").val());
+    		var smallpic = $.trim($("input[name='imgurl_1']").val());
+    		var bigpic = $.trim($("input[name='imgurl_2']").val());
+    		var hits = $.trim($("input[name='hits']").val());
+    		var flag = $.trim($("input[name='flag']").val());
+    		var parternid = $.trim($("input[name='parternid']").val());
+    		var partner = $.trim($("input[name='partner']").val());
+    		var sortid = $.trim($("input[name='sortid']").val());
+    		var id = $.trim($("input[name='id']").val());
+    		if(aname == '')
+    		{
+    			alert('请输入专辑名');
+    			return;
+    		}
+    		//其他验证
+    		$.post(
+    			'/res/updatealbum',
+    			{'ispost':1,'ajax':1,'aname':aname,'smallpic':smallpic,'bigpic':bigpic,'hits':hits,'flag':flag,'parternid':parternid,'partner': partner, 'sortid': sortid,'id':id},
+    			function(res){
+    				if(res.result == 'SUCCESS')
+    				{ 
+    					alert('编辑成功');
+    						document.location.href = '/res/albumlist';   						
+    				}
+    				else
+    				{
+    					alert(res.msg+'('+res.msgcode+')');
+    				}
+    			},
+    			'json'
+    		);
+    		
+    	});
+		
+		$("#Img_1").click(function(){
+			$(".file1").click();
+		});
+		$(".file1").change(function(){
+			$("#form1").submit();
+		});
+		$("#Img_2").click(function(){
+			$(".file2").click();
+		});
+		$(".file2").change(function(){
+			$("#form2").submit();
+		});
+    });
+    function callbackFunction(str)
+	{
+		var jsonobj=eval('('+str+')');
+		var num = jsonobj.num;
+		if(jsonobj.result == 'success')
+		{
+			$("input[name='imgurl_"+num+"']").val(jsonobj.img_name);
+			$("#st_tips_"+num).css('color','green').css("display",'inline').text(jsonobj.msg);
+		}
+		else if(jsonobj.result == 'error')
+		{
+			$("#st_tips_"+num).css('color','red').css('display','inline').text(jsonobj.msg);
+		}
+	}
+    </script>
+    </body>
+</html>

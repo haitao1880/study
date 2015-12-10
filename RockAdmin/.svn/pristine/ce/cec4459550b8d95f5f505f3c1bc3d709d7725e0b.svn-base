@@ -1,0 +1,142 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-10 16:55:15
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//ipc/edit.html" */ ?>
+<?php /*%%SmartyHeaderCode:141360456154880a73964d38-74802905%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '2866693c6fc147cd591e0da54f35bfb148950842' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//ipc/edit.html',
+      1 => 1409709066,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '141360456154880a73964d38-74802905',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+datepicker.css" rel="stylesheet" />
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".datepicker").datePicker({
+		inline:true,
+		selectMultiple:false
+	});
+	
+	$("#datepicker").datePicker({
+		clickInput:true
+	});	
+	
+	var $isadd = $('#isadd').html();
+	if($isadd == 1){
+		alert('修改成功');
+		window.location = '/ipc/index';
+	}else if($isadd == -1){
+		alert('参数不正确！');
+	}else if ($isadd == -2){
+		alert('修改失败');
+	}
+});
+</script>
+</head>
+<body>
+<div style="display: none;" id="isadd"><?php echo $_smarty_tpl->getVariable('isadd')->value;?>
+</div>
+<form method="post">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>修改信息</h3>
+  </caption>
+  <tr>
+    <td width="30%" align="right">编&nbsp;&nbsp;号：</td>
+    <td width="70%" align="left"><input type="text" name="ipcno" value="<?php echo $_smarty_tpl->getVariable('ipcno')->value;?>
+" /></td>
+  </tr>
+  <tr>
+    <td align="right">车次/车站：</td>
+    <td align="left"><input type="text" name="train" value="<?php echo $_smarty_tpl->getVariable('train')->value;?>
+"/></td>
+  </tr>
+  <tr>
+    <td align="right">车厢/位置：</td>
+    <td align="left"><input type="text" name="car" value="<?php echo $_smarty_tpl->getVariable('car')->value;?>
+"/></td>
+  </tr>
+  <tr>
+    <td align="right">楼&nbsp;&nbsp;层：</td>
+    <td align="left"><input type="text" name="floor" value="<?php echo $_smarty_tpl->getVariable('floor')->value;?>
+"/></td>
+  </tr>
+  <tr>
+    <td  align="right">车站/车上：</td>
+    <td  align="left">
+    	<input id="train-state" class="check-box" name="trainflag" type="radio" value="1" <?php if ($_smarty_tpl->getVariable('trainflag')->value==1){?>checked<?php }?>><label>车上</label>
+        <input id="train-state" class="check-box" name="trainflag" type="radio" value="2" <?php if ($_smarty_tpl->getVariable('trainflag')->value==2){?>checked<?php }?>><label>车站</label>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">sim卡号：</td>
+    <td align="left"><input type="text" name="simno" value="<?php echo $_smarty_tpl->getVariable('simno')->value;?>
+"/></td>
+  </tr>
+  <tr>
+    <td  align="right">上线时间：</td>
+    <td  align="left">
+    	<input type="text" name="onlinetime" value="<?php echo $_smarty_tpl->getVariable('onlinetime')->value;?>
+" id="datepicker" />
+    </td>
+  </tr>
+   <tr>
+    <td  align="right">下线时间：</td>
+    <td  align="left">
+    	<input type="text" name="offlinetime" value="<?php echo $_smarty_tpl->getVariable('offlinetime')->value;?>
+" />
+    </td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">硬&nbsp;&nbsp;件：</td>
+    <td width="70%" align="left">
+    	<textarea rows="3" cols="27" name="hardware" ><?php echo $_smarty_tpl->getVariable('hardware')->value;?>
+</textarea>
+    </td>
+  </tr>
+  <tr>
+    <td  align="right">监&nbsp;&nbsp;控：</td>
+    <td  align="left">
+    	<input id="train-state" class="check-box" name="monitor" type="radio" value="0" <?php if ($_smarty_tpl->getVariable('monitor')->value==0){?>checked<?php }?>><label>否</label>
+        <input id="train-state" class="check-box" name="monitor" type="radio" value="1" <?php if ($_smarty_tpl->getVariable('monitor')->value==1){?>checked<?php }?>><label>是</label>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">负责人：</td>
+    <td align="left"><input type="text" name="leader" value="<?php echo $_smarty_tpl->getVariable('leader')->value;?>
+"/></td>
+  </tr>
+  <tr>
+    <td  align="right">备&nbsp;&nbsp;注：</td>
+    <td  align="left">
+    	<input type="text" name="remark" value="<?php echo $_smarty_tpl->getVariable('remark')->value;?>
+" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><input type="submit" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

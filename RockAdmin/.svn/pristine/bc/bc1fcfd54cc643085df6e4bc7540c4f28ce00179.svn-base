@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+{literal}
+<style type="text/css">
+body{margin:0;padding:0;font-size:12px;}
+dt{padding:10px;}
+i{ font-style:normal;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+</style>
+{/literal}
+{literal}
+<script>
+
+function show(time)
+{
+	var $title = '<caption>'
+		  		+	'<h3>注册详情</h3>'
+				+'</caption>'
+		 		+'<tr  bgcolor="#417eb7">'
+		  		+  	'<th>时间</th>'
+		   		+ 	'<th>注册页访问次数</th>'
+		   		+ 	'<th>发送验证码次数</th>'
+          +   '<th>提交次数</th>'
+          +   '<th>注册成功次数</th>'
+          +   '<th>失败次数</th>'
+		 		+'</tr>'; 
+	$("#detailcon").html($title);
+	
+	
+	$.ajax({
+        type: "POST",
+        data: { time: time, ajax:1,ishours:'hours'},
+        url: '/count/regdetail',
+        success: function (data) {  
+                      	
+            if (data.code == 1) {
+            	
+            	
+            	$.each(data.allrow, function (index, item) {
+            		 $('#detailcon').append(
+            			'<tr bgcolor="#FFFFFF"> '   
+						+   ' <td>'+item.day+'</td>'
+						+   ' <td>'+item.rnum+'</td>'
+						+   ' <td>'+item.sendsms+'</td>'
+            +   ' <td>'+item.submit+'</td>'
+            +   ' <td>'+item.success+'</td>'
+            +   ' <td>'+item.fail+'</td>'
+						+  '</tr>'	 
+            		 );
+            		
+            		
+            	});
+            	
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+            	
+	popWin("detail");
+}
+</script>
+{/literal}
+</head>
+
+<body>
+选择服务器:
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  	<h3>{$counttitle}</h3>
+  </caption>
+  <tr  bgcolor="#417eb7">
+    <th>日期</th>
+    <th>注册页访问次数</th>
+    <th>发送验证码次数</th>
+    <th>提交次数</th>
+    <th>注册成功次数</th>
+    <th>失败次数</th>
+    <th>操作</th>
+  </tr>
+ 
+</table>
+
+
+
+</body>
+</html>

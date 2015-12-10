@@ -1,0 +1,188 @@
+﻿table {
+	font-size: 13px;
+}
+.normal_table td {
+	background-color: #fff !important;
+}
+.year td {
+	border-bottom: 1px solid #AAAAFF;
+	background-color: #EEEEFF !important;
+}
+.normal_table .month {
+	background-color: #F6F6F6 !important;
+}
+.seperate {
+	height: 3px;
+	font-size: 1px;
+}
+table th {
+	font-size: 10px;
+	padding: 4px;
+	font-weight: bold;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #A3BAE9;
+	background-color: #DFE8F6;
+	text-align: center;
+}
+table td {
+	/*font-size: 12px;
+	border-width: 1px;
+	padding: 4px;
+	border-style: solid;
+	border-color: #A3BAE9;*/
+}
+.page_numbers_container {
+	/*float:right; width:540px; font-family:"宋体"; font-size:12px; color:#000;*/
+      display: table;
+    height: 15px;
+    margin: auto;
+    width: auto;
+    font-size: 14px;
+}
+.page_numbers_container .wall_arrow_left {
+	float: left;
+	height: 18px;
+	line-height:18px;
+	color:#2264B6;
+	font-size:12px;
+	text-align:center;
+	width: 50px;
+	border:1px solid #037bb8;
+    margin-top: 1px;
+}
+.page_numbers_container .wall_chat_box_pages {
+	color: #31251D;
+	float: left;
+	height: 20px;
+	margin-top: 1px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+.page_numbers_container .wall_chat_box_pages a, .page_numbers_container .wall_chat_box_pages span {
+	color: #2264B6;
+	float: left;
+	font-size: 14px;
+	font-weight: bold;
+	text-decoration: none;
+	height: 18px;
+	line-height:18px;
+	width:26px;
+	margin-bottom: 3px;
+	margin-left: 2px;
+	margin-right: 2px;
+	border:1px solid #3289F8;
+    text-align: center;
+}
+.page_numbers_container .wall_chat_box_pages span {
+	color: #FF0000;
+	border:1px solid red;
+}
+.page_numbers_container .wall_chat_box_pages a:hover{border:1px solid red; color:red;}
+.page_numbers_container .wall_arrow_right {
+	float: left;
+	height: 18px;
+	line-height:18px;
+	color:#2264B6;
+	font-size:12px;
+	text-align:center;
+	width: 50px;
+	border:1px solid #037bb8;
+    margin-top: 1px;
+}
+.page_numbers_container .wall_arrow_right:hover,.page_numbers_container .wall_arrow_left:hover{border:1px solid red; color:red;}
+
+#hidRow {
+	display: none;
+}
+.description {
+	display: none;
+	padding: 5px;
+	float: left;
+	position: absolute;
+	background-color: #ffffff;
+	overflow-y: auto;
+	border: 5px solid #2264B6;
+}
+.description table {
+	background-color: #ffffff;
+	border: 1px solid #2264B6;
+	border-collapse: collapse;
+}
+.description table td {
+	background-color: #ffffff;
+	border: 1px solid #2264B6;
+}
+td, th {
+	/*border: 1px solid #333;
+	border-collapse: collapse;*/
+}
+table {
+	border-collapse: collapse;
+}
+.editlink {
+	color:#fff;
+	text-decoration: none;
+	padding:4px 10px;
+	background:#037bb8;
+   
+}
+.editlink:hover {
+    background: red;
+}
+#contentdiv {
+	z-index: 2;
+	display: none;
+	position: absolute;
+	left: 10%;
+	top: 10%;
+	display: none;
+	background-color: #FFF;
+	border: #DDDDDD solid 1px;
+	width: 80%;
+	height: 600px;
+	overflow: hidden;
+}
+#back {
+	/*position: absolute;
+            left: 0px;
+            top: 0px;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            filter: alpha(opacity=50);
+            -moz-opacity: 0.5;
+            -khtml-opacity: 0.5;
+            opacity: 0.5;
+            display: none;*/
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: #333333;
+	filter: alpha(opacity=50);
+	-moz-opacity: 0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
+	margin: 0;
+	z-index: 0;
+	display: none;
+}
+.hidDiv {
+	display: none;
+}
+.closebtn {
+	color: blue;
+	cursor: pointer;
+	float: right;
+	margin-right: 30px;
+}
+/***2013-10-31 weikang***/
+.GridViewStyle {
+	text-align: center;
+}
+.tableStyle { text-align:center;}
+
+.pager1{ width:100%; background:url(../images/img005.jpg) repeat-x left center; height:31px; line-height:31px;}
+.cont_tab{ border-bottom:1px solid #718598;}

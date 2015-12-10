@@ -1,0 +1,64 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-21 19:17:58
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//station/add.html" */ ?>
+<?php /*%%SmartyHeaderCode:3108960175496ac66a40332-42520033%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'b123f3fe8436443a98b94a46e1ed1a67933eb50a' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//station/add.html',
+      1 => 1418375746,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '3108960175496ac66a40332-42520033',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>添加车站</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+</head>
+<body>
+<div style="display: none;" id="isadd">0</div>
+<form action="/station/doAdd" method="POST" enctype="multipart/form-data">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>新增车站</h3>
+  </caption>
+  <tr>
+    <td align="right">站&nbsp;&nbsp;名：</td>
+    <td align="left"><input type="text" name="station"/></td>
+  </tr>
+  <tr>
+    <td align="right">AC日志：</td>
+    <td align="left"><input type="text" name="acfile"/></td>
+  </tr>
+  <tr>
+    <td align="right">车站日志：</td>
+    <td align="left"><input type="text" name="logfile"/></td>
+  </tr>
+  <tr>
+    <td  align="right">日志IP：</td>
+    <td align="left"><input type="text" name="logip" /></td>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">是否包含IP：</td>
+    <td align="left"><input type="text" name="ifconf" /></td>	
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan="2" align="center"><input type="submit" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

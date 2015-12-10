@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-浏览数据统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+		<link rel="stylesheet" href="{{$psys_js}}/kindeditor/themes/default/default.css" />
+<style type="text/css">
+#title{
+	margin:auto;
+	display:block;
+	width:200px;
+	line-height:60px;
+}
+.adsAdd{
+	background:#FFF;
+	width:90px;
+	line-height:30px;
+	border:1px solid #417eb7;
+	text-align:center;
+	margin-top:20px;
+	margin-left:88px;
+	color:#000;
+}
+table tr:hover{
+	background:#EEEEEE;
+}
+input[type='radio']{
+	margin-bottom:8px;
+}
+</style>
+    </head>
+    <body>
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 新闻管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 新闻编辑</a>
+            </div>
+        </div>
+        <div style="display: none;" id="isadd">{$isadd}</div>
+<form method="post"  id="newsfrom" action="/news/{{$action}}">
+  <input type="hidden" name="news_id" value="{{$new.id}}">
+  <caption>
+  <h3 id="title">新增新闻</h3>
+  </caption>
+  		<table width="900" border="0" cellpadding="0" cellspacing="0">
+		  <tr>
+		    <td align="right"  width="150" >类别：</td>
+		    <td align="left">
+		    	<select name="news_type" id='news_type'>
+		 			 <option value="0" {if $new.newstype eq 0}selected="selected"{/if}>请选择</option>
+		 			  {{foreach $new_type as $key=>$item}}
+					  <option value="{{$key}}" {{if $key eq $cid}}selected="selected"{{/if}} {{if $key eq $new.newstype}}selected="selected"{{/if}}>{{$item}}</option>
+					  {{/foreach}}
+		     	</select>
+		    </td>   
+		  </tr>
+		   <td align="right">标题：</td>
+		    <td align="left">
+		    	<input name="title" type="text" value="{{$new.title}}" style="width:300px;"/>
+		    </td>	    
+		  </tr>
+		  <tr>
+		  <td align="right">标题图片：</td>
+		    <td align="left">
+		    	<input name="imgurl" id="imgurl" type="text"  value="{{$new.imgurl}}"/>
+				<input type="button" id="image3" value="选择图片" style="height:25px; line-height:25px;"/>
+		        <font color='red'>*标题图片请用180*120等比例图片上传。</font>
+		    </td>		   
+		  </tr>
+		  <tr>
+		   <td align="right">作者：</td>
+		    <td align="left">
+		    	<input name="author" type="text"  value="{{$new.author}}"/>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td align="right">来源：</td>
+		    <td align="left">
+		    	<input name="nfrom" type="text"  value="{{$new.nfrom}}"/>
+		    </td>
+		   
+		  </tr>
+		  <tr>
+		   <td align="right">发布日期：</td>
+		    <td align="left">
+		    	<span class="manyday dateSpan">
+                <input id="d5221" name="ctime" value="{{$datetime}}" class="Wdate" type="text" onFocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},firstDayOfWeek:1,maxDate:'%y-%M-%d'})" autocomplete="off"/>
+                </span>
+		    </td>
+		  </tr>
+		  <tr>
+	    <td align="right"  width="150" >是否启用：</td>
+	    <td align="left">
+	    	<input type="radio" name="flag" value="1" {{if $new.flag eq 1}}checked="checked"{{/if}} />是　　
+	    	<input type="radio" name="flag" value="0" {{if $new.flag eq 0}}checked="checked"{{/if}} />否
+	    </td>
+	  </tr>
+	  <tr>
+	    <td  align="right">内容：</td>
+	    <td  align="left">
+	    	<textarea name="ndetail" id="content" style="width:1000px;height:400px;visibility:hidden;">{{$new.content}}</textarea><br/><font color='red'>*图片请从本地上传,图片规格见意640*400。</font>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td colspan="2" align="center">
+	    	<input type="submit"  id="btnSave" name="btnSave" value="保 存" />
+	    	<input type="button" style="margin-left:20px;" onclick="window.location.href = '/news/'" value="返回列表" />
+	    </td>
+	  </tr>
+	</table>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script>
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    <script charset="utf-8" src="{{$psys_js}}/kindeditor/kindeditor-min.js"></script>
+	<script charset="utf-8" src="{{$psys_js}}/kindeditor/lang/zh_CN.js"></script>
+   	<script type="text/javascript">
+$(document).ready(function(){
+	$('.submenu > a').click(function(e)
+			{
+				e.preventDefault();
+				var submenu = $(this).siblings('ul');
+				var li = $(this).parents('li');
+				var submenus = $('#sidebar li.submenu ul');
+				var submenus_parents = $('#sidebar li.submenu');
+				if(li.hasClass('open'))
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenu.slideUp();
+					} else {
+						submenu.fadeOut(250);
+					}
+					li.removeClass('open');
+				} else
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenus.slideUp();			
+						submenu.slideDown();
+					} else {
+						submenus.fadeOut(250);			
+						submenu.fadeIn(250);
+					}
+					submenus_parents.removeClass('open');		
+					li.addClass('open');	
+				}
+			});
+	$('#btnSave').click(function() {
+		var news_type = $("#news_type").val();
+		var title = $.trim($("input[name='title']").val());
+		var ctime = $.trim($("input[name='ctime']").val());
+		var content = $("#content").html();
+		if (news_type == 0) {
+			alert('请选择新闻类别！');
+			return false;
+		}
+		if(title == '')
+		{
+			alert('请输入文章标题');
+			return false;
+		}
+		
+		if(ctime == '')
+		{
+			alert('请选择新闻上传时间！');
+			return false;
+		}
+		/*if(content == '')
+		{
+			alert('文章内容不能为空！');
+			return false;
+		}*/
+	});
+});
+var editor;
+KindEditor.ready(function(K) {
+	editor = K.create('textarea[name="ndetail"]', {
+		uploadJson : '/news/uploadfile?ajax=1',
+		fileManagerJson : '/php/file_manager_json.php',
+		allowFileManager : true,
+		newlineTag :'br',
+		filterMode : true,
+		items : [
+		         'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+		         'italic', 'underline', 'removeformat', '|', 'justifyleft', 'justifycenter',
+		         'justifyright','insertorderedlist','insertunorderedlist','|',
+		         'image','insertfile','link', '|', 'about'
+		 ],
+	});				
+	var uploadbutton = K.uploadbutton({
+		button : K('#image3')[0],
+		fieldName : 'imgFile',
+		url : '/news/uploadfile?dir=image&ajax=1&istmp=1',
+		afterUpload : function(data) {
+			if (data.error === 0) {				
+				K('#imgurl').val(data.url);
+			} else {
+				alert(data.message);
+			}
+		},
+		afterError : function(str) {
+			alert('自定义错误信息: ' + str);
+		}
+	});
+	uploadbutton.fileBox.change(function(e) {
+		uploadbutton.submit();
+	});
+});
+</script>
+    </body>
+</html>

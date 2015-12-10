@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+{literal}
+<style type="text/css">
+body{margin:0;padding:0;font-size:12px;}
+dt{padding:10px;}
+i{ font-style:normal;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#pointer{
+  cursor:pointer;
+}
+
+</style>
+{/literal}
+
+
+
+
+</head>
+
+<body>
+{literal}
+<script>
+$(function(){
+	
+	$("#datepicker").datepicker();	
+	
+	
+});
+
+function appdowns(time)
+{
+  var $title = '<caption>'
+          + '<h3>应用下载详情</h3>'
+        +'</caption>'
+        +'<tr  bgcolor="#417eb7">'
+          +   '<th>应用名称</th>'
+          +   '<th>下载次数</th>'
+        +'</tr>'; 
+  $("#detailcon").html($title);
+
+  $.ajax({
+        type: "POST",
+        data: { date: time, ajax:1},
+        url: '/station/downapk',
+        success: function (data) {  
+             
+            if (data) {
+              
+              
+              $.each(data, function (index, item) {
+                 $('#detailcon').append(
+                  '<tr bgcolor="#FFFFFF"> '   
+            +   ' <td>'+index+'</td>'
+            +   ' <td>'+item+'</td>'
+            +  '</tr>'   
+                 );
+                
+                
+              });
+              
+                return;
+            } else  {
+                alert('没有数据');
+            }
+        }
+    });
+              
+  popWin("detail");
+}
+
+</script>
+{/literal}
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  	<h3>导航点击</h3>
+  </caption>
+  
+  <tr>
+    <form method="post" action="">
+	    <td>时间选择：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	        <input type="text" name="date" value="" id="datepicker" />
+	    </td>
+	   
+	    <td>
+	      <input type="submit" value="查询" id="pointer"/>
+	    </td>
+    </form>
+    
+  </tr>
+  
+  <tr  bgcolor="#417eb7">
+    <th>日期</th>
+    <th>一键</th>
+    <th>应用</th>
+    <th>游戏</th>
+    <th>音乐</th>
+    <th>电影</th>
+    <th>行李</th>
+    <th>到站</th>
+    <th>列车</th>
+    
+  </tr>
+  
+  {foreach $totallist as $v}
+  <tr bgcolor="#FFFFFF">    
+    <td>{$v.time}</td>
+    <td>{$v.linker}</td>
+    <td>{$v.app}</td>
+    <td>{$v.game}</td>
+    <td>{$v.music}</td>
+    <td>{$v.movie}</td>
+    <td>{$v.luggage}</td>
+    <td>{$v.dzfw}</td>
+    <td>{$v.inquiries}</td>
+   
+  </tr>
+  {/foreach}
+</table>
+
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:365px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>
+		
+		 
+		</table>
+	</div>
+</div>
+
+
+</body>
+</html>

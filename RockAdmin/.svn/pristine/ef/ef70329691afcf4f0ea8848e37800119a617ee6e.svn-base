@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+<link href="{$psys_js}lib/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="{$psys_js}lib/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" href="{$psys_js}/kindeditor/themes/default/default.css" />
+<script charset="utf-8" src="{$psys_js}/kindeditor/kindeditor-min.js"></script>
+<script charset="utf-8" src="{$psys_js}/kindeditor/lang/zh_CN.js"></script>
+
+{literal}
+<style>
+.add-table {width:90%;margin:0 auto;line-height:2.5;min-width:1200px;}
+.add-table caption {padding:25px;}
+.add-table h3 {font-size:16px;color:#333;}
+.add-table th {color:#bfeaf5;}
+.add-table tr {color:#333;text-align:center;}
+.add-table a:hover {color:#f00;}
+.tbody:hover {background:#d4eaff;color:#333;text-align:center;}
+.add-table input[type="text"] {border:1px solid #a9a9a9;width:210px;}
+.add-table input[type="password"] {border:1px solid #a9a9a9;width:210px;}
+
+.check-box {margin-top:-1px;}
+.check-box, label {vertical-align:middle;}
+button {padding:3px;margin-top:-1px;border:1px solid #900;}
+.add-table {line-height:1.8;min-width:30%;}
+.jCalendar{ min-width:0px;}
+.pages {margin-top:50px;width:100%;text-align:center;}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){	  
+	$("#datepicker").datepicker();	
+	$('#btnSave').click(function() {
+		var packid = $.trim($("input[name='packid']").val());
+		var pavalue = $.trim($("input[name='pavalue']").val());
+		var content = $("#content").html();
+		if(packid == '')
+		{
+			alert('请输入礼包编号');
+			return false;
+		}
+		
+		if(pavalue == '')
+		{
+			alert('礼包激活码不能为空！');
+			return false;
+		}
+
+	});
+});
+
+</script>
+{/literal}
+</head>
+<body>
+<div style="display: none;" id="isadd">{$isadd}</div>
+<form method="post"  id="newsfrom" action="/package/{$action}">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <input type="hidden" name="id" value="{$pack.id}">
+  <caption>
+  <h3>添加礼包</h3>
+  </caption>
+  <tr>
+  	<td colspan="2" >
+  		<table width="900" border="0" cellpadding="0" cellspacing="0" >
+		  
+		  <tr>
+		    <td align="right">礼包编号：</td>
+		    <td align="left">
+		    	<input name="packid" type="text" value="{$pack.packid}" />
+		    </td>		    
+		  </tr>
+		 	 
+		  <tr>
+		    <td align="right">礼包激活码：</td>
+		    <td align="left">
+		    	<input name="pavalue" type="text"  value="{$pack.value}"/>
+		    </td>
+		   
+		  </tr>
+		  <tr>
+		    <td align="right"  width="150" >是否领取：</td>
+		    <td align="left">
+		    	<input type="radio" name="flag" value="1" {if $pack.flag eq 1}checked="checked"{/if} />是　　
+		    	<input type="radio" name="flag" value="0" {if $pack.flag eq 0}checked="checked"{/if} />否
+		    </td>
+		  </tr>
+		 
+		  <tr>
+		    <td colspan="2" align="center">
+		    	<input type="submit"  id="btnSave" name="btnSave" value="保 存" />
+		    	<input type="button" style="margin-left:20px;" onclick="window.location.href = '/package/valuelist'" value="返回列表" />
+		    </td>
+		  </tr>
+		</table>
+  	</td>
+  </tr> 
+</table>
+</form>
+<form method="post"  id="nfrom" action="/package/import"  enctype="multipart/form-data">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+ <caption>
+  <h3> 批量导入礼包</h3>
+  </caption>
+    <tr>
+  	<td colspan="2" >
+  		<table width="900" border="0" cellpadding="0" cellspacing="0" >		
+		  	 
+		  <tr>
+		    <td align="right">导入Excel表：</td>
+		    <td align="left">
+		    	<input  type="file" name="file_stu" />
+		    </td>		   
+		  </tr>
+	 
+		  <tr>
+		    <td colspan="2" align="center">
+		    	<input type="submit"  id="batchImport" name="batchImport" value="批量导入" />
+		    </td>
+		  </tr>
+		</table>
+  	</td>
+  </tr> 
+</table>
+</form>
+</html>

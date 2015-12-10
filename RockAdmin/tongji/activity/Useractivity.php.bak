@@ -1,0 +1,354 @@
+<?php
+/**
+* 元用户活动内容统计  抢红包，抽奖、等
+*/
+require '/home/upload/nginxlog/activity/dolog.php';
+class Useractivity extends LogDo
+{	
+	protected $today;
+	protected $yesterday;
+	protected $hour;
+	protected $APPNAME;
+	public function __construct($stationid)
+	{
+		parent::__construct($stationid);
+		$this->DATE = date('Y-m-d-H',strtotime("-1 hour"));
+		//$this->DATE = '2015-06-15-13';
+		$this->today = date('Y_m_d');
+		$this->yesterday = date('Y_m_d',strtotime("-1 day"));
+		$this->hour = date('H',strtotime("-1 hour"));
+		//$this->hour = '13';
+		$this->WLNAME = 'm_wonaonao_access_'.$this->hour.'.log';
+
+	}
+
+	//日志解压
+	function Log($is_moreweb)
+	{	
+		if (!file_exists($this->LOG1) && !file_exists($this->LOG2)) {
+			return ;
+		}
+		
+		if (is_dir($this->BASE_PATH . '/web1/www/')) {
+			return;
+		}
+		
+		mkdir ($this->BASE_PATH . '/web1/www/' , 0777 , true);
+		mkdir ($this->BASE_PATH . '/web2/www/' , 0777 , true);
+		if ($is_moreweb) {
+			$sh1 = 'tar -zxvf '.$this->LOG1.' -C '.$this->BASE_PATH.'/web1/www';
+			$sh2 = 'tar -zxvf '.$this->LOG2.' -C '.$this->BASE_PATH.'/web2/www';
+			passthru($sh1);
+			passthru($sh2);
+		}else{
+			$sh1 = 'tar -zxvf '.$this->LOG1.' -C '.$this->BASE_PATH.'/web1/www';
+			passthru($sh1);
+		}
+	}
+
+	/**
+	 * 删除$dir下的目录
+	 * @param  string $dir
+	 */
+	public function deldir($dir){
+		if (!is_dir($dir)) {
+			return;
+		}
+		$conn = opendir($dir);
+		while(($row = readdir($conn)) != false){
+			if ($row == '.' || $row == '..' || $row == 'gonet' || $row == 'qdb' || $row == 'qdd' || $row == 'sf' || $row == $this->yesterday || $row == $this->DATE) {
+				continue;
+			}
+			if (is_dir($dir.DIRECTORY_SEPARATOR.$row)) {
+				$sh = 'rm -rf '.$dir.DIRECTORY_SEPARATOR.$row;
+				passthru($sh);
+			}
+		}
+		closedir($conn);
+	}
+
+	/**
+	 * 获取已经上传的stationid
+	 * @return array
+	 */
+	public function CheckDo()
+	{	
+		$s = $this->db->query('Select `stationid` From `rha_scriptlog` Where `type` = 5 And `ctime` = CURRENT_DATE() and hour = '.$this->hour);
+		$s->setFetchMode(PDO::FETCH_ASSOC);
+		$sid = $s->fetchAll();
+		$ss = array();
+		foreach ($sid as $v)
+		{
+			$ss[] = $v['stationid'];
+		}
+		return $ss;
+	}
+
+	/**
+	 * 插入已经完成的log
+	 */
+	public function InCheck()
+	{	
+		$int = array(
+			'stationid' => 	$this->STATIONID,
+			'type'		=>	5,
+			'ctime'		=>	date('Y-m-d',strtotime("-1 hour")),
+			'hour'	    =>  $this->hour
+		);
+		$this->Insert($int,'rha_scriptlog');
+	}
+
+	/**
+	 * 红包点击pv/uv [click/redpacket/15888888888/ios]
+	 */
+	public function ClickRedPacket(){
+		$sh_pv = $this->CAT_FILE_WEB.'| awk \'{if(tolower($7)~ /record.php\?click\/redpacket/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$4]++}END{for(name in count) print name,count[name]}\'';
+		exec($sh_pv,$ClickRedPacketPv);
+		foreach($ClickRedPacketPv as $pv){
+			$tep = array();
+			list($tep['action'],$tep['sys'],$tep['num']) = explode('/', $pv);
+					
+			$tep += array('date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'pv');
+			$this->Insert($tep,'rha_user_activity');
+		}
+
+		$sh_uv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?click\/redpacket/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | sort -t/ -n -k3 -u | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$3"/"$4]++}END{for(name in count) print name,count[name]}\'';
+		exec($sh_uv,$ClickRedPacketUv);
+		foreach($ClickRedPacketUv as $uv){
+			$tep = array();
+			list($tep['action'],$tep['phone'],$tep['sys'],$tep['num']) = explode('/', $uv);
+					
+			$tep += array('date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'uv');
+			$this->Insert($tep,'rha_user_activity');
+		}
+	}
+
+	/**
+	 * 弹窗关闭统计pv/uv [click/alertclose/18888888888/ios]
+	 */
+	public function AlertClose(){
+		$sh_pv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?click\/alertclose/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | wc -l';
+		exec($sh_pv,$AlertClosePv);
+		
+		if ($AlertClosePv[0]) {
+			$data = array('action'=>'alertclose','num'=>$AlertClosePv[0],'date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'pv');
+			$this->Insert($data,'rha_user_activity');
+		}
+
+
+		$sh_uv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?click\/alertclose/) print $7}\' | cut -d "?" -f 2| grep -Po "\d{11}"|sort -u';
+
+		exec($sh_uv,$AlertCloseUv);
+		foreach($AlertCloseUv as $uv){
+			$data1 = array('action'=>'alertclose','date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'uv','phone'=>$uv);
+			$this->Insert($data1,'rha_user_activity');
+		}
+		
+	}
+
+
+	/**
+	 * 弹窗抽奖统计pv[click/alertdraw/18888888888/ios]
+	 */
+	public function AlertDraw(){
+		$sh_pv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?click\/alertdraw/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | wc -l';
+		exec($sh_pv,$AlertDrawPv);
+		
+		if ($AlertDrawPv[0]) {
+			$data = array('action'=>'alertdraw','num'=>$AlertDrawPv[0],'date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'pv');
+			$this->Insert($data,'rha_user_activity');
+		}
+
+
+		$sh_uv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?click\/alertdraw/) print $7}\' | cut -d "?" -f 2| grep -Po "\d{11}"|sort -u ';
+
+		exec($sh_uv,$AlertDrawUv);
+		foreach($AlertDrawUv as $uv){
+			$data1 = array('action'=>'alertdraw','date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'uv','phone'=>$uv);
+			$this->Insert($data1,'rha_user_activity');
+		}
+		
+	}
+
+	/**
+	 * 进入活动页面pv/uv [user/activity?phone=18888888888]
+	 */
+	public function ActivityPage(){
+		$sh_pv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /user\/activity\?phone=[0-9]/) print $7}\' | wc -l';
+		exec($sh_pv,$ActivityPagePv);
+		
+		if ($ActivityPagePv[0]) {
+			$tep = array('action'=>'activity','num'=>$ActivityPagePv[0],'date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'pv');
+			$this->Insert($tep,'rha_user_activity');
+		}		
+		
+		
+		$sh_uv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~/user\/activity\?phone=[0-9]/) print $7}\' | cut -d "=" -f 2 | sort -u ';
+		exec($sh_uv,$ActivityPageUv);
+		foreach($ActivityPageUv as $uv){
+			$tep = array('action'=>'activity','date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'uv','phone'=>$uv);
+			$this->Insert($tep,'rha_user_activity');
+		}
+
+		/*if ($ActivityPageUv[0]) {
+			$tep = array('action'=>'activity','num'=>$ActivityPageUv[0],'date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'uv');
+			$this->Insert($tep,'rha_user_activity');
+		}*/
+	}
+
+	/**
+	 * app下载统计详情
+	 * downapp/123/useractivity/15288888888/ios
+	 */
+	public function DownAppInfo(){
+		$sh = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /downapp\/[0123456789]+\/useractivity/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | awk \'BEGIN{FS=OFS="/"}{count[$1"/"$2"/"$3"/"$4"/"$5]++}END{for(name in count) print name,count[name]}\' ';
+		exec($sh,$downapps);
+	
+		foreach ($downapps as $n)
+		{
+			$tep = array();
+			list($tep['action'],$tep['appid'],$tep['downpage'],$tep['phone'],$tep['sys'],$tep['num']) = explode('/', $n);
+			
+			if (is_string($tep['appid']) && strtolower($tep['appid']) == 'trainapp') {
+				$tep['appid'] = 12;
+			}
+			//获取app的类型和名称
+			$this->GetAppNameType($tep['appid']);
+					
+			$tep += array('date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'appname'=>$this->APPNAME);
+			$this->Insert($tep,'rha_activity_downapp');
+			
+		}
+	}
+
+
+	/**
+	 * 短信发送pv/uv [send/message/15888888888/ios]
+	 */
+	public function SendMessage(){
+		$sh_pv = $this->CAT_FILE_WEB.'| awk \'{if(tolower($7)~ /record.php\?send\/message/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$4]++}END{for(name in count) print name,count[name]}\' ';
+		exec($sh_pv,$SendMessagePv);
+		foreach($SendMessagePv as $pv){
+			$tep = array();
+			list($tep['action'],$tep['sys'],$tep['num']) = explode('/', $pv);
+					
+			$tep += array('date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'pv');
+			$this->Insert($tep,'rha_user_activity');
+		}
+
+		$sh_uv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?send\/message/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | sort -t/ -n -k3 -u | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$3"/"$4]++}END{for(name in count) print name,count[name]}\' ';
+		exec($sh_uv,$SendMessageUv);
+		foreach($SendMessageUv as $uv){
+			$tep = array();
+			list($tep['action'],$tep['phone'],$tep['sys'],$tep['num']) = explode('/', $uv);
+					
+			$tep += array('date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'uv');
+			$this->Insert($tep,'rha_user_activity');
+		}
+	}
+
+
+	/**
+	 * 问卷调查pv/uv [user/question/18888888888/ios/{message/web}]
+	 */
+	public function UserQuestion(){
+		$sh_pv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?user\/question/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$4"/"$5]++}END{for(name in count) print name,count[name]}\'';
+		exec($sh_pv,$UserQuestionPv);
+		foreach($UserQuestionPv as $pv){
+			$tep = array();
+			list($tep['action'],$tep['from'],$tep['sys'],$tep['num']) = explode('/', $pv);
+					
+			$tep += array('date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'pv');
+			$this->Insert($tep,'rha_user_activity');
+		}
+
+		$sh_uv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?user\/question/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | sort -t/ -n -k3 -u | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$3"/"$4"/"$5]++}END{for(name in count) print name,count[name]}\' ';
+		exec($sh_uv,$UserQuestionUv);
+		foreach($UserQuestionUv as $uv){
+			$tep = array();
+			list($tep['action'],$tep['phone'],$tep['from'],$tep['sys'],$tep['num']) = explode('/', $uv);
+					
+			$tep += array('date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'uv');
+			$this->Insert($tep,'rha_user_activity');
+		}
+	}
+
+	/**
+	 * 参与抽奖pv/uv [click/lottery/15888888888/ios]
+	 */
+	public function Lottery(){
+		$sh_pv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?click\/lottery/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$4]++}END{for(name in count) print name,count[name]}\' ';
+		exec($sh_pv,$LotteryPv);
+		foreach($LotteryPv as $pv){
+			$tep = array();
+			list($tep['action'],$tep['sys'],$tep['num']) = explode('/', $pv);
+					
+			$tep += array('date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'pv');
+			$this->Insert($tep,'rha_user_activity');
+		}
+
+		$sh_uv = $this->CAT_FILE_WEB.' | awk \'{if(tolower($7)~ /record.php\?click\/lottery/) print $7}\' | cut -d "?" -f 2 | cut -d "&" -f 1 | sort -t/ -n -k3 -u | awk \'BEGIN{FS=OFS="/"}{count[$2"/"$3"/"$4]++}END{for(name in count) print name,count[name]}\' ';
+		exec($sh_uv,$LotteryUv);
+		foreach($LotteryUv as $uv){
+			$tep = array();
+			list($tep['action'],$tep['phone'],$tep['sys'],$tep['num']) = explode('/', $uv);
+					
+			$tep += array('date'=>$this->today,'stationid'=>$this->STATIONID,'hour'=>$this->hour,'numtype'=>'uv');
+			$this->Insert($tep,'rha_user_activity');
+		}
+	}
+
+
+	/**
+	 * 根据appid获取app的类型和名称
+	 * @param [type] $appid [description]
+	 */
+	protected function GetAppNameType($appid){
+		if (is_numeric($appid)) {
+			$p = $this->db->query("Select `appname` From `rha_apps` where id = $appid");
+			$p->setFetchMode(PDO::FETCH_ASSOC);
+			$info = $p->fetchAll();
+			$this->APPNAME = $info[0]['appname'];
+		}
+			
+	}
+
+	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+	
+
+}
+
+
+
+error_reporting(E_ALL^E_NOTICE);
+
+//接收stationid
+$stationid = $argv[1];
+if (!$stationid) {
+	exit;
+}
+$obj = new Useractivity($stationid);
+
+$station = $obj->STATION[0];
+$check = $obj->CheckDo();
+$filelogs = array();
+if (!in_array($station['id'], $check)) {
+//	$obj->deldir($obj->LOG_BASE_PATH.$station['logfile']);
+	$obj->setPath($station['logfile'],$station['logname'],$station['is_moreweb']);
+	$obj->setIpFilter($station['logip'], $station['ifconf'], $station['ap'],$station['xuip'],$station['is_alone']);
+	$obj->Log($station['is_moreweb']);
+	$obj->setStationId($station['id']);
+
+	$obj->ClickRedPacket();
+	$obj->ActivityPage();
+	$obj->DownAppInfo();
+	$obj->SendMessage();
+	$obj->UserQuestion();
+	$obj->Lottery();
+	$obj->AlertClose();
+	$obj->AlertDraw();
+
+
+	$obj->InCheck();
+	
+}

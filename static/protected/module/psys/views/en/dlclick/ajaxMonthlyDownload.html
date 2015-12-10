@@ -1,0 +1,43 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr><th>月 份</th><th>【web】点击下载</th><th>【web】点击安装</th><th>【web】点击打开</th><th>确定下载</th><th>下载完成</th><th>下载未完成</th><th>下载未安装</th><th>下载并安装完成</th></tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                            <td style="text-align:center;">{{$v.month}}</td>
+                            <td style="text-align:center;">{{$v.total_download}}</td>
+                            <td style="text-align:center;">{{$v.dl_webinstalled}}</td>
+                            <td style="text-align:center;">{{$v.dl_webopened}}</td>
+                            <td style="text-align:center;">{{$v.dl_confirmed}}</td>
+                            <td style="text-align:center;">{{$v.dl_completed}}</td>
+                            <td style="text-align:center;">{{$v.dl_nocompleted}}</td>
+                            <td style="text-align:center;">{{$v.dl_noinstalled}}</td>
+                            <td style="text-align:center;">{{$v.dl_installed}}</td>
+                            </tr>
+                        {{/foreach}}
+                        <tr>
+                        <td style="text-align:center;"><b>总 计</b></td>
+                        <td style="text-align:center;"><b style="color:red;">{{$total_download}}</b></td>
+                        <td style="text-align:center;"><b style="color:red;">{{$dl_webinstalled}}</b></td>
+                        <td style="text-align:center;"><b style="color:red;">{{$dl_webopened}}</b></td>
+                        <td style="text-align:center;"><b style="color:red;">{{$dl_confirmed}}</b></td>
+                        <td style="text-align:center;"><b style="color:red;">{{$dl_completed}}</b></td>
+                        <td style="text-align:center;"><b style="color:red;">{{$dl_nocompleted}}</b></td>
+                        <td style="text-align:center;"><b style="color:red;">{{$dl_noinstalled}}</b></td>
+                        <td style="text-align:center;"><b style="color:red;">{{$dl_installed}}</b></td>
+                        </tr>
+                        <tr><td colspan="9"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

@@ -1,0 +1,82 @@
+{include file="include/header_pagerecord.html"}
+<link href="{$psys_css}bootstrap.min.css" rel="stylesheet" type="text/css" >
+
+<link rel="stylesheet" type="text/css" href="{$psys_css}paiting/tinybox.css" />
+<link href="{$psys_css}paiting/flexigrid-extent.css" media="all" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="{$psys_js}lib/bootstrap.min.js"></script> 
+</head>
+<body>
+
+<div class="content container-fluid sidebarRight animated fadeInUp">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-6" style="width:100%">
+            <div class="panel panel-pink">
+                <form id="form" action="/pagerecord/adDetailLog" method="post">
+               <div class="panel-heading" style="float: left;margin-top: 10px;">
+                   <!-- <h3 class="panel-title">时间</h3> -->
+                   <label style="font-size: 16px;">时间：</label>
+               </div>
+               
+                <div class="panel-body" data-toggle="buttons">
+                     <label title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="Tooltip on top">
+                        <input type="radio" name="date" id="day" value="1"> 一天
+                    </label>
+                    <button title="" data-placement="left" data-toggle="tooltip" class="btn btn-default tooltips active" type="button" data-original-title="Tooltip on left">
+                        <input type="radio" name="date" id="week" value="7"> 一周
+                    </button>
+                    <button data-original-title="Tooltip on bottom" title="" data-placement="bottom" data-toggle="tooltip " class="btn btn-default tooltips" type="button">
+                        <input type="radio" name="date" id="month" value="30"> 一月
+                    </button>
+                      
+                    {literal}
+                    <input class="Wdate" type="text" onFocus="WdatePicker()" name="sdate" style="height:30px;line-height: 30px; font-size: 16px;" />&nbsp;&nbsp;TO&nbsp;&nbsp;
+                    <input class="Wdate" type="text" onFocus="WdatePicker()" name="edate" style="height:30px;line-height: 30px; font-size: 16px;" />
+                    {/literal}
+                </div>
+
+                <div class="panel-heading" style="float: left;margin-top: 10px;">
+                   <!-- <h3 class="panel-title">时间</h3> -->
+                   <label style="font-size: 16px;">车站：</label>
+                </div>
+               
+                 <div class="panel-body" data-toggle="buttons">
+                    <!-- <label style="font-size: 16px;">时间：</label> -->
+
+                    <button title="" data-placement="top" data-toggle="tooltip" class="btn btn-default tooltips active" type="button" data-original-title="Tooltip on top">
+                        <input type="radio" name="station" value="0">全部
+                    </button>
+                    {foreach $stationsLog as $k=>$v}
+                    <button title="" data-placement="left" data-toggle="tooltip" class="btn btn-default tooltips" type="button" data-original-title="Tooltip on left">
+                        <input type="radio" name="station" value="{$k}">{$v}
+                    </button>
+                   {/foreach}
+                    
+                     
+                </div>
+                <div class="panel-body">
+                    <section class="btn-group pull-left">
+                        <a target="_blank" class="btn btn-info" id="searchs">搜索</a> 
+                      
+                    </section>
+                    
+                </div>
+              </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+    <div id="load"></div>
+     <script type="text/javascript">
+       $("#load").load("/pagerecord/adDetailLogWeget?date=7");
+       $('#searchs').click(function(){
+              var postdata =  $('#form').serialize();
+              $("#load").load("/pagerecord/adDetailLogWeget",postdata);
+             });
+      </script>
+ </body>
+
+</html>
+

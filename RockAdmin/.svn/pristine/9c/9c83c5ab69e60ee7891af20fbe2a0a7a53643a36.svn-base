@@ -1,0 +1,101 @@
+{include file="include/header.html"}
+{literal}
+<script type="text/javascript">
+
+$(function(){
+    $(document).ready(function(){
+        checkloginfo();
+        var date = $('#date').text();
+        var stationid = $('#stationid').text();
+        var data = {};
+            data.ajax=1;
+            data.date = date;
+            data.stationid = stationid;
+            $.post('/station/graphgamead',data,function(res){
+                PaiTing(date+'Android',-20,'',60,res.x_cat,'数量',res.android.y_data,'ad1','column');
+                PaiTing(date+'Ios',-20,'',60,res.x_cat,'数量',res.ios.y_data,'ad2','column');
+            },'json');
+        //SingleGraph(data,date+'广告1 PV 详情','spline','数量','/station/stationinfo?ajax=1&isgrahp=1&date='+date,'ad1'); 
+        //SingleGraph(data,date+'广告2 PV 详情','spline','数量','/station/stationinfo?ajax=1&isgrahp=1&date='+date,'ad2');     
+    });
+
+});
+
+</script>
+{/literal}
+</head>
+<body>
+
+<form action="/station/sindexgamead" method="post">
+    <div class="search" >
+        搜索:
+        <select class="select2" id="station" name="stationid">
+            <option value="">-选择车站-</option>
+            {foreach $stations as $v}
+            <option value="{$v.id}"  >{$v.stationname}</option>
+            {/foreach}
+        </select>
+        {literal}
+        <input class="Wdate" type="text" onFocus="WdatePicker()" name="date"/>
+        {/literal}
+        <input type="submit" class="button2" value="搜索" id="search"/>
+    </div>
+</form>
+<table id="flex1" style="display:none"></table>
+<div id="container" style="height:400px;width:1300px;margin:10px auto;border:1px solid #ccc;background:white;">
+    
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:400px;float: left;width:648px;" id="ad1"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:400px;float: right;width:648px;" id="ad2"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    
+
+
+</div>
+<div style="display:none" id="date">{$date}</div>
+<div style="display:none" id="stationid">{$stationid}</div>
+
+
+</body>
+{literal}
+<script type="text/javascript">
+function checkloginfo(){
+        var date = $('#date').text();
+        var stationid = $('#stationid').text();
+         $("#flex1").flexigrid
+        (
+            {
+
+                url: '/station/tablegamead?ajax=1&date='+date+'&stationid='+stationid,
+
+                dataType: 'json',
+                colModel : [
+                    {display: '日期', name : 'date', width : 200, sortable : true, align: 'center'},
+                    {display: '车站', name : 'station', width : 200, sortable : true, align: 'center'},
+                    {display: '游戏名', name : 'station', width : 200, sortable : true, align: 'center'},
+                    {display: '首页游戏点击数', name : 'sindexnum', width : 200, sortable : true, align: 'center'},
+                    {display: '进入详情页数量', name : 'detailnum', width : 200, sortable : true, align: 'center'},
+                    {display: '点击下载数量', name : 'downnum', width : 200, sortable : true, align: 'center'},
+                    
+                    {display: '操作系统', name : 'sys', width : 200, sortable : true, align: 'center'}
+                    ],
+                buttons : [       
+                    {separator: true}
+                    //{name: 'A', onpress: sortAlpha},
+
+                    ],
+                sortname: "sindexnum",
+                sortorder: "desc",
+                usepager: true,
+                title: date+'游戏广告流程',
+                useRp: true,
+                rp: 10,
+                showTableToggleBtn: true,
+                //onSuccess: stationgraph,
+                // width: document.body.clientWidth ,
+                // height: document.body.clientHeight - 400
+            }
+        ); 
+}
+
+</script>
+{/literal}
+</html>

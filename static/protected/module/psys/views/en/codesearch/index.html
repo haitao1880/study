@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Rockhippo-Train-Statis-admin v1.0 beta</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+
+    <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-font"></i> SQL查询</a>
+                <a class="current" href="javascript:;"><i class="icon-list-alt"></i> SQL查询列表</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="alert alert-error alert-block hide" style="display: block;">
+                <h4 class="alert-heading">说 明</h4>
+                请尽量选择较短时间区间进行查询。
+            </div>
+                <div class="span" style="width:95px">
+                    <select name="dateSearch">
+                      <option value="-">选择时间</option>
+                    </select>
+                </div>
+                <div class="span" style="float:left;">
+                <span>
+                    <input id="d5221" name="start" class="Wdate" type="text" onFocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},dateFmt:'yyyy-MM-dd',firstDayOfWeek:1,maxDate:'%y-%M-%d'})"/> -
+                    <input id="d5222" name="end" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:0})}',dateFmt:'yyyy-MM-dd',firstDayOfWeek:1,firstDayOfWeek:1,maxDate:'#F{$dp.$D(\'d5221\',{d:30})}'})"/>
+                </span>
+                </div>
+                <div style="clear:both;"></div>
+            <p></p>   
+            <hr/>
+            <div id="containerTable">
+                <div class="row-fluid">
+                <div class="span12">
+                    <div class="widget-box">
+                        <div class="widget-content nopadding">
+                            <table class="table form-horizontal">
+                                <thead>
+                                    <tr>
+                                        <th width="15%">编 码</th><th width="70%">编码说明</th><th width="15%">导出数据</th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{foreach $data as $k=>$v}}
+                                    <tr id="tr_{{$v.id}}">
+                                        <td style="text-align:center;">{{$v.code}}</td>
+                                        <td style="text-align:left;">{{$v.description}}</td>
+                                        <td style="text-align:center;">
+                                        <span>&nbsp;&nbsp;<input type="button" onclick="getData('{{$v.action}}')" value="导出EXECL" /></span>
+                                        </td>  
+                                    </tr>
+                                    {{/foreach}}   
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            </div>
+            
+            
+        </div>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+    <script type="text/javascript">
+        function getData(url){
+            var start = $("#d5221").attr("value");
+            var end = $("#d5222").attr("value");
+            if(!start || !end){
+                alert('请选择起始和结束时间再导出信息！');
+                return false;
+            }
+            window.location.href = url + "?start="+start+"&end="+end;
+        }
+    </script>
+    </body>
+</html>
+  

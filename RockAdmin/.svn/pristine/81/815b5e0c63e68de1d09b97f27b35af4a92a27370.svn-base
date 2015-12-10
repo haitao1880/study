@@ -1,0 +1,109 @@
+{include file="include/header.html"}
+{literal}
+<script type="text/javascript">
+
+$(function(){
+    $(document).ready(function(){
+        var stationid = $('#stationid').text();
+
+        $('#station option').each(function(){
+            if ($(this).val() == stationid) {
+                $(this).attr('selected','selected');
+            }
+        });
+
+        checkloginfo();
+        var sdate = $('#sdate').text();
+        var edate = $('#edate').text();
+        
+        var data = {};
+            data.ajax=1;
+            data.sdate = sdate;
+            data.edate = edate;
+            data.stationid = stationid;
+            $.post('/station/graphnavigator',data,function(res){
+                PaiTing(sdate+' TO '+edate+' 首页导航点击趋势图',-20,'',60,res.x_cat,'PV',res.y_data,'navigator','spline');
+            },'json');
+           
+    });
+
+});
+
+</script>
+{/literal}
+</head>
+<body>
+
+<form action="/station/navigator" method="post">
+    <div class="search" >
+        搜索:
+        <select class="select2" id="station" name="stationid">
+            <option value="">-选择车站-</option>
+            {foreach $stations as $v}
+            <option value="{$v.id}"  >{$v.stationname}</option>
+            {/foreach}
+        </select>
+        {literal}
+        <input class="Wdate" type="text" onFocus="WdatePicker()" name="sdate"/> TO
+        {/literal}
+        {literal}
+        <input class="Wdate" type="text" onFocus="WdatePicker()" name="edate"/>
+        {/literal}
+        <input type="submit" class="button2" value="搜索" id="search"/>
+    </div>
+</form>
+<table id="flex1" style="display:none"></table>
+<div id="navigator" style="height:400px;width:1300px;margin:10px auto;border:1px solid #ccc;background:white;">
+
+</div>
+<div style="display:none" id="sdate">{$sdate}</div>
+<div style="display:none" id="edate">{$edate}</div>
+<div style="display:none" id="stationid">{$stationid}</div>
+
+
+</body>
+{literal}
+<script type="text/javascript">
+function checkloginfo(){
+        var sdate = $('#sdate').text();
+        var edate = $('#edate').text();
+        var stationid = $('#stationid').text();
+         $("#flex1").flexigrid
+        (
+            {
+
+                url: '/station/tablenavigator?ajax=1&sdate='+sdate+'&stationid='+stationid+'&edate='+edate,
+
+                dataType: 'json',
+                colModel : [
+                    {display: '日期', name : 'date', width : 200, sortable : true, align: 'center'},
+                    {display: '车站', name : 'stationid', width : 200, sortable : true, align: 'center'},
+                    {display: '车站服务PV', name : 'stationpv', width : 200, sortable : true, align: 'center'},
+                    {display: '音乐PV', name : 'musicpv', width : 200, sortable : true, align: 'center'},
+                    {display: '游戏PV', name : 'gamepv', width : 200, sortable : true, align: 'center'},
+                    {display: '电影PV', name : 'moviepv', width : 200, sortable : true, align: 'center'},
+                    
+                    {display: '应用PV', name : 'apppv', width : 200, sortable : true, align: 'center'}
+                    ],
+                buttons : [       
+                    {separator: true}
+                    //{name: 'A', onpress: sortAlpha},
+
+                    ],
+                sortname: "musicpv",
+                sortorder: "desc",
+                usepager: true,
+                title: sdate+' TO '+edate+' 首页导航点击次数',
+                useRp: true,
+                rp: 10,
+                showTableToggleBtn: true,
+                //onSuccess: stationgraph,
+                // width: document.body.clientWidth ,
+                // height: document.body.clientHeight - 400
+            }
+        ); 
+}
+
+</script>
+{/literal}
+</html>

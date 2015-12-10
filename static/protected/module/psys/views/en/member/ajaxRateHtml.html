@@ -1,0 +1,29 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr><th>日 期</th><th>次日留存率</th><th>3日留存率</th><th>7日留存率</th><th>【30日】 月留存率</th></tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                            <td style="text-align:center;">{{$v.day}}</td>
+                            <td style="text-align:center;">{{$v.rate1}}%【{{$v.day1}}/{{$v.regnums}}】</td>
+                            <td style="text-align:center;">{{$v.rate3}}%【{{$v.day3}}/{{$v.regnums}}】</td>
+                            <td style="text-align:center;">{{$v.rate7}}%【{{$v.day7}}/{{$v.regnums}}】</td>
+                            <td style="text-align:center;">{{$v.rate30}}%【{{$v.day30}}/{{$v.regnums}}】</td>
+                            </tr>
+                        {{/foreach}}
+                        
+                        <tr><td colspan="5"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

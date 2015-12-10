@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-音乐列表</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+<style type="text/css">
+.adsadd{
+line-height:30px;
+border:#2d68a0 1px solid;
+width:100px;
+cursor:pointer;
+text-align:center;
+background:#fff;
+margin-left:85px;
+margin-top:15px;
+}
+input[type="radio"], input[type="checkbox"] {
+    line-height: normal;
+    margin: -4px 2px 0 0;
+}
+</style>
+    </head>
+    <body>
+
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 资源管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 音乐列表</a>
+            </div>
+        </div>
+        <form action="/res/mdel" method="get">
+		<table class="hovertable" width="100%" border="1" cellpadding="0" cellspacing="1" bgcolor="#417eb7" bordercolor="#2d68a0">
+		<caption><h4>音乐列表</h4></caption>
+		<tr class="table-head" bgcolor="#2d68a0">
+			<th>ID</th>
+		    <th>专辑</th>
+		    <th>歌曲ID</th>
+		    <th>歌曲名</th>
+		    <th>歌手</th>
+		    <th>排序</th>
+		    <th>创建时间</th>
+		    <th>显示</th> 
+		    <th>点击</th>
+		    <th>价钱</th>
+		    <th>路径</th>
+		     <th>操作</th>    
+		</tr>
+		{{foreach $list as $v}}
+		<tr class="tbody" bgcolor="#FFFFFF">
+			<td><input name="id[]" type="checkbox"  value="{{$v.id}}">{{$v.id}}</td>
+		    <td>{{$v.albumid}}</td>
+		    <td>{{$v.musicid}}</td>
+		    <td>{{$v.mname}}</td>
+		    <td>{{$v.singer}}</td>
+		    <td>{{$v.sortid}}</td>
+		     <td>{{$v.ctime}}</td>
+		    <td>{{$v.flag}}</td>
+		     <td>{{$v.hits}}</td>
+		     <td>{{$v.price}}</td>
+		    <td>{{$v.mpath}}</td>
+		    <th><a href="/res/medit?id={{$v.id}}">编辑</a>  <a href="/res/mdel?id={{$v.id}}">删除</a></th>    
+		</tr>
+		{{/foreach}}
+		</table>
+		<div class="adsadd"><a href="/res/madd">音乐添加</a></div>
+		<div class="pages">
+		  <ul class="pagination-digg">
+		    
+		   
+		 <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+		{{if $cur_page gt 1}}
+		  <li class="previous"><a href="?page={{$cur_page-1}}">&laquo;Previous</a></li>
+		{{else}}
+		  <li class="previous-off"> &laquo;Previous</li>
+		{{/if}}
+			{{if $endNum lt $allpage}}	
+		         {{for $p=$startNum to $endNum}}
+		                
+		                     {{if $cur_page eq $p}}
+		                     <li class="active">{{$p}}</li>
+		                     {{else}}
+		                     <li><a href="?page={{$p}}">{{$p}}</a></li> 
+		                     {{/if}}
+		                   
+		          {{/for}} 
+		     {{else}}
+		        {{for $p=$startNum to $allpage}}
+		                
+		                     {{if $cur_page eq $p}}
+		                     <li class="active">{{$p}}</li>
+		                     {{else}}
+		                     <li><a href="?page={{$p}}">{{$p}}</a></li> 
+		                     {{/if}}
+		                   
+		          {{/for}}     
+		     {{/if}}     
+		        
+		{{if $cur_page lt $allpage}}
+		    <li class="next">
+		    <a href="?page={{$cur_page+1}}">Next &raquo;</a>
+		    </li>
+		{{else}}
+		    <li class="next-off">
+		    Next &raquo;
+		    </li>
+		{{/if}}
+		   <li class="next">
+		    <a href="?page={{$allpage}}">Last &raquo;</a>
+		    </li>
+		    <li class="next-off">
+		   {{$cur_page}}/{{$allpage}} Page
+		    </li>
+		    <li class="del">
+		   		<button type="submit" name="submit" class="but">DELETE</button>
+		    </li>    
+		  </ul>
+		</div>
+		</form>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script>
+	//menu
+    $(document).ready(function(){
+    	//menu
+    	$('.submenu > a').click(function(e)
+    			{
+    				e.preventDefault();
+    				var submenu = $(this).siblings('ul');
+    				var li = $(this).parents('li');
+    				var submenus = $('#sidebar li.submenu ul');
+    				var submenus_parents = $('#sidebar li.submenu');
+    				if(li.hasClass('open'))
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenu.slideUp();
+    					} else {
+    						submenu.fadeOut(250);
+    					}
+    					li.removeClass('open');
+    				} else 
+    				{
+    					if(($(window).width() > 768) || ($(window).width() < 479)) {
+    						submenus.slideUp();			
+    						submenu.slideDown();
+    					} else {
+    						submenus.fadeOut(250);			
+    						submenu.fadeIn(250);
+    					}
+    					submenus_parents.removeClass('open');		
+    					li.addClass('open');	
+    				}
+    			});
+    })
+    </script>
+    </body>
+</html>

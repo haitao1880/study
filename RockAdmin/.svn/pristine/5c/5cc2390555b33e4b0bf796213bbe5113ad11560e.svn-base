@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+<style type="text/css">
+h1{
+margin:0 auto;
+text-align:center;
+}
+#sn{
+margin:20px auto;
+text-align:center;
+font-size:30px;
+}
+#sn select{
+height:30px;
+}
+#sn button{
+height:30px;
+margin-left:20px;
+}
+#content{
+margin:20px auto;
+width:1200px;
+height:604px;
+overflow:auto;
+text-align:center;
+}
+#syncinfo{
+width:1190px;
+}
+.red{
+color:red;
+}
+.deep{
+background-color:#d3d7d4;
+}
+.ting{
+background-color:#fffef9;
+}
+.num{
+color:#005831;
+}
+.error{
+background-color:#d71345;
+}
+</style>
+{literal}
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#btn").click(function(){
+		$("#syncinfo").html('');
+		var url = $("select").val();
+		var apk = $("select[name='domain'] option:selected").attr('apk');
+		if(url)
+		{
+			fromAjax(url,apk);
+		}
+		else
+		{
+			alert("请选择需要同步的服务器");return;
+		}
+		});
+	$("#all").click(function(){
+		$("#syncinfo").html('');
+		$("#select option").each(function(){
+			var $option = $(this);
+			var url = $option.val();
+			var apk = $option.attr('apk');
+			fromAjax(url,apk);
+		});
+	});
+		
+});
+function fromAjax(url,apk)
+{
+	
+	if(url)
+	{
+		 $.ajax({
+			   type: "POST",
+			   url: "/ads/syncl",
+			   dataType:"json",
+			   data:{'ajax':1,'host':url,'appkey':apk},
+			   success: function(data){
+			   		if(data.result == 'SUCCESS')
+			   		{
+				   		var tr_server = $("<tr class='red'></tr>");
+				   		var td_server = $("<td width='10%'>同步服务器：</td><td width='10%'>"+data.server+"</td>");
+						var td_time = $("<td width='10%'>同步时间：</td><td width='70%'>"+data.time+"</td>");
+						
+						tr_server.append(td_server);
+						tr_server.append(td_time);
+						$("#syncinfo").append(tr_server);
+				 		var msg = data.msg;
+				 		for(var n in msg)
+				 		{
+					 		if(n%2 == 0)
+					 		{
+						 		var color = 'deep';
+					 		}
+					 		else
+					 		{
+						 		var color = 'tint';
+					 		}
+					 		if(msg[n].flag)
+					 		{
+						 		var error = '';
+					 		}
+					 		else
+					 		{
+						 		var error = 'error';
+					 		}
+					 		var tr_id = $("<tr class='"+color+" "+error+"'></tr>");
+					 		var tr_title = $("<tr class='"+color+" "+error+"'></tr>");
+	
+					 		var td_id = $("<td colspan='2'>广告ID：</td><td colspan='2' class='num'>"+msg[n].id+"</td>");
+					 		var td_title = $("<td colspan='2'>广告标题：</td><td colspan='2'>"+msg[n].title+"</td>");
+	
+					 		tr_id.append(td_id);
+					 		tr_title.append(td_title);
+					 		$("table").append(tr_id);
+					 		$("table").append(tr_title);
+					 		
+							var tr_info = $("<tr class='"+color+" "+error+"'></tr>");
+							var info = msg[n].info;
+							var info_text = '';
+							//for(var p in info)
+							//{
+							//	info_text = info_text ? info_text + "<br />" + info[p] : info[p];
+							//}
+							var td_info = $("<td colspan='2'>同步详情：</td><td colspan='2'>"+info+"</td>");
+					 		
+					 		tr_info.append(td_info);				 		
+					 		$("table").append(tr_info);
+				 		}
+				 		
+				 		$.ajax({
+							   type: "POST",
+							   url: "/ads/adsdown",
+							   dataType:"json",
+							   data:{'ajax':1},
+							   success: function(data){
+								   alert(data);
+							   }
+				 		});
+
+				 		
+			   		}
+			   		else if(data.result == 'EMPTY')
+			   		{
+			   			var tr_server = $("<tr class='red'></tr>");
+				   		var td_server = $("<td width='10%'>同步服务器：</td><td width='10%'>"+data.server+"</td>");
+						var td_time = $("<td width='10%'>同步时间：</td><td width='70%'>"+data.time+"</td>");
+						
+						tr_server.append(td_server);
+						tr_server.append(td_time);
+						$("#syncinfo").append(tr_server);
+						var tr_ept = $("<tr></tr>");
+						var td_ept = $("<td colspan='4'>"+data.msg+"</td>");
+						tr_ept.append(td_ept);
+						$("#syncinfo").append(tr_ept);
+			   		}
+			   		else if(data.result == 'ERROR')
+			   		{
+				   		alert(data.msg);return;
+			   		}
+			   }
+			});
+	}
+	
+}
+</script>
+{/literal}
+</head>
+<body>
+	<h1>广告实时同步</h1>
+	<div id="sn">
+		<select name="domain" id="select">
+			{foreach $lists as $key=>$one}
+			<option value="{$one.ip}" apk="{$one.appkey}">{$one.name}</option>
+			{/foreach}
+		</select>
+		<button id="btn">同步</button><button id="all">全部同步</button>
+	</div>
+	<div id="content">
+		<table border="1" id="syncinfo" cellspacing="0">
+			
+		</table>
+	</div>
+</body>
+</html>

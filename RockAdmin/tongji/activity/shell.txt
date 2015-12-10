@@ -1,0 +1,29 @@
+cat /home/upload/aclog/qdn/aclog2015-07-01-13.txt | grep "active\|roaming to\|leave" | sed -e "s/notify.*:/ /g;s/  //g" | awk '{print $9}'|sed -e "s/Client(//g;s/)\|(/ 1/g" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$2]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/qdb/aclog2015-07-01-13.txt | grep "active\|roaming to\|leave" | sed -e "s/notify.*:/ /g;s/  //g" | awk '{print $9}'|sed -e "s/Client(//g;s/)\|(/ 2/g" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$2]++}END{for(name in num) print name,num[name]}'
+
+sed -e "s/.*Local.*STA//g;s/WTP.*/ 3/g" /home/upload/aclog/jn/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/jnx/aclog2015-07-01-13.txt | grep  "access\|leave" | grep "192\.168\.103" | sed -e "s/.*Local.*STA//g;s/WTP.*/ 4/g" /home/upload/aclog/jnx/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/jnx/aclog2015-07-01-13.txt | grep  "access\|leave" | grep "222\.43\.236\.130\|222\.43\.236\.131\|222\.43\.236\.132\|222\.43\.236\.133" | sed -e "s/.*Local.*STA//g;s/WTP.*/ 5/g" /home/upload/aclog/jnx/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+sed -e "s/.*Local.*STA//g;s/WTP.*/ 6/g" /home/upload/aclog/wf/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+sed -e "s/.*Local.*STA//g;s/WTP.*/ 7/g" /home/upload/aclog/zb/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/jnx/aclog2015-07-01-13.txt | grep  "access\|leave" | grep "211\.98\.156\.73\|211\.98\.156\.74\|211\.98\.156\.75" | sed -e "s/.*Local.*STA//g;s/WTP.*/ 8/g" /home/upload/aclog/jnx/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/jnx/aclog2015-07-01-13.txt | grep  "access\|leave" | grep "211\.98\.22\.48\|211\.98\.22\.49\|211\.98\.22\.50" | sed -e "s/.*Local.*STA//g;s/WTP.*/ 9/g"  | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/jnx/aclog2015-07-01-13.txt | grep  "access\|leave" | grep "211\.98\.22\.9\|211\.98\.22\.10\|211\.98\.22\.11" | sed -e "s/.*Local.*STA//g;s/WTP.*/ 10/g" /home/upload/aclog/jnx/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/qdjy/aclog2015-07-01-13.txt | grep  "access\|leave" | grep "10\.0\.0\.\|10\.0\.1\.\|10\.0\.2\.\|10\.0\.3\.\|10\.0\.4\.\|10\.0\.5\.\|10\.0\.6\.\|10\.0\.7\." | sed -e "s/.*Local.*STA//g;s/WTP.*/ 11/g" /home/upload/aclog/qdjy/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/qdjy/aclog2015-07-01-13.txt | grep  "access\|leave" | grep "10\.0\.8\.\|10\.0\.9\.\|10\.0\.10\.\|10\.0\.11\.\|10\.0\.12\.\|10\.0\.13\.\|10\.0\.14\.\|10\.0\.15\." | sed -e "s/.*Local.*STA//g;s/WTP.*/ 12/g" /home/upload/aclog/qdjy/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/qdjy/aclog2015-07-01-13.txt | grep  "access\|leave" | grep "10\.0\.16\.\|10\.0\.17\.\|10\.0\.18\.\|10\.0\.19\.\|10\.0\.20\.\|10\.0\.21\.\|10\.0\.22\.\|10\.0\.23\." | sed -e "s/.*Local.*STA//g;s/WTP.*/ 13/g" /home/upload/aclog/qdjy/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+cat /home/upload/aclog/qdjy/aclog2015-07-01-13.txt | grep  "access\|leave" | grep "10\.0\.24\.\|10\.0\.25\.\|10\.0\.26\.\|10\.0\.27\.\|10\.0\.28\.\|10\.0\.29\.\|10\.0\.30\.\|10\.0\.31\." | sed -e "s/.*Local.*STA//g;s/WTP.*/ 14/g" /home/upload/aclog/qdjy/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'
+
+sed -e "s/.*Local.*STA//g;s/WTP.*/ 15/g" /home/upload/aclog/yt/aclog2015-07-01-13.txt| grep "access\|leave" | awk '{count[$1]=$0}END{for(name in count) print count[name]}' | awk 'BEGIN{OFS="/"}{num[$3]++}END{for(name in num) print name,num[name]}'

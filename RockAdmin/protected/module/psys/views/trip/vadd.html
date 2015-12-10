@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>列车修改添加</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+{literal}
+<script language="javascript" type="text/javascript">
+$(document).ready(function(){
+	for(var i=2014;i>1980;i--)
+	{
+		$('#vyear').append("<option value="+i+">"+i+"</option>");
+	}      
+ });
+</script>
+<style type="text/css">
+.file-box {position:relative;width:340px}
+.txt {height: 22px;border: 1px solid #cdcdcd;width: 180px;}
+.btn {background-color: #FFF;border: 1px solid #CDCDCD;height: 24px;width: 70px;}
+.file {position: absolute;top: 0;right: 80px;height: 24px;filter: alpha(opacity : 0);opacity: 0;width: 260px}
+</style>
+{/literal}
+</head>
+<body>
+	<form class="add" id="addfrom" action="/trip/{$action}" method="POST" enctype="multipart/form-data">
+		<table class="add-table" width="100%" border="0" cellpadding="0">
+			<caption>
+				<h3>{if $action == 'vadd'}添加{else}修改{/if}列车信息</h3>
+			</caption>
+			<tr>
+				<td width="50%" align="right">车次：</td>
+				<td width="50%" align="left"><input type="text" name="trainno" value="{$trip.trainno}"/></td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">发站：</td>
+				<td width="50%" align="left"><input type="text" name="bstation" value="{$trip.bstation}"/></td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">综点站：</td>
+				<td width="50%" align="left"><input type="text" name="estation" value="{$trip.estation}"/></td>
+			</tr>
+
+			<tr>
+				<td width="50%" align="right">发站时间：</td>
+				<td width="50%" align="left"><input type="text" name="btime" value="{$trip.btime}"/></td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">到站时间：</td>
+				<td width="50%" align="left"><input type="text" name="etime" value="{$trip.etime}"/></td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">运行时间：</td>
+				<td width="50%" align="left"><input type="text" name="runtime" value="{$trip.runtime}"/></td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">列车价格：</td>
+				<td width="50%" align="left"><input type="text" name="price"  value="{$trip.price}" /></td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">mileage：</td>
+				<td width="50%" align="left"><input type="text"	name="mileage"  value="{$trip.mileage}" /></td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">行经站点ID：</td>
+				<td width="50%" align="left"><input type="text"	name="stationlist"  value="{$trip.stationlist}" /></td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">坐标图片：</td>
+				<td width="50%" align="left">
+					<div class="file-box">
+						<input type='text' name='vpath' id='textfield' class='txt'  value="{$trip.coimg}"/>
+						<input type='button' class='btn' value='浏览...' />
+						<input type="file" name="vpath" class="file" id="fileField" size="28" onchange="document.getElementById('textfield').value=this.value" />
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">行经站点座标：</td>
+				<td width="50%" align="left">
+					<textarea rows="5" name="coordinates" cols="50">{$trip.coordinates}</textarea>
+				</td>
+			</tr>
+			<tr>
+				<td width="50%" align="right">状&nbsp;&nbsp;态：</td>
+				<td width="50%" align="left">
+					<input id="state" class="check-box" name="flag" type="radio" value="1" {if $trip.flag == 1}checked{/if}><label>正常</label>
+					<input id="state" class="check-box" name="flag" type="radio" value="0" {if $trip.flag == 0}checked{/if}><label>停用</label>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<input type="hidden" name="id"  value="{$trip.id}"/>
+					<input type="hidden" name="ispost"  value="1"/>
+					<input type="submit" id="btnSave" value="保 存" />
+				</td>
+			</tr>
+		</table>
+	</form>
+
+
+</body>
+</html>

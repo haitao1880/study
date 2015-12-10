@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>站台修改添加</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/WdatePicker.js"></script>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+{literal}
+<script language="javascript" type="text/javascript">
+$(document).ready(function(){
+	$("#imgs input").change(function(){
+		 var filename = '';
+		 var files = this.files;
+		 $.each(files, function(i, file){     
+			filename = filename ? filename+','+file.name : file.name;
+		 });
+		 $("#imgs_tips").text('已选择图片：'+filename);
+	});
+	$("#imgs_action").click(function(){
+		var filename = $("#imgs_tips").text();
+		if(filename == '')
+		{
+			alert("请选择上传图片");
+		}
+		else
+		{
+			$("#imgs").submit();
+		}
+	});	
+ });
+function callbackFunction(str)
+{
+	var jsonobj=eval('('+str+')');
+	if(jsonobj.result == 'success')
+	{
+		$("input[name='imgs']").val(jsonobj.img_name);
+		$("#imgs_tips").css('color','green').text(jsonobj.msg);
+	}
+	else
+	{
+		$("#imgs_tips").css('color','red').text(jsonobj.msg);
+	}
+}
+
+</script>
+<style type="text/css">
+*
+{
+	margin:0px;
+	padding:0px;
+	border:0px;
+}
+#wrap
+{
+	position:relative;
+	width:1400px;
+}
+#addform table tr td input
+{
+	height:26px;
+	padding-left:3px;
+}
+
+
+#addform table tr td label span
+{
+	border:1px solid gray;
+	margin-left:20px;
+	padding:5px;
+	font-size:16px;
+}
+#img_form input
+{
+	width:74px;
+	filter: alpha(opacity : 0);
+	opacity:0 ;
+}
+#imgs
+{
+	position:absolute;
+	left:688px;
+}
+
+#imgs
+{
+	top:366px;
+}
+#mapimg_tips,#imgs_tips,#headimg_tips
+{
+	margin-left:10px;
+}
+textarea
+{
+	border:1px solid rgb(169, 169, 169);
+	width: 400px;
+	height: 100px;
+	max-width: 400px;
+	max-height: 100px;
+	margin-top:15px;
+}
+table tr td .error
+{
+	border:1px solid red;
+}
+</style>
+{/literal}
+</head>
+<body>
+	<div id="wrap">
+		<form class="add" id="addform" action="/mall/goodsupdate" method="POST" enctype="multipart/form-data">
+			<table class="add-table" width="100%" border="0" cellpadding="0">
+				<caption>
+					<h1>{if $goods}商品编辑{else}商品添加{/if}</h1>
+				</caption>
+				<tr>
+					<td width="30%" align="right">商品名称：</td>
+					<td width="70%" align="left"><input type="text" name="name" value="{$goods.name}"/></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">商品类型：</td>
+					<td width="70%" align="left"><input type="text" name="category" value="{$goods.category}" /><label id="city_tips" style="color:red;margin-left:10px;font-size:14px"></label></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">单价积分：</td>
+					<td width="70%" align="left"><input type="text" name="price" value="{$goods.price}" /><label id="city_tips" style="color:red;margin-left:10px;font-size:14px"></label></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">折后价：</td>
+					<td width="70%" align="left"><input type="text" name="discount" value="{$goods.discount}"/>
+				</tr>
+				<tr>
+					<td width="30%" align="right">商品描述：</td>
+					<td width="70%" align="left"><input type="text" name="desc" value="{$goods.desc}"/>
+				</tr>
+				<tr>
+					<td width="30%" align="right">商品图集：</td>
+					<td width="70%" align="left"><input type="text"	name="imgs"  value="{$goods.imgs}" /><label><span>选择图片</span><span id="imgs_action">图片上传</span></label><span id="imgs_tips"></span></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">开始时间：</td>
+					<td width="70%" align="left"><input class="Wdate" type="text" onFocus="WdatePicker()" name="starttime" style="height:30px;line-height: 30px; font-size: 16px;" value="{$goods.starttime}"/></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">结束时间：</td>
+					<td width="70%" align="left"><input class="Wdate" type="text" onFocus="WdatePicker()" name="endtime" style="height:30px;line-height: 30px; font-size: 16px;" value="{$goods.endtime}"/></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">库存：</td>
+					<td width="70%" align="left"><input type="text" name="num" value="{$goods.num}"/></td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+					<td width="70%" align="left">
+						<input id="state" class="check-box" name="flag" type="radio" value="1" {if $goods.flag == 1}checked{/if}><label>正常</label>
+						<input id="state" class="check-box" name="flag" type="radio" value="0" {if $goods.flag == 0}checked{/if}><label>停用</label>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<input type="hidden" name="goods_id" value="{$goods.id}" />
+						<input type="button" id="btnSave" value="保 存" />
+					</td>
+				</tr>
+			</table>
+		</form>
+		<div id="img_form">
+			<form id="imgs" action="/mall/upload" target="img_iframe" method="post" enctype= "multipart/form-data">
+				<input type="file" name='file[]' multiple="multiple">
+				<input type='hidden' name='id' value="{$goods.id}">
+			</form>
+			<iframe name="img_iframe"></iframe>
+		</div>
+	</div>
+	
+	{literal}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#btnSave").click(function(){
+				var goods_id = $("input[name='goods_id']").val();
+				var name = $("input[name='name']").val();		
+				var category = $("input[name='category']").val();
+				var price = $("input[name='price']").val();
+				var discount = $("input[name='discount']").val();
+				var desc = $("input[name='desc']").val();
+				var flag = $("input[name='flag']:checked").val();
+				var imgs = $("input[name='imgs']").val();
+				var starttime = $("input[name='starttime']").val();
+				var endtime = $("input[name='endtime']").val();
+				var num = $("input[name='num']").val();
+				
+				if(!name)
+				{
+					alert('请输入商品名称！');return;
+				}
+				if(!category)
+				{
+					alert('请输入商品类型！');return;
+				}
+				if(!price)
+				{
+					alert('请输入商品单价！');return;
+				}
+				if(!desc)
+				{
+					alert('请输入商品描述！');return;
+				}
+				if(!imgs)
+				{
+					alert('请上传商品图片集！');return;
+				}
+				if(!num)
+				{
+					alert('请输入库存数量！');return;
+				}
+				$.ajax({
+		            type: "POST",
+		            url: "/mall/goodsupdate",
+		            data: {'ajax':1,
+		            	   'ispost':1,
+		            	   'goods_id':goods_id,
+		            	   'name':name,
+		            	   'category':category,
+		            	   'price':price,
+		            	   'discount':discount,
+		            	   'desc':desc,
+		            	   'flag':flag,
+		            	   'imgs':imgs,
+		            	   'starttime':starttime,
+		            	   'endtime':endtime,
+		            	   'num':num,
+		            	   },
+		            dataType: "json",
+		            success: function(data){
+						if(data.result == 'SUCCESS')
+						{
+							alert('操作成功');
+							window.location.href = '/mall/goodslist';
+						}
+						else
+						{
+							alert('操作失败');
+						}
+		                }             
+		        });
+
+
+				
+				});
+			});
+	</script>
+	{/literal}
+
+</body>
+</html>

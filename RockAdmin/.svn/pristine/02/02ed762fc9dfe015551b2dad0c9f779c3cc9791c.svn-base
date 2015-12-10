@@ -1,0 +1,318 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-23 15:24:01
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//station/aclog.html" */ ?>
+<?php /*%%SmartyHeaderCode:186832781054991891a5b9f9-33159921%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '8c0cf54427ebfde4df8cf15de408ff7441b57ebf' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//station/aclog.html',
+      1 => 1418353032,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '186832781054991891a5b9f9-33159921',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+public.css" />
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+mytc.js"></script>
+
+<style type="text/css">
+body{margin:0;padding:0;font-size:12px;}
+dt{padding:10px;}
+i{ font-style:normal;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#ipcno{width: 150px;height: 20px;margin-left: 0;}
+#pointer{
+  cursor:pointer;
+}
+
+</style>
+
+
+<script>
+
+function show(date)
+{
+	var $title = '<caption>'
+		  		+	'<h3>每日详情</h3>'
+				+'</caption>'
+		 		+'<tr  bgcolor="#417eb7">'
+		  		+  	'<th>时间</th>'
+		   		+ 	'<th>人数</th>'
+		 		+'</tr>'; 
+	$("#detailcon").html($title);
+	
+	$.ajax({
+        type: "POST",
+        data: { date: date, ajax:1,station:<?php echo $_smarty_tpl->getVariable('station')->value;?>
+},
+        url: '/station/actime',
+        success: function (data) {  
+
+            if (data.code == 1 ) {
+            	
+            	
+            	$.each(data.allrow, function (index, item) {
+            		 $('#detailcon').append(
+            			'<tr bgcolor="#FFFFFF"> '   
+						+   ' <td>'+item.h+'</td>'
+						+   ' <td>'+item.num+'</td>'
+						+  '</tr>'	 
+            		 );
+            		
+            		
+            	});
+            	
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+            	
+	popWin("detail");
+}
+function showap(date)
+{
+	var $title = '<caption>'
+		  		+	'<h3>AP当天区域人数</h3>'
+				+'</caption>'
+		 		+'<tr  bgcolor="#417eb7">'
+		  		+  	'<th>AP</th>'
+		   		+ 	'<th>人数</th>'
+		 		+'</tr>'; 
+	$("#detailcon").html($title);
+	
+	$.ajax({
+        type: "POST",
+        data: { date: date, ajax:1,station:<?php echo $_smarty_tpl->getVariable('station')->value;?>
+},
+        url: '/station/aplog',
+        success: function (data) {  
+
+            if (data.code == 1 ) {
+            	
+            	
+            	$.each(data.allrow, function (index, item) {
+            		 $('#detailcon').append(
+            			'<tr bgcolor="#FFFFFF"> '   
+						+   ' <td>'+item.ap+'</td>'
+						+   ' <td>'+item.num+'</td>'
+						+  '</tr>'	 
+            		 );
+            		
+            		
+            	});
+            	
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+            	
+	popWin("detail");
+}
+function showapdetail(date)
+{
+	var $title = '<caption>'
+		  		+	'<h3>AP当天区域详情</h3>'
+				+'</caption>'
+		 		+'<tr  bgcolor="#417eb7">'
+		 		+  	'<th>时间</th>'
+		  		+  	'<th>AP</th>'
+		   		+ 	'<th>人数</th>'
+		 		+'</tr>'; 
+	$("#detailcon").html($title);
+	
+	$.ajax({
+        type: "POST",
+        data: { date: date, ajax:1,station:<?php echo $_smarty_tpl->getVariable('station')->value;?>
+},
+        url: '/station/apdetail',
+        success: function (data) {  
+
+            if (data.code == 1 ) {
+            	
+            	
+            	$.each(data.allrow, function (index, item) {
+            		 $('#detailcon').append(
+            			'<tr bgcolor="#FFFFFF"> '  
+            			+   ' <td>'+item.h+'</td>'
+						+   ' <td>'+item.ap+'</td>'
+						+   ' <td>'+item.num+'</td>'
+						+  '</tr>'	 
+            		 );
+            		
+            		
+            	});
+            	
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+            	
+	popWin("detail");
+}
+
+$(function()
+{
+	$('.close').click(function(){
+		$('#maskLayer').hide();
+	});
+	
+});
+</script>
+
+</head>
+<body>
+<form action="" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h3>WIFI连接概况</h3></caption>
+
+
+<tr>
+    <td>车站选择：</td>
+    <form method = "post" action="/station/aclog" id="countreg">
+    <td colspan="1">
+      <select name="station" id="station">
+       
+        <option value="1" <?php if ($_smarty_tpl->getVariable('station')->value==1){?>selected<?php }?>>青岛南</option>
+        <option value="2" <?php if ($_smarty_tpl->getVariable('station')->value==2){?>selected<?php }?>>青岛北</option>
+       
+      </select>
+    </td>
+    <td>
+      <input type="submit" value="查询" id="pointer"/>
+    </td>
+    </form>
+</tr>
+
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>日期</th>
+    <th>人数</th>
+    <th>操作</th> 
+</tr>
+<?php  $_smarty_tpl->tpl_vars['v'] = new Smarty_Variable;
+ $_From = $_smarty_tpl->getVariable('list')->value; if (!is_array($_From) && !is_object($_From)) { settype($_From, 'array');}
+if ($_smarty_tpl->_count($_From) > 0){
+    foreach ($_From as $_smarty_tpl->tpl_vars['v']->key => $_smarty_tpl->tpl_vars['v']->value){
+?>
+<tr class="tbody" bgcolor="#FFFFFF">
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['date'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['num'];?>
+</td>
+    <td>
+    	<a href="javascript:;" onclick="show('<?php echo $_smarty_tpl->tpl_vars['v']->value['date'];?>
+')">每日分时段</a> &nbsp;
+    	<a href="javascript:;" onclick="showap('<?php echo $_smarty_tpl->tpl_vars['v']->value['date'];?>
+')">每日AP概况</a> &nbsp;
+    	<a href="javascript:;" onclick="showapdetail('<?php echo $_smarty_tpl->tpl_vars['v']->value['date'];?>
+')">每日AP详情</a>
+    	
+    </td>
+</tr>
+<?php }} ?>
+</table>
+
+<div class="pages" style="display: none;">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+<?php if ($_smarty_tpl->getVariable('cur_page')->value>1){?>
+  <li class="previous"><a href="?page=<?php echo $_smarty_tpl->getVariable('cur_page')->value-1;?>
+">&laquo;Previous</a></li>
+<?php }else{ ?>
+  <li class="previous-off"> &laquo;Previous</li>
+<?php }?>
+	<?php if ($_smarty_tpl->getVariable('endNum')->value<$_smarty_tpl->getVariable('allpage')->value){?>	
+         <?php $_smarty_tpl->tpl_vars['p'] = new Smarty_Variable;$_smarty_tpl->tpl_vars['p']->step = 1;$_smarty_tpl->tpl_vars['p']->total = (int)ceil(($_smarty_tpl->tpl_vars['p']->step > 0 ? $_smarty_tpl->getVariable('endNum')->value+1 - ($_smarty_tpl->getVariable('startNum')->value) : $_smarty_tpl->getVariable('startNum')->value-($_smarty_tpl->getVariable('endNum')->value)+1)/abs($_smarty_tpl->tpl_vars['p']->step));
+if ($_smarty_tpl->tpl_vars['p']->total > 0){
+for ($_smarty_tpl->tpl_vars['p']->value = $_smarty_tpl->getVariable('startNum')->value, $_smarty_tpl->tpl_vars['p']->iteration = 1;$_smarty_tpl->tpl_vars['p']->iteration <= $_smarty_tpl->tpl_vars['p']->total;$_smarty_tpl->tpl_vars['p']->value += $_smarty_tpl->tpl_vars['p']->step, $_smarty_tpl->tpl_vars['p']->iteration++){
+$_smarty_tpl->tpl_vars['p']->first = $_smarty_tpl->tpl_vars['p']->iteration == 1;$_smarty_tpl->tpl_vars['p']->last = $_smarty_tpl->tpl_vars['p']->iteration == $_smarty_tpl->tpl_vars['p']->total;?>
+                
+                     <?php if ($_smarty_tpl->getVariable('cur_page')->value==$_smarty_tpl->tpl_vars['p']->value){?>
+                     <li class="active"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</li>
+                     <?php }else{ ?>
+                     <li><a href="?page=<?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</a></li> 
+                     <?php }?>
+                   
+          <?php }} ?> 
+     <?php }else{ ?>
+        <?php $_smarty_tpl->tpl_vars['p'] = new Smarty_Variable;$_smarty_tpl->tpl_vars['p']->step = 1;$_smarty_tpl->tpl_vars['p']->total = (int)ceil(($_smarty_tpl->tpl_vars['p']->step > 0 ? $_smarty_tpl->getVariable('allpage')->value+1 - ($_smarty_tpl->getVariable('startNum')->value) : $_smarty_tpl->getVariable('startNum')->value-($_smarty_tpl->getVariable('allpage')->value)+1)/abs($_smarty_tpl->tpl_vars['p']->step));
+if ($_smarty_tpl->tpl_vars['p']->total > 0){
+for ($_smarty_tpl->tpl_vars['p']->value = $_smarty_tpl->getVariable('startNum')->value, $_smarty_tpl->tpl_vars['p']->iteration = 1;$_smarty_tpl->tpl_vars['p']->iteration <= $_smarty_tpl->tpl_vars['p']->total;$_smarty_tpl->tpl_vars['p']->value += $_smarty_tpl->tpl_vars['p']->step, $_smarty_tpl->tpl_vars['p']->iteration++){
+$_smarty_tpl->tpl_vars['p']->first = $_smarty_tpl->tpl_vars['p']->iteration == 1;$_smarty_tpl->tpl_vars['p']->last = $_smarty_tpl->tpl_vars['p']->iteration == $_smarty_tpl->tpl_vars['p']->total;?>
+                
+                     <?php if ($_smarty_tpl->getVariable('cur_page')->value==$_smarty_tpl->tpl_vars['p']->value){?>
+                     <li class="active"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</li>
+                     <?php }else{ ?>
+                     <li><a href="?page=<?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['p']->value;?>
+</a></li> 
+                     <?php }?>
+                   
+          <?php }} ?>     
+     <?php }?>     
+        
+<?php if ($_smarty_tpl->getVariable('cur_page')->value<$_smarty_tpl->getVariable('allpage')->value){?>
+    <li class="next">
+    <a href="?page=<?php echo $_smarty_tpl->getVariable('cur_page')->value+1;?>
+">Next &raquo;</a>
+    </li>
+<?php }else{ ?>
+    <li class="next-off">
+    Next &raquo;
+    </li>
+<?php }?>
+   <li class="next">
+    <a href="?page=<?php echo $_smarty_tpl->getVariable('allpage')->value;?>
+">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   <?php echo $_smarty_tpl->getVariable('cur_page')->value;?>
+/<?php echo $_smarty_tpl->getVariable('allpage')->value;?>
+ Page
+    </li>
+      
+  </ul>
+</div>
+</form>
+
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:365px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>
+		
+		 
+		</table>
+	</div>
+</div>
+</body>
+</html>

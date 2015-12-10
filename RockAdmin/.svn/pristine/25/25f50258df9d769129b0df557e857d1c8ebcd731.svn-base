@@ -1,0 +1,69 @@
+<?php
+/**
+* Copyright(c) 2015
+* 日    期:2015年4月7日                                                 
+* 作　  者:never
+* E-mail  :never@rockhippo.net
+* 文 件 名:pagerecordController.php                                                
+* 创建时间:下午15:58                                               
+* 字符编码:UTF-8                                                   
+* 脚本语言:PHP                                            
+* 版本信息:                                        
+* 修改日期:                               
+* 最后版本:                            
+* 修 改 者:                            
+* 版本地址:$HeadURL: http://192.168.28.100:12000/svn/rocktrain/trunk/RockAdmin/protected/module/psys/controller/:pagerecordController.php  $                                            
+* 摘    要: 广告管理                                                      
+*/
+class pagerecordController extends Psys_AbstractController {
+        public function __construct() {
+		parent::__construct ();
+	}
+        //加载 一段时间的数据
+	public function webCountAction()
+	{
+            // $Psys_StationModel = new Psys_StationModel();
+            // $stations = $Psys_StationModel->station();//站点名
+            //数据库站点数据不适合做下面的 以后校正后才 更改 从数据库/配置文件读取 
+            //获取车站名称列表
+            $stations=array(//站点名
+                 "qdn"=>"青岛南",
+                  "jn"=>"济南",
+                  "jnx"=>"济南西",
+                  "ta"=>"泰安",
+                  "qf"=>"曲阜",
+                  "tz"=>"滕州",
+                  "zz"=>"枣庄",
+                  "wf"=>"潍坊",
+                  "zb"=>"淄博",
+             );
+            
+               $page = reqnum("page",'1');
+	       $pagesize = reqnum("pagesize",'10');
+	       $stationid = reqstr('stationid',"qdn"); //站点名
+              
+	       $Psys_PagerecordModel = new Psys_PagerecordModel();
+               $data = $Psys_PagerecordModel->datelist($stationid,$page,$pagesize); //获取分页记录列表数据
+               $allnum= $Psys_PagerecordModel-> get_allnum(); //获取总条数  
+               $showpage=$Psys_PagerecordModel->openpage("/pagerecord/webCount",$pagesize, $allnum, $page,"&appkey={$stationid}", 3);//分页 
+    	       $this->smarty->assign('stations',$stations);
+               $this->smarty->assign('stationid', $stationid);
+               $this->smarty->assign('showpage', $showpage);
+               $this->smarty->assign('totallist',$data);
+             
+               $this->forward = 'webCountone';
+               $this->forward = 'webCount';
+        }
+        
+          //加载 一天的 数据 
+	public function getOneDateAction()
+	{
+	       $stationid = reqstr('stationid',"qdn"); //站点名
+               $Psys_PagerecordModel = new Psys_PagerecordModel();
+               $data = $Psys_PagerecordModel->datelist($stationid); //获取分页记录列表数据
+               $this->smarty->assign('totallist',$data);
+                  $this->smarty->assign('date',reqstr("date"));
+               //   print_r($data);
+              $this->forward = 'getOneDate';
+        }     
+ }

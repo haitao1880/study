@@ -1,0 +1,10 @@
+
+RewriteEngine On
+
+RewriteCond %{REQUEST_URI} \.(css|gif|jpg|jpeg|js|png|rar|zip|tar|swf|htc|svg|ico)$
+RewriteRule ^.*$ - [NC,L]
+
+RewriteCond %{REQUEST_FILENAME} -f 
+RewriteRule ^.*$ - [NC,L]
+
+RewriteRule ^.*$ /index.php [NC,L]

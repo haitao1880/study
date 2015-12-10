@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-问卷调查统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+
+    <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-question-sign"></i> 问卷调查统计</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 日调查数据</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <p><b>说 明: </b></p>
+            <p>请选择要查询的起始和结束时间。</p>  
+                        <div class="span" style="width:100px">
+                            <select name="dateSearch">
+                              <option value="manyday">日期选择</option>
+                            </select>
+                        </div>
+                        <span class="manyday dateSpan">
+                            <input id="d5221" name="bmanyday" value="{{$sdate}}" class="Wdate" type="text" onFocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},firstDayOfWeek:1,maxDate:'%y-%M-%d'})"/> -
+                            <input id="d5222" name="emanyday" value="{{$edate}}" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:0})}',firstDayOfWeek:1,maxDate:'%y-%M-%d',onpicked:function(){dataSearch()}})"/>
+                        </span>
+            <div id="dateError" class="alert alert-error alert-block hide">
+                <h4 class="alert-heading">提示</h4>
+                查询时间设置错误，请重新设置。
+            </div>
+            <div id="containerTable"></div>
+            <a id="loading" href="#myModal" data-toggle="modal" class="hide"></a> 
+            <div id="myModal" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><img src="{{$psys_img}}loading.gif" /></p>
+                <p style="text-align:center;">加载中...</p>
+                <a id="loading_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+
+            <a id="loading" href="#myDataModal" data-toggle="modal" class="hide"></a> 
+            <div id="myDataModal" class="modal hide">
+              <div id="modal-content" class="modal-body">
+                <div id="container" style="min-width: 350px; width:800px; margin: 0 auto"></div>
+              </div>
+            </div>
+        </div>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+    <script src="{{$psys_js}}highcharts.js"></script>
+    <script src="{{$psys_js}}exporting.js"></script>
+    
+    <script type="text/javascript">
+        function getPie(id,string){
+            var options = new Array();
+            switch (id)
+            {
+                case 1:
+                  question="您的性别？";
+                  options[0]="男";
+                  options[1]="女";
+                  break;
+                case 2:
+                  question="您的年龄？";
+                  options[0]="14岁~19岁";
+                  options[1]="20岁~25岁";
+                  options[2]="26岁~35岁";
+                  options[3]="35岁以上";
+                  break;
+                case 3:
+                  question="您的学历？";
+                  options[0]="初中以下";
+                  options[1]="高中";
+                  options[2]="本科及本科以上";
+                  break;
+                case 4:
+                  question="您的职业？";
+                  options[0]="白领阶层";
+                  options[1]="蓝领阶层";
+                  options[2]="学生";
+                  options[3]="其他";
+                  break;
+                case 5:
+                  question="您的收入？";
+                  options[0]="6000元以上";
+                  options[1]="3000~6000元";
+                  options[2]="1000~3000元";
+                  options[3]="1000元以下";
+                  break;
+                case 6:
+                  question="您对使用本游戏平台的感受？";
+                  options[0]="质量精美,使用方便";
+                  options[1]="画质一般,有待改进";
+                  options[2]="无所谓";
+                  options[3]="太垃圾,想卸载";
+                  break;
+                case 7:
+                  question="您是否喜欢玩手机游戏吗？";
+                  options[0]="喜欢";
+                  options[1]="不喜欢";
+                  options[2]="一般";
+                  break;
+                case 8:
+                  question="您通常是通过什么平台下载手机游戏？";
+                  options[0]="手机浏览器";
+                  options[1]="手机助手";
+                  options[2]="手机自带的应用商店";
+                  options[3]="通过电脑下载安装";
+                  options[4]="都有";
+                  break;
+                case 9:
+                  question="在本游戏平台中是否有您感兴趣或喜欢的手机游戏？";
+                  options[0]="有";
+                  options[1]="没有";
+                  break;
+                case 10:
+                  question="在本游戏平台中是否有搜索到您所需要的手机游戏？";
+                  options[0]="有";
+                  options[1]="没有";
+                  break;
+                case 11:
+                  question="游戏是通过什么途径获得？";
+                  options[0]="自己搜索";
+                  options[1]="朋友推荐";
+                  options[2]="广告推广";
+                  options[3]="其他";
+                  break;
+            }
+            getData(question,string,options);
+        }
+        $(function(){
+            dataSearch();
+        })
+        
+        function dataSearch(){
+            var bmanyday = $("#d5221").attr("value");
+            var emanyday = $("#d5222").attr("value");
+            if(!bmanyday || !emanyday){
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/answer/ajaxAnswerHtml",
+                data: {
+                    start:bmanyday,
+                    end:emanyday
+                },
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){
+                    loading_func(1);
+                },
+                success: function(data){
+                    loading_func();
+                    $("#containerTable").html(data);
+                }
+            });  
+            
+        }
+        
+        function getData(question,string,options) {
+            var strs = new Array();
+            var datastr = new Array();
+            var sum = 0;
+            strs = string.split("-");
+            for(i=0;i<strs.length ;i++ ){
+                sum += parseInt(strs[i]);
+            }
+            var tempArr = new Array();
+            for(i=0;i<options.length ;i++ ){
+                tempArr[i]=new Array();
+                tempArr[i][0] = options[i]+' ('+parseInt(strs[i])+')个'; 
+                tempArr[i][1] = parseInt(strs[i]); 
+            }
+            $('#container').highcharts({
+                chart: {
+                    type: 'pie',
+                    options3d: {
+                        enabled: true,
+                        alpha: 45,
+                        beta: 0
+                    }
+                },
+                title: {
+                    text: question 
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                credits:{
+                    enabled:false
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        depth: 35,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}'
+                        }
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: '占比',
+                    data: tempArr
+                }]
+            });
+        }
+          
+        function loading_func(s){
+            s == 1 ? $("#loading").click() : $("#loading_c").click();
+        }
+    </script>
+    </body>
+</html>
+  

@@ -1,0 +1,178 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-23 10:49:29
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//station/music.html" */ ?>
+<?php /*%%SmartyHeaderCode:6501312155498d839713f96-28766795%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'b15c3e56499595192f5f751a2c7593a473d6d837' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//station/music.html',
+      1 => 1419152373,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '6501312155498d839713f96-28766795',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+public.css"/>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+mytc.js"></script>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+datepicker.css" rel="stylesheet" />
+
+<style type="text/css">
+body{margin:0;padding:0;font-size:12px;}
+dt{padding:10px;}
+i{ font-style:normal;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#pointer{
+  cursor:pointer;
+}
+
+</style>
+
+
+</head>
+
+<body>
+
+<script>
+$(function(){
+	
+	$("#datepicker").datepicker();	
+	
+	
+});
+
+function albumhit(time)
+{
+  var $title = '<caption>'
+          + '<h3>榜单点击详情</h3>'
+        +'</caption>'
+        +'<tr  bgcolor="#417eb7">'
+          +   '<th>榜单名称</th>'
+          +   '<th>点击次数</th>'
+        +'</tr>'; 
+  $("#detailcon").html($title);
+
+  $.ajax({
+        type: "POST",
+        data: { date: time, ajax:1},
+        url: '/station/albumhit',
+        success: function (data) {  
+             
+            if (data) {
+              
+              
+              $.each(data, function (index, item) {
+                 $('#detailcon').append(
+                  '<tr bgcolor="#FFFFFF"> '   
+            +   ' <td>'+index+'</td>'
+            +   ' <td>'+item+'</td>'
+            +  '</tr>'   
+                 );             
+                
+              });
+              
+                return;
+            } else  {
+                alert('没有数据');
+            }
+        }
+    });
+              
+  popWin("detail");
+}
+
+</script>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  	<h3>音乐统计</h3>
+  </caption>
+  <tr>
+    <form method="post" action="/station/music" enctype="multipart/form-data">
+	    <td>车站选择：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	        <select	name="stationid">
+				<?php if ($_smarty_tpl->getVariable('stationid')->value==1){?>
+				<option value="1" selected="selected">青岛南</option>
+				<option value="2" >青岛北</option>
+				<?php }elseif($_smarty_tpl->getVariable('stationid')->value==2){?>
+				<option value="1">青岛南</option>
+				<option value="2" selected="selected">青岛北</option>
+				<?php }?>
+			</select>
+	    </td>
+	    <td>
+	      <input type="submit" value="查询"/>
+	    </td>
+    </form> 
+  </tr>
+  
+  <tr  bgcolor="#417eb7">
+    <th>日期</th>
+    <th>播放</th>
+    <th>暂停</th>
+    <th>加入单首</th>
+    <th>加入榜单</th>
+    <th>加入歌手</th>
+    <th>喜欢</th>
+    <th>歌手</th>
+    <th>详情</th>
+  </tr> 
+  <?php  $_smarty_tpl->tpl_vars['v'] = new Smarty_Variable;
+ $_From = $_smarty_tpl->getVariable('data')->value; if (!is_array($_From) && !is_object($_From)) { settype($_From, 'array');}
+if ($_smarty_tpl->_count($_From) > 0){
+    foreach ($_From as $_smarty_tpl->tpl_vars['v']->key => $_smarty_tpl->tpl_vars['v']->value){
+?>
+  <tr bgcolor="#FFFFFF">          
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['date'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['play'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['pause'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['addsong'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['addalbum'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['addsinger'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['like'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['singer'];?>
+</td>
+    <td><a href="#" name="" onclick="appdowns(this.name)">查看</a></td> 
+  </tr>
+  <?php }} ?>
+</table>
+
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:365px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>
+	 
+		</table>
+	</div>
+</div>
+</body>
+</html>

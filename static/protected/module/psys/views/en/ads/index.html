@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-浏览数据统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+		<link type="text/css" rel="stylesheet" href="{{$psys_css}}table.css" />
+        <style type="text/css">
+        .adsAdd{
+			background:#FFF;
+			width:90px;
+			line-height:30px;
+			border:1px solid #417eb7;
+			text-align:center;
+			margin-top:20px;
+			margin-left:88px;
+			color:#000;
+		}
+        </style>
+    </head>
+    <body>
+    
+    <div id="content2">
+    	<div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-list-alt"></i> 广告管理</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 广告</a>
+            </div>
+        </div>
+        <form action="/ads/delete" method="get">
+		<table class="hovertable" width="100%" border="1" cellpadding="0" cellspacing="1" bgcolor="#417eb7" bordercolor="#417eb7">
+		<caption><h4>广告列表</h4></caption>
+		<tr class="table-head" bgcolor="#2d68a0">
+			<th>ID</th>
+		    <th>广告名称</th>
+		    <th>图片地址</th>
+		    <th>访问地址</th>
+		    <th>显示栏目</th>
+		    <th>状态</th>
+		   <th>广告内容</th>
+		   <th>推荐编号</th>
+		    <th>操作</th> 
+		</tr>
+		{{foreach $list as $v}}
+		<tr class="tbody" bgcolor="#FFFFFF">
+			<td><input name="id[]" type="checkbox"  value="{{$v.id}}">{{$v.id}}</td>
+		    <td>{{$v.adname}}</td>
+		    <td>{{$v.imgurl}}</td>
+		    <td>{{$v.actionurl}}</td>
+		    <td>{{$v.colid}}</td>
+		     <td>{{if $v.flag eq 1}}是{{else}}否{{/if}}</td>
+		     <td>{{$v.addesc}}</td>
+		     <td>{{$v.tjappid}}</td>
+		    <td><a href="/ads/edit?id={{$v.id}}">编辑</a> <a href="/ads/delete?id={{$v.id}}">删除</a></td>
+		</tr>
+		{{/foreach}}
+		</table>
+		<a href="/ads/add" target="content"><div class="adsAdd">广告添加</div></a>
+		<div class="pages">
+		  <ul class="pagination-digg">
+		    
+		   
+		 <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+		{{if $cur_page gt 1}}
+		  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+		{{else}}
+		  <li class="previous-off"> &laquo;Previous</li>
+		{{/if}}
+			{{if $endNum lt $allpage}}	
+		         {{for $p=$startNum to $endNum}}
+		                
+		                     {{if $cur_page eq $p}}
+		                     <li class="active">{{$p}}</li>
+		                     {{else}}
+		                     <li><a href="?page={$p}">{{$p}}</a></li> 
+		                     {{/if}}
+		                   
+		          {{/for}} 
+		     {{else}}
+		        {{for $p=$startNum to $allpage}}
+		                
+		                     {{if $cur_page eq $p}}
+		                     <li class="active">{{$p}}</li>
+		                     {{else}}
+		                     <li><a href="?page={{$p}}">{{$p}}</a></li> 
+		                     {{/if}}
+		                   
+		          {{/for}}     
+		     {{/if}}    
+		        
+		{{if $cur_page lt $allpage}}
+		    <li class="next">
+		    <a href="?page={{$cur_page+1}}">Next &raquo;</a>
+		    </li>
+		{{else}}
+		    <li class="next-off">
+		    Next &raquo;
+		    </li>
+		{{/if}}
+		   <li class="next">
+		    <a href="?page={{$allpage}}">Last &raquo;</a>
+		    </li>
+		    <li class="next-off">
+		   {{$cur_page}}/{{$allpage}} Page
+		    </li>
+		    <li class="del">
+		   		<button type="submit" name="submit" class="but">DELETE</button>
+		    </li>    
+		  </ul>
+		</div>
+		</form>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+   <script type="text/javascript">
+$(document).ready(function(){
+	$('.submenu > a').click(function(e)
+			{
+				e.preventDefault();
+				var submenu = $(this).siblings('ul');
+				var li = $(this).parents('li');
+				var submenus = $('#sidebar li.submenu ul');
+				var submenus_parents = $('#sidebar li.submenu');
+				if(li.hasClass('open'))
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenu.slideUp();
+					} else {
+						submenu.fadeOut(250);
+					}
+					li.removeClass('open');
+				} else 
+				{
+					if(($(window).width() > 768) || ($(window).width() < 479)) {
+						submenus.slideUp();			
+						submenu.slideDown();
+					} else {
+						submenus.fadeOut(250);			
+						submenu.fadeIn(250);
+					}
+					submenus_parents.removeClass('open');		
+					li.addClass('open');	
+				}
+			});
+	
+	$(".delads").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var id= $(this).attr('stationads_id');
+			$.ajax({
+	            type: "POST",
+	            url: "/fullads/delete",
+	            data: {'ajax':1,'ispost':1,'id':id},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('删除成功！');
+						window.location.href = '/fullads/index';
+					}
+					else
+					{
+						alert('删除失败！');				
+					}
+	            }       
+	        });	
+		}
+		});
+	$(".toggleads").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var id= $(this).attr('stationads_id');
+			var flag= $(this).attr('flag');
+			$.ajax({
+	            type: "POST",
+	            url: "/fullads/toggleads",
+	            data: {'ajax':1,'ispost':1,'id':id,'flag':flag},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('审核状态切换成功！');
+						window.location.href = '/fullads/index';
+					}
+					else
+					{
+						alert('审核状态切换失败！');				
+					}
+	            }       
+	        });	
+		}
+		});
+});
+</script>
+    </body>
+</html>

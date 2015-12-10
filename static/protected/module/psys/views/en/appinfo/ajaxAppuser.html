@@ -1,0 +1,38 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr><th>日 期</th><th>开启APP次数</th><th>开启APP新用户</th><th>开启APP老用户</th><th>开启平台人数</th></tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                            <td style="text-align:center;">{{$v.day}}</td>
+                            <td style="text-align:center;">{{$v.open_app}}</td>
+                            <td style="text-align:center;">{{$v.new_appuser}}</td>
+                            
+                            <td style="text-align:center;">{{$v.old_appuser}}</td>
+                            <td style="text-align:center;">{{$v.active_appuser}}</td>
+                            
+                            </tr>
+                        {{/foreach}}
+                            <tr>
+                            <td style="text-align:center;"><b>总 计</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$open_app}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$new_appuser}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$old_appuser}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$active_appuser}}</b></td>
+                            
+                            </tr>
+                            <tr><td colspan="5"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

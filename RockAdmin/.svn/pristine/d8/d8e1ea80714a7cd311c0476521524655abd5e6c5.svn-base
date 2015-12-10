@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>音乐添加</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+</head>
+<body>
+<form class="add">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>音乐添加</h3>
+  </caption>
+  <tr>
+    <td width="30%" align="right">选择专辑：</td>
+    <td width="70%" align="left"><select name="albumid">
+      <option value="">请选择所属专辑</option>
+       {foreach $alist as $av}
+              <option value="{$av.id}">{$av.aname}</option>
+       {/foreach}
+    
+      </select></td>
+  </tr>
+  <tr>
+    <td align="right">音乐ID：</td>
+    <td align="left"><input type="text" name="musicid"/></td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">音乐名称：</td>
+    <td width="70%" align="left"><input type="text" name="mname"/></td>
+  </tr>
+  <tr>
+    <td align="right">歌手：</td>
+    <td align="left"><input type="text" name="singer"/></td>
+  </tr>
+    <tr>
+    <td width="30%" align="right">排序：</td>
+    <td width="70%" align="left"><input type="text"  name="sortid"/></td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">状&nbsp;&nbsp;态：</td>
+    <td width="70%" align="left">
+    	<input id="state" class="check-box" name="flag" type="radio" value="1" checked><label>显示</label>
+        <input id="state" class="check-box" name="flag" type="radio" value="0"><label>隐藏</label>
+    </td>
+  </tr>
+   <tr>
+    <td width="30%" align="right">点击：</td>
+    <td width="70%" align="left"><input type="text"  name="hits"/></td>
+  </tr>
+     <tr>
+    <td width="30%" align="right">价钱：</td>
+    <td width="70%" align="left"><input type="text"  name="price"/></td>
+  </tr>
+       <tr>
+    <td width="30%" align="right">路径：</td>
+    <td width="70%" align="left"><input type="text"  name="mpath"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><input type="hidden" name="id" /><input type="button" id="btnSave" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+{literal}
+<script type="text/javascript">
+
+$(function(){
+	$('#btnSave').click(function(){
+		var mname = $.trim($("input[name='mname']").val());
+		var albumid = $.trim($("select[name='albumid']").val());
+		var musicid = $.trim($("input[name='musicid']").val());
+		var singer  = $.trim($("input[name='singer']").val());
+		var sortid = $.trim($("input[name='sortid']").val());
+		var hits = $.trim($("input[name='hits']").val());
+		var flag = $.trim($("input[name='flag']").val());
+		var price = $.trim($("input[name='price']").val());
+		var mpath = $.trim($("input[name='mpath']").val());
+		
+		var id = $.trim($("input[name='id']").val());
+		if(mname == '')
+		{
+			alert('请输入音乐名');
+			return;
+		}
+		
+		//其他验证
+		$.post(
+			'/res/updatemusic',
+			{'ispost':1,'ajax':1,'mname':mname,'albumid':albumid,'musicid':musicid,'singer':singer,'hits':hits,'flag':flag, 'sortid': sortid,'price':price,'mpath': mpath,'id':id},
+			function(res){
+				if(res.result == 'SUCCESS')
+				{
+					if(confirm('添加成功，点击确定继续添加，点击取消返回列表'))
+					{
+						$("input").val('');
+						
+					}else{
+						document.location.href = '/res/mlist';
+					}
+				}
+				else
+				{
+					alert(res.msg+'('+res.msgcode+')');
+				}
+			},
+			'json'
+		);
+		
+	});
+});
+</script>
+{/literal}
+
+</body>
+</html>

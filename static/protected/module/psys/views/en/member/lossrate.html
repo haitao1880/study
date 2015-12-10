@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-用户信息统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+
+    <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-user"></i> 用户信息统计</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 用户流失率</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <p><b>说 明: </b></p>
+            <p>请选择起始和结束时间进行信息查询。<b style="color:red;">此查询效率较低，只能查询最近两个月的数据，请尽量选择短的时间区间！</b></p>  
+            <p style="color:green;">【7日】周流失率：统计日倒数第二周 (倒数第8-14天) 开启过游戏平台，当前一周(倒数第1-7天)未开启过游戏平台的用户数比例</p>
+            <p style="color:green;">【30日】月流失率：统计日倒数第二月 (倒数第30-60天) 开启过游戏平台，当前一月(倒数第1-30天)未登录过平台的用户数比例。</p>
+                <div class="span" style="width:95px">
+                    <select name="dateSearch">
+                      <option value="-">日期选择</option>
+                    </select>
+                </div>
+                
+                <span class="manyday dateSpan">
+                    <input id="d5221" name="start" value="{{$sdate}}" class="Wdate" type="text" onFocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},dateFmt:'yyyy-MM-dd',firstDayOfWeek:1,maxDate:'%y-%M-#{%d-6}'})"/> -
+                    <input id="d5222" name="end" value="{{$edate}}" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:0})}',dateFmt:'yyyy-MM-dd',firstDayOfWeek:1,maxDate:'#F{$dp.$D(\'d5221\',{d:9})}',onpicked:function(){searchRate()}})"/>
+                </span>
+            <p></p>   
+            <hr/>
+            <div id="containerTable">
+                
+            </div>
+            
+            <a id="loading" href="#myModal" data-toggle="modal" class="hide"></a> 
+            <div id="myModal" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><img src="{{$psys_img}}loading.gif" /></p>
+                <p style="text-align:center;">加载中...</p>
+                <a id="loading_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+        </div>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+    <script src="{{$psys_js}}highcharts.js"></script>
+    <script src="{{$psys_js}}exporting.js"></script>  
+    <script type="text/javascript">
+        $(function(){
+            searchRate();
+        })
+        function searchRate(){
+            var start = $("#d5221").attr("value");
+            var end = $("#d5222").attr("value");
+            $.ajax({
+                type: "POST",
+                url: "/member/ajaxLossrateHtml",
+                data: {
+                    start:start,
+                    end:end
+                },
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){
+                    loading_func(1);
+                },
+                success: function(data){
+                    loading_func();
+                    $("#containerTable").html(data);
+                }
+            });
+            
+        }        
+        function loading_func(s){
+            s == 1 ? $("#loading").click() : $("#loading_c").click();
+        }
+    </script>
+    </body>
+</html>
+  

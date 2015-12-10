@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+</head>
+<body>
+		<table width="100%" border="0" cellpadding="0" cellspacing="1">
+		<caption>
+			<h2>交易查询</h2>
+		</caption>
+	     <tr>
+	        <form method="POST" action="/fin/inquiryList">
+	  		<td>订单号：<input type="text" name="orderguid" /></td>
+	  	</tr>
+	  	<tr>
+	        <td>用户名：<input type="text" name="username" /></td>
+	    </tr>
+	    <tr>
+	        <td>产品类型:<select name="producttype">
+	        					<option value="0">请选择产品类型</option>
+	        				{foreach $producttype as $type}
+	        					<option value="{$type[0]}">{$type[1]}</option>
+	        				{/foreach}
+	        </td>
+	    </tr>
+	    <tr>
+	        
+	        <td>升/降排序：<input type="radio" name="order" value="0" checked="checked" />降序
+	        				<input type="radio" name="order" value="1" />升序
+	        </td>
+	    </tr>
+	    <tr>
+	        <td>状态查询：<input type="radio" name="ifsucc" value="-1" checked="checked" />全部
+	        				<input type="radio" name="ifsucc" value="0" />失败
+	        				<input type="radio" name="ifsucc" value="1" />成功
+	        </td>
+	    </tr>
+	    <tr>
+	        <td>起始时间：<input type="text" name="startTime" /></td>
+	    </tr>
+	    <tr>
+	    	<td>截止时间：<input type="text" name="endTime" /></td>
+	   	</tr>
+	   	<tr>
+	        <td><input type="submit" value="查询" id="searchuser"/></td>
+	        </form>
+	     </tr>
+		</table>
+		
+</body>
+</html>

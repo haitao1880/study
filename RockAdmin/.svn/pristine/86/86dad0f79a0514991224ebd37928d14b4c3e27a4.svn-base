@@ -1,0 +1,487 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>RockHippo Train's Admin Center</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}trainAdmin.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}trainAdmin.js"></script>
+</head>
+
+<body>
+	<div id="header">
+		<a href="http://admin.wonaonao.com"><img id="logo"
+			src="{$psys_img}logo.jpg" width="187" height="74" alt="Logo"
+			border="0" /></a>
+		<div id="top_nav">
+			<ul>
+				<li data-value="service"><img data-value=""
+					src="{$psys_img}img001.jpg" width="52" height="52" alt="客户服务" />
+					<h4>客户服务</h4>
+					<div class="point"></div></li>
+				<li data-value="market"><img src="{$psys_img}img003.jpg"
+					width="52" height="52" alt="市场管理" />
+					<h4>市场管理</h4>
+					<div class="point"></div></li>
+				<li data-value="trip"><img src="{$psys_img}img003.jpg"
+					width="52" height="52" alt="线路管理" />
+					<h4>线路管理</h4>
+					<div class="point"></div></li>
+				<li data-value="cp"><img src="{$psys_img}img002.jpg" width="52"
+					height="52" alt="数据统计" />
+					<h4>数据统计</h4>
+					<div class="point"></div></li>
+				<li data-value="finance"><img src="{$psys_img}img004.jpg"
+					width="52" height="52" alt="财务管理" />
+					<h4>财务管理</h4>
+					<div class="point"></div></li>
+				<li data-value="member"><img src="{$psys_img}img005.jpg"
+					width="52" height="52" alt="会员管理" />
+					<h4>会员管理</h4>
+					<div class="point"></div></li>
+				<li data-value="account" id="lifirst"><img
+					src="{$psys_img}img006_h.jpg" width="52" height="52" alt="后台用户" />
+					<h4 style="color: #5cccff;">后台用户</h4>
+					<div class="point"></div></li>
+				<li data-value="sys"><img src="{$psys_img}img007.jpg"
+					width="52" height="52" alt="系统设置" />
+					<h4>系统设置</h4>
+					<div class="point"></div></li>
+				<!-- <li data-value="tongji2"><img src="{$psys_img}img002.jpg" width="52"
+					height="52" alt="数据统计2" />
+					<h4>数据统计2</h4>
+					<div class="point"></div></li> -->
+					
+				<li data-value="operation"><img src="{$psys_img}img003.jpg"
+					width="52" height="52" alt="运营平台" />
+					<h4>运营平台</h4>
+					<div class="point"></div></li>
+
+			</ul>
+		</div>
+		<div id="user-bg">
+			<p>{$admin_name}：Welcome</p>
+			<p>
+				<span><a href="/account/chgpwd" target="frmain">[修改密码]</a></span>&nbsp;&nbsp;&nbsp;&nbsp;<span><a
+					href="/account/logout">[退出]</a></span>
+			</p>
+
+		</div>
+	</div>
+	<div id="main">
+		{if $cur_x_user['username'] neq 'market'}
+		<div class="aside" style="display: none;" data-value="service">
+			<div>
+				<h4>客户服务</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li><a href="/member/search" target="frmain">用户查询</a></li>
+				<li><a href="/fin/trasiction" target="frmain">交易明细</a></li>
+			</ul>
+		</div>
+		{/if}
+		
+		{if $cur_x_user['username'] neq 'trip'}
+		<div class="aside market_li" {if $cur_x_user['username'] neq 'trip'}style="display: none;"{/if} data-value="trip">
+			<div>
+				<h4>线路管理</h4>
+				<div class="fenline"></div>
+			</div>
+			<div>
+				<h5 id="ziyuan_show" onclick="list_show(this.id)">线路管理<span>+</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>列车时刻表&nbsp;&nbsp;<a href="/trip/stlist" target="frmain">时刻表</a></li>				
+				<li>线路&nbsp;&nbsp;<a href="/trip/vadd" target="frmain">添加</a> | <a href="/trip/vlist" target="frmain">列表</a></li>
+				<li>站点&nbsp;&nbsp;<a href="/trip/cityAdd" target="frmain">添加</a> | <a href="/trip/cityList" target="frmain">列表</a></li>
+				<li>城市简介&nbsp;&nbsp;<a href="/trip/citydetaillist" target="frmain">列表</a></li>
+				<li>旅游景点&nbsp;&nbsp;<a href="/trip/spotadd" target="frmain">添加</a> | <a href="/trip/spotslist" target="frmain">列表</a></li>
+				<li>美食天地&nbsp;&nbsp;<a href="/trip/foodadd" target="frmain">添加</a> | <a href="/trip/foodlist" target="frmain">列表</a></li>
+			</ul>
+		</div>
+		{/if}
+		
+		{if $cur_x_user['username'] neq 'market'}
+		<div class="aside market_li" {if $cur_x_user['username'] neq 'market'}style="display: none;"{/if}
+			data-value="market">
+			<div>
+				<h4>市场</h4>
+				<div class="fenline"></div>
+			</div>
+			{if $cur_x_user['username'] neq 'market'}
+			<div>
+				<h5 id="ziyuan_show" onclick="list_show(this.id)">资源管理<span>+</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/res/index" target="frmain">概述</a></li>
+				<li>视频&nbsp;&nbsp;<a href="/res/vadd" target="frmain">添加</a> |
+					<a href="/res/vlist" target="frmain">列表</a></li>
+				<li><a href="/res/import" target="frmain">批量上传视频</a></li>
+				<li>音乐&nbsp;&nbsp;<a href="/res/madd" target="frmain">添加</a> |
+					<a href="/res/mlist" target="frmain">列表</a></li>
+                <li>专辑&nbsp;&nbsp;<a href="/res/albumadd" target="frmain">添加</a> | <a href="/res/albumlist" target="frmain">列表</a></li>
+				<li>游戏&nbsp;&nbsp;<a href="/res/gadd" target="frmain">添加</a> |
+					<a href="/res/glist" target="frmain">列表</a></li>
+			</ul>
+			<div>
+				<h5 id="ads_show" onclick="list_show(this.id)">广告管理<span>+</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>广告&nbsp;&nbsp;<a href="/ads/add" target="frmain">添加</a> | <a href="/ads/index" target="frmain">列表</a></li>
+				<li><a href="/ads/sync" target="frmain">实时同步</a></li>
+				<!--  
+				<li>访问统计</li>
+				<li>按车次访问统计</li>
+				<li>按时间段访问统计</li>
+				<li>按车厢类型访问统计</li>
+				-->
+			</ul>
+			
+			{/if}
+			
+			{if $cur_x_user['username'] neq 'market'}
+			<div>
+				<h5 id="zyhz_show" onclick="list_show(this.id)">资源合作方管理<span>+</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>多米</li>
+				<li>乐视</li>
+			</ul>
+			<div>
+				<h5 id="cc_show" onclick="list_show(this.id)">车次管理<span>+</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>车次&nbsp;&nbsp;<a href="/train/add" target="frmain">添加</a> | <a
+					href="/train/index" target="frmain">列表</a></li>
+			</ul>
+			{/if}
+			<div>
+				<h5 id="dx_show" onclick="list_show(this.id)">短信管理<span>+</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/sms/set" target="frmain">设置短信</a>&nbsp;&nbsp;<a href="/sms/add" target="frmain">充值</a> | <a	href="/sms/index" target="frmain">列表</a></li>
+				<li><a href="/sms/getTimeNum" target="frmain">短信发送量</a></li>
+			</ul>
+			<div>
+				<h5 id="xw_show" onclick="list_show(this.id)">新闻管理<span>+</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/news/add" target="frmain">添加新闻</a> | <a	href="/news/index" target="frmain">新闻列表</a></li>
+				<li><a href="/news/sync" target="frmain">实时同步</a></li>
+			</ul>
+		</div>
+		<!-- <div class="aside" style="display: none;" data-value="cp">
+			<div>
+				<h4>三方交易</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li><a href="/transaction/threeBird" target="frmain">飞翔小鸟</a></li>
+				<li><a href="/transaction/theworld" target="frmain">风云天下</a></li>
+				<li><a href="/transaction/panda" target="frmain">功夫熊猫</a></li>
+				<li><a href="/transaction/bomb" target="frmain">炸弹糖</a></li>
+				<li><a href="/transaction/contest" target="frmain">比武招亲</a></li>
+				<li><a href="/transaction/forward" target="frmain">天天向前冲</a></li>
+			</ul>
+		</div> -->
+		<div class="aside market_li" {if $cur_x_user['username'] neq 'market'}style="display: none;"{/if}
+			data-value="cp">
+			<div>
+				<h4>车站统计</h4>
+				<div class="fenline"></div>
+			</div>
+			{if $cur_x_user['username'] neq 'market'}
+			
+			<!-- <div>
+				<h5 id="train_show" onclick="list_show(this.id)">数据分析<span>+</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>栏目统计</li>
+				<li>车次统计</li>
+				<li>时间段统计</li>
+				<li>车厢类型统计</li>
+				<li>用户消费统计</li>
+				<li><a href="/count/videoin" target="frmain">电影统计</a></li>
+				<li><a href="/count/countmusic" target="frmain">音乐统计</a></li>
+				<li><a href="/count/newsin" target="frmain">新闻统计</a></li>
+				
+				<li><a href="/count/countreg" target="frmain">注册统计</a></li>
+				<li><a href="/count/modelhits" target="frmain">板块点击</a></li>
+				<li><a href="/count/click" target="frmain">页面点击</a></li>
+				<li><a href="/count/uvisitor" target="frmain">独立访客</a></li>
+				<li><a href="/count/appin" target="frmain">下载统计</a></li>
+				<li><a href="#" target="frmain">应用统计</a></li>
+				<li><a href="/count/gamein" target="frmain">游戏统计</a></li>
+				
+			</ul> -->
+			{/if}
+			<div>
+				<h5 id="wifi_show" onclick="list_show(this.id)">WIFI数据分析<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<!-- <li><a href="/station/aclog" target="frmain">WIFI连接统计</a></li> -->
+				<li><a href="/station/wifiinfo" target="frmain">WIFI连接统计</a></li>
+				<li><a href="/station/wifidaily" target="frmain">每日时段对比</a></li>
+				<li><a href="/station/wifiweek" target="frmain">每7天链接趋势</a></li>
+			</ul>
+
+			<!-- <div>
+				<h5 id="result_show" onclick="list_show(this.id)">资源数据分析<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/station/movie" target="frmain">电影统计[app]</a></li>
+				<li><a href="/station/music" target="frmain">音乐统计[app]</a></li>
+				<li><a href="/station/app" target="frmain">应用统计</a></li>
+				<li><a href="/station/webApp" target="frmain">应用/游戏[old]</a></li>
+				<li><a href="/resource/downapp" target="frmain">应用/游戏下载统计</a></li>
+				<li><a href="/station/order" target="frmain">订票统计</a></li>
+				<li><a href="/resource/mobilerank" target="frmain">手机/浏览器排行</a></li>
+			</ul>
+			 -->
+			<div>
+				<h5 id="proce_show" onclick="list_show(this.id)">流程数据分析<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/resource/UserLotteryPage" target="frmain">抽奖活动统计</a></li>
+				<!-- <li><a href="/resource/NewUserLotteryPage" target="frmain">新抽奖活动统计</a></li> -->
+				<li><a href="/station/paiting" target="frmain">统计图</a></li>
+				<li><a href="/station/totalstation" target="frmain">每日流程对比</a></li>
+				<!-- <li><a href="/station/sindexgamead" target="frmain">首页游戏广告流程</a></li> -->
+				{if $username eq 'admin'}
+               <li><a href="/pagerecord/addetaillog" target="frmain">首页游戏广告流程</a></li> 
+                {/if}
+				<li><a href="/station/webCountNew" target="frmain">流程统计[New]</a></li>
+				<li><a href="/station/webCountAll" target="frmain">流程统计汇总</a></li>
+				<li><a href="/station/reg" target="frmain">注册统计</a></li>
+				<li><a href="/station/registerweek" target="frmain">每周注册趋势</a></li>
+
+			</ul>
+
+			<!-- <div>
+				<h5 id="pv_show" onclick="list_show(this.id)">PV数据分析<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				
+				<li><a href="/station/navigator" target="frmain">导航点击PV</a></li>
+				<li><a href="/station/pagehit" target="frmain">Banner点击PV</a></li>
+				<li><a href="/station/adshowpv" target="frmain">广告位PV统计</a></li>
+				<li><a href="/station/showadpv" target="frmain">广告PV统计</a></li>
+			               <li><a href="/station/everyday" target="frmain">伙伴每日数据</a></li>
+			               <li><a href="/station/navhit" target="frmain">旧导航点击</a></li>
+			</ul> -->
+
+			<div>
+				<h5 id="staytime_show" onclick="list_show(this.id)">停留时间分析<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/station/staytime" target="frmain">页面停留时间</a></li>
+			</ul>
+
+			<div>
+				<h5 id="check_show" onclick="list_show(this.id)">监控数据分析<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/station/checklog" target="frmain">日志监控</a></li>
+			</ul>
+
+			<div>
+				<h5 id="eventadd" onclick="list_show(this.id)">统计相关数据添加<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/resource/eventadd" target="frmain">记录事件添加</a></li>
+				<li><a href="/resource/gonetalarm" target="frmain">一键上网预警设置</a></li>
+			</ul>
+
+			
+	
+		</div>
+		<!-- <div class="aside" style="display: none;" data-value="cp">
+			<div>
+				<h4>三方交易</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li><a href="/transaction/threeBird" target="frmain">飞翔小鸟</a></li>
+				<li><a href="/transaction/theworld" target="frmain">风云天下</a></li>
+				<li><a href="/transaction/panda" target="frmain">功夫熊猫</a></li>
+				<li><a href="/transaction/bomb" target="frmain">炸弹糖</a></li>
+				<li><a href="/transaction/contest" target="frmain">比武招亲</a></li>
+				<li><a href="/transaction/forward" target="frmain">天天向前冲</a></li>
+			</ul>
+		</div> -->
+		<div class="aside" style="display: none;" data-value="finance">
+			<div>
+				<h4>财务</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li><a href="/fin/tradeInquiry" target="frmain">交易查询</a></li>
+				<li><a href="/card/index" target="frmain">充值卡管理</a></li>
+				<li><a href="/fin/orderlist" target="frmain">订单管理</a></li>
+				<li>渠道交易</li>
+				<li><a href="/fin/dateList" target="frmain">日期交易</a></li>
+			</ul>
+		</div>
+		<div class="aside" style="display: none;" data-value="member">
+			<div>
+				<h4>会员管理</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li><a href="/member/index" target="frmain">会员列表</a></li>
+				<li><a href="/member/search" target="frmain">会员查询</a></li>
+				<li><a href="/member/block" target="frmain">会员锁定</a></li>
+			</ul>
+		</div>
+		<div class="aside" data-value="account"{if $cur_x_user['username'] eq 'market'} style="display: none;"{/if}>
+			<div>
+				<h4>后台用户</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li>用户管理&nbsp;&nbsp;<a href="/account/add" target="frmain">添加</a>
+					| <a href="/account/index" target="frmain">列表</a></li>
+				<li>角色管理</li>
+				<li>权限管理</li>
+			</ul>
+		</div>
+		<div class="aside" style="display: none;" data-value="sys">
+			<div>
+				<h4>系统</h4>
+				<div class="fenline"></div>
+			</div>
+			<ul>
+				<li>设备管理&nbsp;<a href="/ipc/add" target="frmain">添加</a> | <a
+					href="/ipc/index" target="frmain">列表</a></li>
+				<li>同步状态</li>
+				<li><a href="/ipc/status" target="frmain">设备状态</a></li>
+				<li>SIM卡状态&nbsp;<a href="/sim/add" target="frmain">添加</a> | <a
+					href="/sim/index" target="frmain">列表</a></li>
+				<li>管理日志&nbsp;<a
+					href="/ipc/log" target="frmain">列表</a></li>
+                 <li>地址管理&nbsp; <a href="/region/index" target="frmain">列表</a></li>
+                 <li>车站管理&nbsp; <a href="/station/add" target="frmain">添加</a> | <a href="/station/stlist" target="frmain">列表</a></li>
+			</ul>
+		</div>
+		<div class="aside market_li" {if $cur_x_user['username'] neq 'market'}style="display: none;"{/if}
+			data-value="tongji2">
+			<div>
+				<h4>车站统计</h4>
+				<div class="fenline"></div>
+			</div>
+
+			<div>
+				<h5 id="proce1_show" onclick="list_show(this.id)">流程数据分析<span></span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/pagerecord/webCount" target="frmain">流程统计</a></li>
+                                <li><a href="/pagerecord/allchart" target="frmain">统计图</a></li>
+                                <li><a href="/pagerecord/compare" target="frmain">每日流程对比</a></li>
+                                <li><a href="/pagerecord/allsite" target="frmain">流程统计汇总</a></li>
+                                <li><a href="/pagerecord/regdetail" target="frmain">注册统计</a></li>
+			</ul>
+                        <div>
+				<h5 id="proce1_show" onclick="list_show(this.id)">PV数据分析+<span></span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li><a href="/pagerecord/navpv" target="frmain">导航点击PV</a></li>
+                                <li><a href="/pagerecord/bannerpv" target="frmain">Banner点击PV</a></li>
+                                <li><a href="/pagerecord/adpv" target="frmain">广告PV统计</a></li>
+                                <li><a href="/pagerecord/addetaillog" target="frmain">广告详情</a></li>
+                        </ul>
+	
+		</div>
+		<div class="aside market_li" style="display: none;" data-value="operation">
+			<div>
+				<h4>运营平台</h4>
+				<div class="fenline"></div>
+			</div>
+			<div>
+				<h5 id="mall_show" onclick="list_show(this.id)">商城管理<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>商品管理&nbsp;&nbsp;<a href="/mall/goodsadd" target="frmain">添加</a> | <a href="/mall/goodslist" target="frmain">列表</a></li>
+				<li>兑换管理&nbsp;&nbsp;<a href="/mall/orderlist" target="frmain">列表</a></li>
+			</ul>
+			<div>
+				<h5 id="user_show" onclick="list_show(this.id)">用户管理<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>账号管理&nbsp;&nbsp;<a href="/member/index" target="frmain">列表</a></li>
+				<li>积分明细&nbsp;&nbsp;<a href="/points/pointslist" target="frmain">列表</a></li>
+			</ul>
+			
+			<div>
+				<h5 id="package_show" onclick="list_show(this.id)">礼包管理<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>礼包管理&nbsp;&nbsp;<a href="/package/add" target="frmain">添加</a> | <a href="/package/index" target="frmain">列表</a></li>
+				<li>礼包激活码&nbsp;&nbsp;<a href="/package/valueadd" target="frmain">添加</a> | <a href="/package/valuelist" target="frmain">列表</a></li>
+			</ul>
+			<div>
+				<h5 id="user_show" onclick="list_show(this.id)">抽奖用户管理<span>-</span></h5>
+				<div class="fenline2"></div>
+			</div>
+			<ul>
+				<li>抽奖用户管理&nbsp;&nbsp;<a href="/user/index" target="frmain">列表</a></li>
+				<li>中奖用户管理&nbsp;&nbsp;<a href="/user/award" target="frmain">列表</a></li>
+				<li>用户下载日志管理&nbsp;&nbsp;<a href="/user/tasks" target="frmain">列表</a></li>
+			</ul>
+		</div>
+		{/if}
+		<div id="context">
+			<iframe id="iframe01" name="frmain" src="/index/main" frameborder="0"></iframe>
+		</div>
+	</div>
+{literal}
+<script>
+$(function(){
+	$('#train_show').parent().next().hide();
+	$('#station_show').parent().next().hide();
+	$('#ziyuan_show').parent().next().hide();
+	$('#ads_show').parent().next().hide();
+	$('#zyhz_show').parent().next().hide();
+	$('#cc_show').parent().next().hide();
+	$('#dx_show').parent().next().hide();
+	$('#xw_show').parent().next().hide();
+	/*$('#wifi_show').parent().next().hide();
+	$('#result_show').parent().next().hide();
+	$('#check_show').parent().next().hide();
+	$('#proce_show').parent().next().hide();
+	$('#pv_show').parent().next().hide();*/
+});
+function list_show(id)
+{
+	$('#'+id).parent().next().toggle(200);
+	if($('#'+id).parent().next().height()>2){
+		$('#'+id).children('span').text('+');
+	}else{
+		$('#'+id).children('span').text('-');
+	}
+}
+
+</script>
+{/literal}
+</body>
+</html>

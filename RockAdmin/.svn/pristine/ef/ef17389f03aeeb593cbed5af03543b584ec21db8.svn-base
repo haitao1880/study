@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>广告后台添加</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.Jcrop.min.js"></script>
+
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+<link type="text/css" href="{$psys_css}jquery.Jcrop.min.css" rel="stylesheet" />
+
+<style type="text/css">
+input {
+	vertical-align: middle;
+	margin: 0;
+	padding: 0
+}
+#title{
+	font-size:20px;
+	font-weight:bold;
+	text-align:center;
+}
+#wrap{
+	margin:0 auto;
+	width:1600px;
+	position:relative;
+}
+#data_form form table{
+	margin-top:20px;
+	border-collapse:separate; 
+	border-spacing:10px;
+}
+#data_form form table tr td{
+	height:30px;
+}
+
+#data_form form table tr td label{
+	border:1px solid #DEDEDE;
+	background-color:#EAEAEA;
+	margin-left:10px;
+	width:40px;
+	height:28px;
+	line-height:28px;
+	padding:6px;
+}
+#data_form form table tr td span{
+	border:1px solid #DEDEDE;
+	background-color:#68228B;
+	margin-left:20px;
+	color:#FFFFFF;
+	width:40px;
+	height:28px;
+	line-height:28px;
+	padding:6px;
+}
+#data_form form table tr #content{
+	vertical-align:top;
+}
+#data_form form table tr td input,select{
+	height:24px;
+	margin-bottom:4px;
+}
+#data_form form table tr td select{
+	width:160px;
+}
+textarea{
+	width: 400px;
+	height: 100px;
+	max-width: 400px;
+	max-height: 100px;
+}
+#img_form{
+	position: absolute;
+	width:80px;
+	height:28px;
+	top:264px;
+	left:285px;
+}
+#img_form .file{
+	margin-top:3px;
+	height: 28px;
+	filter: alpha(opacity : 40);
+	opacity: 0.4;
+	width: 74px;
+}
+iframe{
+	width:0px;
+	height:0px;
+	display:none;
+}
+#st_tips{
+	display:none;
+}
+#st_not{
+	display:none;
+}
+#img_view{
+	position:absolute;
+	width:99.9%;
+	height:99.9%;
+	padding:100px auto;
+	left:0;
+	top:0;
+	background-color:#D4D4D4;
+	filter: alpha(opacity : 70);
+	opacity: 0.7;
+	display:none;
+	border:1px solid black;
+}
+#img_view #img_wrap{
+	margin:100px auto;
+}
+#img_view #res_img{
+	text-align:center;
+	margin: 0 auto;
+	width: 0;
+	margin-left: 30%;
+}
+#img_view #res_img img
+{
+	display:block;
+	margin:10px auto;
+	
+}
+#action{
+	text-align:center;
+	margin:40px auto;
+}
+#action label
+{
+	border:1px solid blue;
+	padding:8px;
+	margin-left:30px;
+}
+
+</style>
+{literal}
+<script type="text/javascript">
+$(document).ready(function(){
+    $(".datepicker").datePicker({
+        inline:true,
+        selectMultiple:false
+    });
+    
+    $("#datepicker").datePicker({
+        clickInput:true
+    });
+    $("#datepicker1").datePicker({
+        clickInput:true
+    });
+    $("select[name='colid']").change(function(){
+        var id = parseInt($(this).val());
+		if(id == 6)
+		{
+			$("#img_form").css("top",'222px');
+			$("#form1 .file").attr('multiple',true);
+			$("#systerms").hide();
+			$("#tjappid").hide();
+		}
+		else
+		{
+			$("#img_form").css("top",'263px');
+			$("#systerms").show();
+			$("#tjappid").show();
+		}
+    });
+	$(".file").click(function(){
+		var flag = $("input[type='checkbox'][name='adstype']:checked").length;
+		var colid = $("select[name='colid'] option:selected").val();
+		if(colid != 6 && flag < 1)
+		{
+			alert('请对显示系统进行选择！');
+			return false;
+		}
+	});
+	 
+	$(".file").change(function(){
+		 var filename = '';
+		 var files = this.files;
+		 $.each(files, function(i, file){     
+			filename = filename ? filename+','+file.name : file.name;
+		 }); 		 
+		 $("#st_tips").css("display","none");
+		 $("#st_not").css("display","none");
+		 $("input[name='imgurl']").val('已选择图片：'+filename);
+	});
+	$("#upload").click(function(){
+		var filename = $("input[name='imgurl']").val();
+		if(filename == '')
+		{
+			alert("请选择上传图片");
+		}
+		else
+		{
+			$("#form1").submit();
+		}
+	});
+	$("#img_view #cut").click(function(){
+		if(checkCoords())
+		{
+			$("#cut").css('display','none');
+			$("#form2").submit();			
+		}
+		else
+		{
+			return false;
+		}
+	});
+  	$("#btn_back").click(function(){
+		$("#res_img div").remove();
+		$("#res_img img").removeAttr("style");
+
+		var api = $.Jcrop("#cropbox"); 
+		api.destroy();
+		$("#img_view").hide();
+  	});
+
+  	$("#btn_data_submit").click(function(){
+		var adname = $("input[name='adname']").val();
+		var adstype = '';
+		$("input[type='checkbox'][name='adstype']:checked").each(function(){
+			adstype += adstype ? ','+$(this).val() : $(this).val(); 
+		});
+		var colid = $("select[name='colid'] option:selected").val();
+		var isstation = $("input[name='isstation']:checked").val();
+		var flag = $("input[name='flag']:checked").val();
+		var imgurl = $("input[name='imgurl']").val();
+		var actionurl = $("input[name='actionurl']").val();
+		var orderby = $("input[name='orderby']").val();
+		var tjappid = $("input[name='tjappid']").val();
+		var validity = $("input[name='validity']").val();
+		var content = $("textarea[name='adsdesc']").val();
+		var colstr = '';
+		$("input[name='colstr']:checked").each(function(){
+			colstr += colstr ? ','+ $(this).val() : $(this).val();
+		});
+				
+		if(!adname)
+		{
+			alert('请输入广告名！');
+			return false;
+		}
+		if(colid != 6 && !adstype)
+		{
+			alert('请选择显示系统！');
+			return false;
+		}
+		if(!colid)
+		{
+			alert('请选择广告显示位置！');
+			return false;
+		}
+		if(!imgurl)
+		{
+			alert('请进行图片上传！');
+			return false;
+		}
+		if(!actionurl)
+		{
+			alert('请输入广告访问URL！');
+			return false;
+		}
+		if(colid != 6 && !tjappid)
+		{
+			alert('请输入推荐AppID！');
+			return false;
+		}
+		if(!content)
+		{
+			alert('请填写广告描述！');
+			return false;
+		}
+		if(!colstr)
+		{
+			alert('请选择候车厅！');
+			return false;
+		}
+		
+		$.ajax({
+            type: "POST",
+            url: "/ads/update",
+            data: {'ajax':1,'ispost':1,'adname':adname,'adstype':adstype,'colid':colid,'imgurl':imgurl,'actionurl':actionurl,'orderby':orderby,'tjappid':tjappid,'content':content,'colstr':colstr,'validity':validity,'isstation':isstation,'flag':flag},
+            dataType: "json",
+            success: function(data){
+				alert(data);return false;
+                }             
+        });
+		return false;
+  	});
+});
+function callbackFunction(str)
+{
+	var jsonobj=eval('('+str+')');
+	var colid = $("select[name='colid'] option:selected").val();
+		
+	if(jsonobj.result == 'success')
+	{
+		if(colid >= 5)
+		{
+			var pattern = /^[a-zA-Z]+/g;
+			$("input[name='imgurl']").val(jsonobj.img_name.match(pattern));
+		}
+		else
+		{
+			$("input[name='imgurl']").val(jsonobj.img_name);
+		}
+		$("#st_tips").css('color','green').css("display",'inline').text(jsonobj.msg);
+		$("#img_view #cropbox").attr('src','http://res.wonaonao.com/imgs/ppts/'+jsonobj.img_name);
+		$("#form2 #file").val(jsonobj.img_name);
+
+		//var api = $.Jcrop("#cropbox"); 
+		//destroy()
+		//api.setImage('http://res.wonaonao.com/imgs/ppts/'+jsonobj.img_path);
+		
+		if(colid != 6)
+		{
+			$("#st_not").css('font-size','12px').css("display","inline").css("border",'none').css("background-color",'#FFFFFF').text('请分别对以下系统做相应的图片剪切');
+		}
+		$("#data_form form table tr td span").remove();
+		$("input[type='checkbox'][name='adstype']:checked").each(function(){
+			var sys = parseInt($(this).val());
+			var colid = parseInt($("select[name='colid'] option:selected").val());
+			
+			var radio = '';
+			switch(colid)
+			{
+			case 0:
+				if(sys == 0)
+				{
+					radio = 1.3538;
+					$("<span class='sys' radio="+radio+"></span>").appendTo("#tips").html("Pm");
+				}
+				else if(sys == 1)
+				{
+					radio = 1.3538;
+					$("<span class='sys' radio="+radio+" type='1'></span>").appendTo("#tips").html("Android");
+				}
+				else
+				{
+					radio = 1.20769;
+					$("<span class='sys' radio="+radio+" type='2'></span>").appendTo("#tips").html("IOS1");
+					radio = 1.82558;
+					$("<span class='sys' radio="+radio+" type='3'></span>").appendTo("#tips").html("IOS2");
+				}
+				break;
+			case 1:
+			case 2://音乐、视频
+				/*
+				if(sys == 0)
+				{
+					radio = 2.397;
+					$("<span class='sys' radio='"+radio+"'></span>").appendTo("#tips").html("Pm");
+				}
+				else if(sys == 1)
+				{
+					radio = 2.397;
+					$("<span class='sys' radio='"+radio+"'></span>").appendTo("#tips").html("Android");
+				}
+				else
+				{
+					radio = 2.397;
+					$("<span class='sys' radio='"+radio+"'></span>").appendTo("#tips").html("IOS");
+				}
+				break;
+				*/
+			case 3:
+			case 4://游戏应用
+				if(sys == 0)
+				{
+					radio = 1.8947;
+					$("<span class='sys' radio="+radio+"></span>").appendTo("#tips").html("Pm");
+				}
+				else if(sys == 1)
+				{
+					radio = 1.8947;
+					$("<span class='sys' radio="+radio+" type='4'></span>").appendTo("#tips").html("Android");
+				}
+				else
+				{
+					radio = 1.6667;
+					$("<span class='sys' radio="+radio+" type='5'></span>").appendTo("#tips").html("IOS");
+				}
+				break;
+			}
+		});
+		$(".sys").live('click',imgCut);
+	}
+	else if(jsonobj.result == 'error')
+	{
+		$("#st_tips").css('color','red').css('display','inline').text(jsonobj.msg);
+	}
+}
+function cutAfter(str)
+{
+	$("#res_img div").remove();
+	$("#res_img img").removeAttr("style");
+	var api = $.Jcrop("#cropbox"); 
+	api.destroy();	
+	$("#cropbox").attr('src','');
+	$("#cropbox").attr('src','http://res.wonaonao.com/imgs/ppts/'+str+'?'+Math.random());
+	
+}
+function updateCoords(c)
+{
+  $('#x').val(c.x);
+  $('#y').val(c.y);
+  $('#w').val(c.w);
+  $('#h').val(c.h);
+};
+function imgCut()
+{
+	var ratio = $(this).attr('radio');
+	var type = $(this).attr('type');
+	$("#cut").css('display','inline');
+	$("#type").val(type);
+	$("#img_view").show();
+	$('#cropbox').Jcrop({
+	      aspectRatio: ratio,
+	      onSelect: updateCoords
+	});
+}
+function checkCoords()
+{
+	if (parseInt($('#w').val())) return true;
+	alert('请先剪切图片再进行保存');
+	return false;
+};
+</script>
+{/literal}
+</head>
+<body>
+	<p id="title">新增广告位</p>
+	<div id="wrap">
+		<div id="data_form">
+			<form action="/ads/update" method="POST">
+			<table>
+				<tr><td width="250px" align="right">广告名称：</td><td align="left"><input type="text" name="adname" /></td></tr>
+				<tr><td width="250px" align="right">显示位置：</td>
+					<td align="left">
+						<select name="colid">
+							<option value="0">主页</option>
+							<option value="1">电影</option>
+							<option value="2">音乐</option>
+							<option value="3">游戏</option>
+							<option value="4">应用</option>
+							<option value="5">全屏广告1</option>
+							<option value="6">全屏广告2</option>
+						</select>
+					</td>
+				</tr>
+				<tr id="systerms"><td width="250px" align="right">显示系统：</td>
+					<td align="left">
+						&nbsp;&nbsp;<input type="checkbox" name="adstype" value="0" />&nbsp;Pm
+						&nbsp;&nbsp;<input type="checkbox" name="adstype" value="1" />&nbsp;Android
+						&nbsp;&nbsp;<input type="checkbox" name="adstype" value="2" />&nbsp;IOS		
+					</td>
+				</tr>
+				<tr><td width="250px" align="right">是否车站：</td>
+					<td align="left">&nbsp;&nbsp;<input id="isstation" class="check-box" name="isstation" type="radio" value="1" checked>是
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input id="isstation" class="check-box" name="isstation" type="radio" value="0" checked="checked">否</td>
+				</tr>
+				<tr><td width="250px" align="right">状　　态：</td>
+					<td align="left">&nbsp;&nbsp;<input id="state" class="check-box" name="flag" type="radio" value="1" checked>正常
+					&nbsp;&nbsp;&nbsp;&nbsp;<input id="state" class="check-box" name="flag" type="radio" value="0">停用</td>
+				</tr>
+				
+				<tr><td width="250px" align="right">图片路径：</td><td align="left"><input type="text" name="imgurl" readonly /><label id="st_tips"></label><label id="st_not"></label></td></tr>
+				<tr><td width="250px" align="right"></td><td id="tips"><label>选择文件</label><label id="upload">上传</label>　　</td></tr>
+				<tr><td width="250px" align="right">访问路径：</td><td align="left"><input type="text" name="actionurl" /></td></tr>
+				<tr><td width="250px" align="right">排&nbsp;&nbsp;&nbsp;&nbsp序：</td><td align="left"><input type="text" name="orderby" /></td></tr>
+				<tr id="tjappid"><td width="250px" align="right">链&nbsp;接&nbsp;ID：</td><td align="left"><input type="text" name="tjappid" /></td></tr>
+				<tr><td width="250px" align="right">有&nbsp;效&nbsp;期：</td><td align="left"><input type="text" name="validity" id="datepicker" /></td></tr>
+				<tr><td width="250px" align="right" id="content">广告备注：</td><td align="left"><textarea cols="20" name="adsdesc" id="addesc" rows="2"></textarea></td></tr>
+				<tr><td width="250px" align="right">候&nbsp;车&nbsp;厅：</td>
+					<td align="left">
+					<input name="colstr" type="checkbox" id="colstr" value="1" />第一候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="2" />第二候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="3" />第三候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="4" />第四候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="5" />第五候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="6" />第六候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="7" />第七候车厅
+					<input name="colstr" type="checkbox" id="colstr" value="8" />第八候车厅
+					</td>
+				</tr>
+				<tr><td colspan="2" align="center" style="margin-top:20px"><button id="btn_data_submit">提交</button></tr>
+			</table>
+			</form>
+		</div>
+		<div id="img_form">
+			<form id="form1" action="/ads/uploadadds" method="post" enctype= "multipart/form-data" target="img_iframe">
+				<input type="file" name="file[]" class="file" />
+			</form>
+			<iframe name="img_iframe"></iframe>
+		</div>
+	</div>
+	<div id="img_view">
+		<div id="img_wrap">
+			<div id="res_img">
+				<img src="" id="cropbox" />
+			</div>
+			<div>
+				<form id="form2" action="/ads/imgcut" method="post" target="img_iframe">
+					<input type="hidden" id="file" name="file" />
+					<input type="hidden" id="type" name='type' />
+					<input type="hidden" id="x" name="x" />
+					<input type="hidden" id="y" name="y" />
+					<input type="hidden" id="w" name="w" />
+					<input type="hidden" id="h" name="h" />
+				</form>
+			</div>
+			<div id="action">
+				<label id="cut">剪切</label><label id="btn_back">返回</label>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

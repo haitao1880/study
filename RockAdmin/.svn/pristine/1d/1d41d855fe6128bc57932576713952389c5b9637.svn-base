@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>车站列表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+</head>
+<body>
+<form action="/sim/del" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>车站列表</h4></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	
+	<th>ID</th>
+    <th>站名</th>
+    <th>Ac日志</th>
+    <th>车站日志</th>
+    <th>日志IP</th>
+    <th>是否包含Ip</th>
+    <th>操作</th>  
+</tr>
+	
+	{foreach $list as $v}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><input name="id[]" type="checkbox"  value="{$v.id}">{$v.id}</td>
+    <td>{$v.stationname}</td>
+    <td>{$v.acfile}</td>
+    <td>{$v.logfile}</td>
+    <td>{$v.logip}</td>
+    <td>{$v.ifconf}</td>
+    <td><a href="/station/edit?id={$v.id}">编辑</a> <a href="/station/del?id={$v.id}">删除</a></td>
+</tr>
+{/foreach}
+
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr><th>日 期</th><th>启动平台次数【WiFi / 非WiFi】</th><th>浏览页面次数</th><th>人均浏览量</th><th>浏览时长(小时)</th><th>人均浏览时长(小时)</th></tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                            <td style="text-align:center;">{{$v.day}}</td>
+                            <td style="text-align:center;">{{$v.start_times}}【{{$v.wifi}} / {{$v.nowifi}}】</td>
+                            <td style="text-align:center;">{{$v.page_views}}</td>
+                            <td style="text-align:center;">{{$v.per_view}}</td>
+                            <td style="text-align:center;">{{$v.online_times}}</td>
+                            <td style="text-align:center;">{{$v.per_online}}</td>
+                            </tr>
+                        {{/foreach}}
+                            <tr>
+                            <td style="text-align:center;"><b>总 计</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_start_times}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_page_views}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">-</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_online_times}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">-</b></td>
+                            </tr>
+                            <tr><td colspan="6"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

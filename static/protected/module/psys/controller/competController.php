@@ -1,0 +1,1222 @@
+<?php
+/**
+* Copyright(c) 2015
+* 日    期:2015年07月07日
+* 文 件 名:{sign}Controller.php
+* 创建时间:16:04
+* 字符编码:UTF-8
+* 版本信息:v1.0
+* 修改日期:2015年07月14日
+* 最后版本:v1.0
+* 创 建 者:jerry (jerry@rockhippo.cn)
+* 修 改 者:Jerry (Jerry@rockhippo.cn)
+* 版本地址:none
+* 摘    要: 访问统计控制器
+*/
+class competController extends PSys_AbstractController{
+    
+	public function __construct() {
+		parent::__construct();
+        $this->smarty->assign("gameActive","active");
+        $this->smarty->assign("trainActive","");
+        $this->smarty->assign("gameHidden","");
+        $this->smarty->assign("trainHidden","hidden");
+        $this->smarty->assign("busHidden","hidden");
+        $this->smarty->assign("busActive","");
+        $this->smarty->assign("marketHidden","hidden");
+        $this->smarty->assign("marketActive","");
+	}
+    
+	/**
+     *
+     * @do 展示浏览数据
+     *
+     * @sign public 
+     * @author jerry
+     * @copyright rockhippo
+     * @param -
+     * @return -
+     *
+     */
+	public function indexAction(){
+        $this->smarty->assign("active","compet/index");
+        $this->smarty->assign("active_menu","compet");
+        $this->smarty->assign("sdate",date('Y-m-d',strtotime("-6 days")));
+        $this->smarty->assign("edate",date('Y-m-d'));
+		$this->forward = "index";
+        
+	}
+
+    /**
+     *
+     * @do 展示浏览数据
+     *
+     * @sign public 
+     * @author jerry
+     * @copyright rockhippo
+     * @param -
+     * @return -
+     *
+     */
+    public function webuserAction(){
+        $this->smarty->assign("active","compet/webuser");
+        $this->smarty->assign("active_menu","compet");
+        $this->smarty->assign("sdate",date('Y-m-d',strtotime("-6 days")));
+        $this->smarty->assign("edate",date('Y-m-d'));
+        $this->forward = "webuser";
+        
+    }
+
+    /**
+    *
+    * @do ajax 获取日浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return json
+    *
+    */
+    public function ajaxWebuserJsonAction(){
+        $start = reqstr("start","");
+        $micstart = strtotime($start);
+        $end = reqstr("end","");
+        $micend = strtotime($end);
+        $PSys_PageviewRule = new PSys_PageviewRule();
+        $i = 0;
+        $xAxis = $series = "";
+        for($x=$micstart; $x<=$micend; $x += 86400) {
+            $xAxis .= '"'.date('Y-m-d',$x).'",';
+            $sql_kqcs = 'SELECT count(id) AS total_views FROM rhc_game_platform_match WHERE cday = '.date('Ymd',$x).' AND type = 0 AND pid = 0 AND `from` = 1';
+            $kqcsRs = $PSys_PageviewRule->matchQuery($sql_kqcs);
+            $kqcs_num .= intval($kqcsRs[0]["total_views"]).',';
+
+            $sql_kqrs = 'SELECT count(DISTINCT client) AS total_num FROM rhc_game_platform_match WHERE cday = '.date('Ymd',$x).' AND type = 0 AND pid = 0 AND `from` = 1';
+            $kqrsRs = $PSys_PageviewRule->matchQuery($sql_kqrs);
+            $kqrs_num .= intval($kqrsRs[0]["total_num"]).',';
+    
+            $sql_jjcs = 'SELECT count(id) AS total_times FROM rhc_game_platform_match WHERE cday = '.date('Ymd',$x).' AND type = 104 AND pid = 0 AND `from` = 1';
+            $jjcsRs = $PSys_PageviewRule->matchQuery($sql_jjcs);
+            $jjcs_num .= intval($jjcsRs[0]["total_times"]).',';
+
+            $sql_jjrs = 'SELECT count(DISTINCT mobile) AS total_player FROM rhc_game_platform_match WHERE cday = '.date('Ymd',$x).' AND type = 104 AND pid = 0 AND `from` = 1';
+            $jjrsRs = $PSys_PageviewRule->matchQuery($sql_jjrs);
+            $jjrs_num .= intval($jjrsRs[0]["total_player"]).',';
+
+        }
+        $xAxis = trim($xAxis,",");
+        $kqcs_num = "{name:'开启竞技页面次数',data:[".trim($kqcs_num,",")."]},";
+        $kqrs_num = "{name:'开启竞技页面人数',data:[".trim($kqrs_num,",")."]},";
+        $jjcs_num = "{name:'竞技总次数[点击开始按钮]',data:[".trim($jjcs_num,",")."]},";
+        $jjrs_num = "{name:'竞技总人数',data:[".trim($jjrs_num,",")."]},";
+        $series = $kqcs_num.$kqrs_num.$jjcs_num.$jjrs_num;
+        $data['xAxis'] = $xAxis;
+        $data['series'] = $series;
+        die(json_encode($data));
+    }
+
+    /**
+    *
+    * @do ajax 获取浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return html
+    *
+    */
+    public function ajaxWebuserHtmlAction(){
+        $start = reqstr("start","");
+        $micstart = strtotime($start);
+        $end = reqstr("end","");
+        $micend = strtotime($end);
+        $PSys_PageviewRule = new PSys_PageviewRule();
+        $i = 0;
+        $xAxis = $series = "";
+
+        for($x=$micstart; $x<=$micend; $x += 86400) {
+            $xAxis = date('Y-m-d',$x);
+            $result["allrow"][$i]['day'] = $xAxis;
+            $xAxis .= '"'.date('Y-m-d',$x).'",';
+            $sql_kqcs = 'SELECT count(id) AS total_views FROM rhc_game_platform_match WHERE cday = '.date('Ymd',$x).' AND type = 0 AND pid = 0 AND `from` = 1';
+            $kqcsRs = $PSys_PageviewRule->matchQuery($sql_kqcs);
+            $result["allrow"][$i]['kqcs_num'] = intval($kqcsRs[0]["total_views"]);
+            $kqcs_num += intval($kqcsRs[0]["total_views"]);
+
+            $sql_kqrs = 'SELECT count(DISTINCT client) AS total_num FROM rhc_game_platform_match WHERE cday = '.date('Ymd',$x).' AND type = 0 AND pid = 0 AND `from` = 1';
+            $kqrsRs = $PSys_PageviewRule->matchQuery($sql_kqrs);
+            $result["allrow"][$i]['kqrs_num'] = intval($kqrsRs[0]["total_num"]);
+            $kqrs_num += intval($kqrsRs[0]["total_num"]);
+    
+            $sql_jjcs = 'SELECT count(id) AS total_times FROM rhc_game_platform_match WHERE cday = '.date('Ymd',$x).' AND type = 104 AND pid = 0 AND `from` = 1';
+            $jjcsRs = $PSys_PageviewRule->matchQuery($sql_jjcs);
+            $result["allrow"][$i]['jjcs_num'] = intval($jjcsRs[0]["total_times"]);
+            $jjcs_num += intval($jjcsRs[0]["total_times"]);
+
+            $sql_jjrs = 'SELECT count(DISTINCT mobile) AS total_player FROM rhc_game_platform_match WHERE cday = '.date('Ymd',$x).' AND type = 104 AND pid = 0 AND `from` = 1';
+            $jjrsRs = $PSys_PageviewRule->matchQuery($sql_jjrs);
+            $result["allrow"][$i]['jjrs_num'] = intval($jjrsRs[0]["total_player"]);
+            $jjrs_num += intval($jjrsRs[0]["total_player"]);
+            $i++;
+        }
+        $this->smarty->assign("data",$result["allrow"]);
+        $this->smarty->assign("kqcs_num",$kqcs_num);
+        $this->smarty->assign("kqrs_num",$kqrs_num);
+        $this->smarty->assign("jjcs_num",$jjcs_num);
+        $this->smarty->assign("jjrs_num",$jjrs_num);
+        $this->forward = "ajaxWebuser";
+    }
+
+    /**
+     *
+     * @do 展示浏览数据
+     *
+     * @sign public 
+     * @author jerry
+     * @copyright rockhippo
+     * @param -
+     * @return -
+     *
+     */
+    public function userAction(){
+        $this->smarty->assign("active","compet/user");
+        $this->smarty->assign("active_menu","compet");
+        $this->smarty->assign("sdate",date('Y-m-d',strtotime("-6 days")));
+        $this->smarty->assign("edate",date('Y-m-d'));
+        $this->forward = "user";
+        
+    }
+    
+    /**
+    *
+    * @do ajax 获取日浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return json
+    *
+    */
+    public function ajaxCompetJsonAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        $PSys_signModel = new PSys_PageviewModel();
+        $where["day_>="] = $start;
+        $where["day_<="] = $end;
+        $order = "day ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_daily");
+        
+        $xAxis = $series = $view_times = $open_num = $open_times = $first_open = $second_open = $third_open = $fourth_open = $fifth_open = $sixth_open = $seventh_open = $eighth_open = $ninth_open = $tenth_open = $pass_5 = $pass_10 = $pass_15 = $pass_20 = $pass_25 = $pass_30 = $pass_35 = $pass_40 = $pass_45 = $pass_50 = $pass_other = "";
+        foreach($result["allrow"] as $k=>$v){
+            $xAxis .= '"'.$v["day"].'",';
+            $view_times .= $v["view_times"].',';
+            $open_num .= $v["open_num"].',';
+            $open_times .= $v["open_times"].',';
+            $open_person .= $v["open_person"].',';
+            $first_open .= $v["first_open"].',';
+            $second_open .= $v["second_open"].',';
+            $third_open .= $v["third_open"].',';
+            $fourth_open .= $v["fourth_open"].',';
+            $fifth_open .= $v["fifth_open"].',';
+            $sixth_open .= $v["sixth_open"].',';
+            $seventh_open .= $v["seventh_open"].',';
+            $eighth_open .= $v["eighth_open"].',';
+            $ninth_open .= $v["ninth_open"].',';
+            $tenth_open .= $v["tenth_open"].',';
+            $eleventh_open .= $v["eleventh_open"].',';
+            $twelfth_open .= $v["twelfth_open"].',';
+            $thirteenth_open .= $v["thirteenth_open"].',';
+            $fourteenth_open .= $v["fourteenth_open"].',';
+            $fifteenth_open .= $v["fifteenth_open"].',';
+            $pass_5 .= $v["pass_5"].',';
+            $pass_10 .= $v["pass_10"].',';
+            $pass_15 .= $v["pass_15"].',';
+            $pass_20 .= $v["pass_20"].',';
+            $pass_25 .= $v["pass_25"].',';
+            $pass_30 .= $v["pass_30"].',';
+            $pass_35 .= $v["pass_35"].',';
+            $pass_40 .= $v["pass_40"].',';
+            $pass_45 .= $v["pass_45"].',';  
+            $pass_50 .= $v["pass_50"].',';  
+            $pass_other .= $v["pass_other"].',';  
+        }
+        $xAxis = trim($xAxis,",");
+        $view_times = "{name:'开启竞技页面次数',data:[".trim($view_times,",")."]},";
+        $open_num = "{name:'开启竞技页面人数',data:[".trim($open_num,",")."]},";
+        $open_times = "{name:'竞技总次数',data:[".trim($open_times,",")."]},";
+        $open_person = "{name:'竞技总人数',data:[".trim($open_person,",")."]},";
+        $first_open = "{name:'首次竞技次数',data:[".trim($first_open,",")."]},";
+        $second_open = "{name:'2次竞技次数',data:[".trim($second_open,",")."]},";
+        $third_open = "{name:'3次竞技次数',data:[".trim($third_open,",")."]},";
+        $fourth_open = "{name:'4次竞技次数',data:[".trim($fourth_open,",")."]},";
+        $fifth_open = "{name:'5次竞技次数',data:[".trim($fifth_open,",")."]},";
+        $sixth_open = "{name:'6次竞技次数',data:[".trim($sixth_open,",")."]},";
+        $seventh_open = "{name:'7次竞技次数',data:[".trim($seventh_open,",")."]},";
+        $eighth_open = "{name:'8次竞技次数',data:[".trim($eighth_open,",")."]},";
+        $ninth_open = "{name:'9次竞技次数',data:[".trim($ninth_open,",")."]},";
+        $tenth_open = "{name:'10次竞技次数',data:[".trim($tenth_open,",")."]},";
+        $eleventh_open = "{name:'11次竞技次数',data:[".trim($eleventh_open,",")."]},";
+        $twelfth_open = "{name:'12次竞技次数',data:[".trim($twelfth_open,",")."]},";
+        $thirteenth_open = "{name:'13次竞技次数',data:[".trim($thirteenth_open,",")."]},";
+        $fourteenth_open = "{name:'14次竞技次数',data:[".trim($fourteenth_open,",")."]},";
+        $fifteenth_open = "{name:'15次竞技次数',data:[".trim($fifteenth_open,",")."]},";
+        $pass_5 = "{name:'过5关人数',data:[".trim($pass_5,",")."]},";
+        $pass_10 = "{name:'过10关人数',data:[".trim($pass_10,",")."]},";
+        $pass_15 = "{name:'过15关人数',data:[".trim($pass_15,",")."]},";
+        $pass_20 = "{name:'过20关人数',data:[".trim($pass_20,",")."]},";
+        $pass_25 = "{name:'过25关人数',data:[".trim($pass_25,",")."]},";
+        $pass_30 = "{name:'过30关人数',data:[".trim($pass_30,",")."]},";
+        /*
+        $pass_35 = "{name:'过35关人数',data:[".trim($pass_35,",")."]},";
+        $pass_40 = "{name:'过40关人数',data:[".trim($pass_40,",")."]},";
+        $pass_45 = "{name:'过45关人数',data:[".trim($pass_45,",")."]},";
+        $pass_50 = "{name:'过50关人数',data:[".trim($pass_50,",")."]},";
+        $pass_other = "{name:'过50关以上人数',data:[".trim($pass_other,",")."]},";
+        */
+        $series = $view_times.$open_num.$open_times.$open_person.$first_open.$second_open.$third_open.$fourth_open.$fifth_open.$sixth_open.$seventh_open.$eighth_open.$ninth_open.$tenth_open.$eleventh_open.$twelfth_open.$thirteenth_open.$fourteenth_open.$fifteenth_open.$pass_5.$pass_10.$pass_15.$pass_20.$pass_25.$pass_30;
+        $data['xAxis'] = $xAxis;
+        $data['series'] = $series;
+        die(json_encode($data));
+    }
+    
+    /**
+    *
+    * @do ajax 获取日浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return json
+    *
+    */
+    public function ajaxUserJsonAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        $PSys_signModel = new PSys_PageviewModel();
+        $where["day_>="] = $start;
+        $where["day_<="] = $end;
+        $order = "day ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_daily");
+        
+        $xAxis = $series = $open_num = $share_times = $share_ok = $new_num = $new_reg = "";
+        foreach($result["allrow"] as $k=>$v){
+            $xAxis .= '"'.$v["day"].'",';
+            $view_times .= $v["view_times"].',';
+            $open_num .= $v["open_num"].',';
+            $new_num .= $v["new_num"].',';
+            $old_num .=  intval($v["open_num"]-$v["new_num"]).',';
+            
+        }
+        $xAxis = trim($xAxis,",");
+        $view_times = "{name:'开启竞技页次数',data:[".trim($view_times,",")."]},";
+        $open_num = "{name:'开启竞技页人数',data:[".trim($open_num,",")."]},";
+        $old_num = "{name:'老用户数[开启竞技页]',data:[".trim($old_num,",")."]},";
+        $new_num = "{name:'新用户数[开启竞技页]',data:[".trim($new_num,",")."]},";
+        $series = $view_times.$open_num.$new_num.$old_num;
+        $data['xAxis'] = $xAxis;
+        $data['series'] = $series;
+        die(json_encode($data));
+    }
+
+
+    /**
+    *
+    * @do ajax 获取浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return html
+    *
+    */
+    public function ajaxCompetHtmlAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        $PSys_signModel = new PSys_PageviewModel();
+        $where["day_>="] = $start;
+        $where["day_<="] = $end;
+        $order = "day ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_daily");
+        $view_times = $open_num = $open_times = $first_open = $second_open = $third_open = $fourth_open = $fifth_open = $sixth_open = $seventh_open = $eighth_open = $ninth_open = $tenth_open = $pass_5 = $pass_10 = $pass_15 = $pass_20 = $pass_25 = $pass_30 = $pass_35 = $pass_40 = $pass_45 = $pass_50 = $pass_other = "";
+        
+        foreach($result["allrow"] as $k=>$v){
+            $view_times += intval($v["view_times"]);
+            $open_num += intval($v["open_num"]);
+            $open_times += intval($v["open_times"]);
+            $open_person += intval($v["open_person"]);
+            $first_open += intval($v["first_open"]);
+            $second_open += intval($v["second_open"]);
+            $third_open += intval($v["third_open"]);
+            $fourth_open += intval($v["fourth_open"]);
+            $fifth_open += intval($v["fifth_open"]);
+            $sixth_open += intval($v["sixth_open"]);
+            $seventh_open += intval($v["seventh_open"]);
+            $eighth_open += intval($v["eighth_open"]);
+            $ninth_open += intval($v["ninth_open"]);
+            $tenth_open += intval($v["tenth_open"]);
+            $eleventh_open += intval($v["eleventh_open"]);
+            $twelfth_open += intval($v["twelfth_open"]);
+            $thirteenth_open += intval($v["thirteenth_open"]);
+            $fourteenth_open += intval($v["fourteenth_open"]);
+            $fifteenth_open += intval($v["fifteenth_open"]);
+            $pass_5 += intval($v["pass_5"]);
+            $pass_10 += intval($v["pass_10"]);
+            $pass_15 += intval($v["pass_15"]);
+            $pass_20 += intval($v["pass_20"]);
+            $pass_25 += intval($v["pass_25"]);
+            $pass_30 += intval($v["pass_30"]);
+            $pass_35 += intval($v["pass_35"]);
+            $pass_40 += intval($v["pass_40"]);
+            $pass_45 += intval($v["pass_45"]);
+            $pass_50 += intval($v["pass_50"]);
+            $pass_other += intval($v["pass_other"]);
+        }
+        $this->smarty->assign("data",$result["allrow"]);
+        $this->smarty->assign("view_times",$view_times);
+        $this->smarty->assign("open_num",$open_num);
+        $this->smarty->assign("open_times",$open_times);
+        $this->smarty->assign("open_person",$open_person);
+        $this->smarty->assign("first_open",$first_open);
+        $this->smarty->assign("second_open",$second_open);
+        $this->smarty->assign("third_open",$third_open);
+        $this->smarty->assign("fourth_open",$fourth_open);
+        $this->smarty->assign("fifth_open",$fifth_open);
+        $this->smarty->assign("sixth_open",$sixth_open);
+        $this->smarty->assign("seventh_open",$seventh_open);
+        $this->smarty->assign("eighth_open",$eighth_open);
+        $this->smarty->assign("ninth_open",$ninth_open);
+        $this->smarty->assign("tenth_open",$tenth_open);
+        $this->smarty->assign("eleventh_open",$eleventh_open);
+        $this->smarty->assign("twelfth_open",$twelfth_open);
+        $this->smarty->assign("thirteenth_open",$thirteenth_open);
+        $this->smarty->assign("fourteenth_open",$fourteenth_open);
+        $this->smarty->assign("fifteenth_open",$fifteenth_open);
+        $this->smarty->assign("pass_5",$pass_5);
+        $this->smarty->assign("pass_10",$pass_10);
+        $this->smarty->assign("pass_15",$pass_15);
+        $this->smarty->assign("pass_20",$pass_20);
+        $this->smarty->assign("pass_25",$pass_25);
+        $this->smarty->assign("pass_30",$pass_30);
+        $this->smarty->assign("pass_35",$pass_35);
+        $this->smarty->assign("pass_40",$pass_40);
+        $this->smarty->assign("pass_45",$pass_45);
+        $this->smarty->assign("pass_50",$pass_50);
+        $this->smarty->assign("pass_other",$pass_other);
+		$this->forward = "ajaxCompet";
+    }
+    
+    /**
+    *
+    * @do ajax 获取浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return html
+    *
+    */
+    public function ajaxUserHtmlAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        $PSys_signModel = new PSys_PageviewModel();
+        $where["day_>="] = $start;
+        $where["day_<="] = $end;
+        $order = "day ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_daily");
+        $open_num = $share_times = $share_ok = $new_num = $new_reg = "";
+        
+        foreach($result["allrow"] as $k=>$v){
+            $result["allrow"][$k]['old_num'] = intval($v["open_num"]-$v["new_num"]);
+            $view_times += intval($v["view_times"]);
+            $open_num += intval($v["open_num"]);
+            $new_num += intval($v["new_num"]);
+            $old_num +=  intval($v["open_num"]-$v["new_num"]);
+        }
+        $this->smarty->assign("data",$result["allrow"]);
+        $this->smarty->assign("open_num",$open_num);
+        $this->smarty->assign("view_times",$view_times);
+        $this->smarty->assign("new_num",$new_num);
+        $this->smarty->assign("old_num",$old_num);
+        $this->forward = "ajaxUser";
+    }
+
+    /**
+     *
+     * @do 展示周浏览数据
+     *
+     * @sign public 
+     * @author jerry
+     * @copyright rockhippo
+     * @param -
+     * @return -
+     *
+     */
+	public function weeklyAction(){
+        $this->smarty->assign("active","compet/weekly");
+        $this->smarty->assign("active_menu","compet");
+        $this->smarty->assign("sdate",date('Y-m-d',strtotime("-14 days")));
+        $this->smarty->assign("edate",date('Y-m-d'));
+		$this->forward = "weekly";
+        
+	}
+
+    /**
+     *
+     * @do 展示周浏览数据
+     *
+     * @sign public 
+     * @author jerry
+     * @copyright rockhippo
+     * @param -
+     * @return -
+     *
+     */
+    public function uweeklyAction(){
+        $this->smarty->assign("active","compet/uweekly");
+        $this->smarty->assign("active_menu","compet");
+        $this->smarty->assign("sdate",date('Y-m-d',strtotime("-14 days")));
+        $this->smarty->assign("edate",date('Y-m-d'));
+        $this->forward = "uweekly";
+        
+    }
+    
+    /**
+    *
+    * @do ajax 获取周浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return json
+    *
+    */
+    public function ajaxWeeklycompetJsonAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        $tempdate=date('Y-m-d',strtotime("$start Monday")); 
+        $start=date('Y-m-d',strtotime("$tempdate -7 days"));
+        $end=date('Y-m-d',strtotime("$end Sunday"));
+        
+        $PSys_signModel = new PSys_PageviewModel();               
+        $where["startday_>="] = $start;
+        $where["endday_<="] = $end;
+        $order = "startday ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_weekly");
+        
+        $xAxis = $series = $view_times = $open_num = $open_times = $first_open = $second_open = $third_open = $fourth_open = $fifth_open = $sixth_open = $seventh_open = $eighth_open = $ninth_open = $tenth_open = $pass_5 = $pass_10 = $pass_15 = $pass_20 = $pass_25 = $pass_30 = $pass_35 = $pass_40 = $pass_45 = $pass_50 = $pass_other = "";
+        foreach($result["allrow"] as $k=>$v){
+            $xtemp = $v["startday"];
+            $mictime = strtotime($v["startday"]);
+            $endtemp = date('/m/d',strtotime("$xtemp Sunday"));
+            $xAxis .= '"'.date('Y/m/d',$mictime).' - '.$endtemp.'",';
+            $view_times .= $v["view_times"].',';
+            $open_num .= $v["open_num"].',';
+            $open_times .= $v["open_times"].',';
+            $first_open .= $v["first_open"].',';
+            $second_open .= $v["second_open"].',';
+            $third_open .= $v["third_open"].',';
+            $fourth_open .= $v["fourth_open"].',';
+            $fifth_open .= $v["fifth_open"].',';
+            $sixth_open .= $v["sixth_open"].',';
+            $seventh_open .= $v["seventh_open"].',';
+            $eighth_open .= $v["eighth_open"].',';
+            $ninth_open .= $v["ninth_open"].',';
+            $tenth_open .= $v["tenth_open"].',';
+            $pass_5 .= $v["pass_5"].',';
+            $pass_10 .= $v["pass_10"].',';
+            $pass_15 .= $v["pass_15"].',';
+            $pass_20 .= $v["pass_20"].',';
+            $pass_25 .= $v["pass_25"].',';
+            $pass_30 .= $v["pass_30"].',';
+            $pass_35 .= $v["pass_35"].',';
+            $pass_40 .= $v["pass_40"].',';
+            $pass_45 .= $v["pass_45"].',';  
+            $pass_50 .= $v["pass_50"].',';  
+            $pass_other .= $v["pass_other"].',';  
+        }
+        $xAxis = trim($xAxis,",");
+        $view_times = "{name:'开启竞技次数',data:[".trim($view_times,",")."]},";
+        $open_num = "{name:'开启竞技人数',data:[".trim($open_num,",")."]},";
+        $open_times = "{name:'竞技总数',data:[".trim($open_times,",")."]},";
+        $first_open = "{name:'首次竞技',data:[".trim($first_open,",")."]},";
+        $second_open = "{name:'二次竞技',data:[".trim($second_open,",")."]},";
+        $third_open = "{name:'三次竞技',data:[".trim($third_open,",")."]},";
+        $fourth_open = "{name:'四次竞技',data:[".trim($fourth_open,",")."]},";
+        $fifth_open = "{name:'五次竞技',data:[".trim($fifth_open,",")."]},";
+        $sixth_open = "{name:'六次竞技',data:[".trim($sixth_open,",")."]},";
+        $seventh_open = "{name:'七次竞技',data:[".trim($seventh_open,",")."]},";
+        $eighth_open = "{name:'八次竞技',data:[".trim($eighth_open,",")."]},";
+        $ninth_open = "{name:'九次竞技',data:[".trim($ninth_open,",")."]},";
+        $tenth_open = "{name:'十次竞技',data:[".trim($tenth_open,",")."]},";
+        $pass_5 = "{name:'过5关',data:[".trim($pass_5,",")."]},";
+        $pass_10 = "{name:'过10关',data:[".trim($pass_10,",")."]},";
+        $pass_15 = "{name:'过15关',data:[".trim($pass_15,",")."]},";
+        $pass_20 = "{name:'过20关',data:[".trim($pass_20,",")."]},";
+        $pass_25 = "{name:'过25关',data:[".trim($pass_25,",")."]},";
+        $pass_30 = "{name:'过30关',data:[".trim($pass_30,",")."]},";
+        $pass_35 = "{name:'过35关',data:[".trim($pass_35,",")."]},";
+        $pass_40 = "{name:'过40关',data:[".trim($pass_40,",")."]},";
+        $pass_45 = "{name:'过45关',data:[".trim($pass_45,",")."]},";
+        $pass_50 = "{name:'过50关',data:[".trim($pass_50,",")."]},";
+        $pass_other = "{name:'过50关以上',data:[".trim($pass_other,",")."]},";
+        
+        $series = $view_times.$open_num.$open_times.$first_open.$second_open.$third_open.$fourth_open.$fifth_open.$sixth_open.$seventh_open.$eighth_open.$ninth_open.$tenth_open.$pass_5.$pass_10.$pass_15.$pass_20.$pass_25.$pass_30.$pass_35.$pass_40.$pass_45.$pass_50.$pass_other;
+        
+
+        $data['xAxis'] = $xAxis;
+        $data['series'] = $series;
+        
+        die(json_encode($data));
+    }
+
+    /**
+    *
+    * @do ajax 获取周浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return json
+    *
+    */
+    public function ajaxWeeklyuserJsonAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        $tempdate=date('Y-m-d',strtotime("$start Monday")); 
+        $start=date('Y-m-d',strtotime("$tempdate -7 days"));
+        $end=date('Y-m-d',strtotime("$end Sunday"));
+        
+        $PSys_signModel = new PSys_PageviewModel();               
+        $where["startday_>="] = $start;
+        $where["endday_<="] = $end;
+        $order = "startday ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_weekly");
+
+        $xAxis = $series = $open_num = $share_times = $share_ok = $new_num = $new_reg = "";
+        foreach($result["allrow"] as $k=>$v){
+            $xtemp = $v["startday"];
+            $mictime = strtotime($v["startday"]);
+            $endtemp = date('/m/d',strtotime("$xtemp Sunday"));
+            $xAxis .= '"'.date('Y/m/d',$mictime).' - '.$endtemp.'",';
+            $open_num .= $v["open_num"].',';
+            $share_times .= $v["share_times"].',';
+            $share_ok .= $v["share_ok"].',';
+            
+            $new_num .= $v["new_num"].',';
+            $new_reg .= $v["new_reg"].',';
+        }
+        $xAxis = trim($xAxis,",");
+        $open_num = "{name:'开启竞技页人数',data:[".trim($open_num,",")."]},";
+        $new_reg = "{name:'注册用户数',data:[".trim($new_reg,",")."]},";
+        $new_num = "{name:'新开始游戏人数',data:[".trim($new_num,",")."]},";
+        $share_times = "{name:'分享活动',data:[".trim($share_times,",")."]},";
+        $share_ok = "{name:'分享成功',data:[".trim($share_ok,",")."]},";
+        
+        
+        $series = $open_num.$new_reg.$new_num.$share_times.$share_ok;
+
+        $data['xAxis'] = $xAxis;
+        $data['series'] = $series;
+        
+        die(json_encode($data));
+    }
+    
+    /**
+    *
+    * @do ajax 获取周浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return html
+    *
+    */
+    public function ajaxWeeklycompetHtmlAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        $tempdate=date('Y-m-d',strtotime("$start Monday")); 
+        $start=date('Y-m-d',strtotime("$tempdate -7 days"));
+        $end=date('Y-m-d',strtotime("$end Sunday"));
+        
+        $PSys_signModel = new PSys_PageviewModel();
+        $where["startday_>="] = $start;
+        $where["endday_<="] = $end;
+        $order = "startday ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_weekly");
+        $view_times = $open_num = $open_times = $first_open = $second_open = $third_open = $fourth_open = $fifth_open = $sixth_open = $seventh_open = $eighth_open = $ninth_open = $tenth_open = $pass_5 = $pass_10 = $pass_15 = $pass_20 = $pass_25 = $pass_30 = $pass_35 = $pass_40 = $pass_45 = $pass_50 = $pass_other = "";
+        
+        foreach($result["allrow"] as $k=>$v){
+            $view_times += intval($v["view_times"]);
+            $open_num += intval($v["open_num"]);
+            $open_times += intval($v["open_times"]);
+            $first_open += intval($v["first_open"]);
+            $second_open += intval($v["second_open"]);
+            $third_open += intval($v["third_open"]);
+            $fourth_open += intval($v["fourth_open"]);
+            $fifth_open += intval($v["fifth_open"]);
+            $sixth_open += intval($v["sixth_open"]);
+            $seventh_open += intval($v["seventh_open"]);
+            $eighth_open += intval($v["eighth_open"]);
+            $ninth_open += intval($v["ninth_open"]);
+            $tenth_open += intval($v["tenth_open"]);
+            $pass_5 += intval($v["pass_5"]);
+            $pass_10 += intval($v["pass_10"]);
+            $pass_15 += intval($v["pass_15"]);
+            $pass_20 += intval($v["pass_20"]);
+            $pass_25 += intval($v["pass_25"]);
+            $pass_30 += intval($v["pass_30"]);
+            $pass_35 += intval($v["pass_35"]);
+            $pass_40 += intval($v["pass_40"]);
+            $pass_45 += intval($v["pass_45"]);
+            $pass_50 += intval($v["pass_50"]);
+            $pass_other += intval($v["pass_other"]);
+        }
+        $this->smarty->assign("data",$result["allrow"]);
+        $this->smarty->assign("view_times",$view_times);
+        $this->smarty->assign("open_num",$open_num);
+        $this->smarty->assign("open_times",$open_times);
+        $this->smarty->assign("first_open",$first_open);
+        $this->smarty->assign("second_open",$second_open);
+        $this->smarty->assign("third_open",$third_open);
+        $this->smarty->assign("fourth_open",$fourth_open);
+        $this->smarty->assign("fifth_open",$fifth_open);
+        $this->smarty->assign("sixth_open",$sixth_open);
+        $this->smarty->assign("seventh_open",$seventh_open);
+        $this->smarty->assign("eighth_open",$eighth_open);
+        $this->smarty->assign("ninth_open",$ninth_open);
+        $this->smarty->assign("tenth_open",$tenth_open);
+        $this->smarty->assign("pass_5",$pass_5);
+        $this->smarty->assign("pass_10",$pass_10);
+        $this->smarty->assign("pass_15",$pass_15);
+        $this->smarty->assign("pass_20",$pass_20);
+        $this->smarty->assign("pass_25",$pass_25);
+        $this->smarty->assign("pass_30",$pass_30);
+        $this->smarty->assign("pass_35",$pass_35);
+        $this->smarty->assign("pass_40",$pass_40);
+        $this->smarty->assign("pass_45",$pass_45);
+        $this->smarty->assign("pass_50",$pass_50);
+        $this->smarty->assign("pass_other",$pass_other);
+		$this->forward = "ajaxWeeklyCompet";
+    }
+
+    /**
+    *
+    * @do ajax 获取周浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return html
+    *
+    */
+    public function ajaxWeeklyuserHtmlAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        $tempdate=date('Y-m-d',strtotime("$start Monday")); 
+        $start=date('Y-m-d',strtotime("$tempdate -7 days"));
+        $end=date('Y-m-d',strtotime("$end Sunday"));
+        
+        $PSys_signModel = new PSys_PageviewModel();
+        $where["startday_>="] = $start;
+        $where["endday_<="] = $end;
+        $order = "startday ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_weekly");
+        $open_num = $share_times = $share_ok = $new_num = $new_reg = "";
+        
+        foreach($result["allrow"] as $k=>$v){
+            $open_num += intval($v["open_num"]);
+            $new_reg += intval($v["new_reg"]);
+            $new_num += intval($v["new_num"]);
+            $share_times += intval($v["share_times"]);
+            $share_ok += intval($v["share_ok"]);
+            
+        }
+        $this->smarty->assign("data",$result["allrow"]);
+        $this->smarty->assign("open_num",$open_num);
+        $this->smarty->assign("new_reg",$new_reg);
+        $this->smarty->assign("new_num",$new_num);
+        $this->smarty->assign("share_times",$share_times);
+        $this->smarty->assign("share_ok",$share_ok);
+        
+        $this->forward = "ajaxWeeklyUser";
+    }
+    
+    /**
+     *
+     * @do 展示月浏览数据
+     *
+     * @sign public 
+     * @author jerry
+     * @copyright rockhippo
+     * @param -
+     * @return -
+     *
+     */
+	public function monthlyAction(){
+        $this->smarty->assign("active","compet/monthly");
+        $this->smarty->assign("active_menu","compet");
+        $this->smarty->assign("sdate",date("Y-m",mktime(0,0,0,date("m")-2,1,date("Y"))));
+        $this->smarty->assign("edate",date("Y-m",mktime(0,0,0,date("m"),1,date("Y"))));
+		$this->forward = "monthly";
+        
+	}
+
+    /**
+     *
+     * @do 展示月浏览数据
+     *
+     * @sign public 
+     * @author jerry
+     * @copyright rockhippo
+     * @param -
+     * @return -
+     *
+     */
+    public function umonthlyAction(){
+        $this->smarty->assign("active","compet/umonthly");
+        $this->smarty->assign("active_menu","compet");
+        $this->smarty->assign("sdate",date("Y-m",mktime(0,0,0,date("m")-2,1,date("Y"))));
+        $this->smarty->assign("edate",date("Y-m",mktime(0,0,0,date("m"),1,date("Y"))));
+        $this->forward = "umonthly";
+        
+    }
+    
+    /**
+    *
+    * @do ajax 获取月浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return json
+    *
+    */
+    public function ajaxMonthlycompetJsonAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        
+        $PSys_signModel = new PSys_PageviewModel();               
+        $where["month_>="] = $start;
+        $where["month_<="] = $end;
+        $order = "month ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_monthly");
+        $xAxis = $series = $view_times = $open_num = $open_times = $first_open = $second_open = $third_open = $fourth_open = $fifth_open = $sixth_open = $seventh_open = $eighth_open = $ninth_open = $tenth_open = $pass_5 = $pass_10 = $pass_15 = $pass_20 = $pass_25 = $pass_30 = $pass_35 = $pass_40 = $pass_45 = $pass_50 = $pass_other = "";
+        foreach($result["allrow"] as $k=>$v){
+           
+            $xAxis .= '"'.$v["month"].'",';
+            $view_times .= $v["view_times"].',';
+            $open_num .= $v["open_num"].',';
+            $open_times .= $v["open_times"].',';
+            $first_open .= $v["first_open"].',';
+            $second_open .= $v["second_open"].',';
+            $third_open .= $v["third_open"].',';
+            $fourth_open .= $v["fourth_open"].',';
+            $fifth_open .= $v["fifth_open"].',';
+            $sixth_open .= $v["sixth_open"].',';
+            $seventh_open .= $v["seventh_open"].',';
+            $eighth_open .= $v["eighth_open"].',';
+            $ninth_open .= $v["ninth_open"].',';
+            $tenth_open .= $v["tenth_open"].',';
+            $pass_5 .= $v["pass_5"].',';
+            $pass_10 .= $v["pass_10"].',';
+            $pass_15 .= $v["pass_15"].',';
+            $pass_20 .= $v["pass_20"].',';
+            $pass_25 .= $v["pass_25"].',';
+            $pass_30 .= $v["pass_30"].',';
+            $pass_35 .= $v["pass_35"].',';
+            $pass_40 .= $v["pass_40"].',';
+            $pass_45 .= $v["pass_45"].',';  
+            $pass_50 .= $v["pass_50"].',';  
+            $pass_other .= $v["pass_other"].',';  
+        }
+        $xAxis = trim($xAxis,",");
+        $view_times = "{name:'开启竞技次数',data:[".trim($view_times,",")."]},";
+        $open_num = "{name:'开启竞技人数',data:[".trim($open_num,",")."]},";
+        $open_times = "{name:'竞技总数',data:[".trim($open_times,",")."]},";
+        $first_open = "{name:'首次竞技',data:[".trim($first_open,",")."]},";
+        $second_open = "{name:'二次竞技',data:[".trim($second_open,",")."]},";
+        $third_open = "{name:'三次竞技',data:[".trim($third_open,",")."]},";
+        $fourth_open = "{name:'四次竞技',data:[".trim($fourth_open,",")."]},";
+        $fifth_open = "{name:'五次竞技',data:[".trim($fifth_open,",")."]},";
+        $sixth_open = "{name:'六次竞技',data:[".trim($sixth_open,",")."]},";
+        $seventh_open = "{name:'七次竞技',data:[".trim($seventh_open,",")."]},";
+        $eighth_open = "{name:'八次竞技',data:[".trim($eighth_open,",")."]},";
+        $ninth_open = "{name:'九次竞技',data:[".trim($ninth_open,",")."]},";
+        $tenth_open = "{name:'十次竞技',data:[".trim($tenth_open,",")."]},";
+        $pass_5 = "{name:'过5关',data:[".trim($pass_5,",")."]},";
+        $pass_10 = "{name:'过10关',data:[".trim($pass_10,",")."]},";
+        $pass_15 = "{name:'过15关',data:[".trim($pass_15,",")."]},";
+        $pass_20 = "{name:'过20关',data:[".trim($pass_20,",")."]},";
+        $pass_25 = "{name:'过25关',data:[".trim($pass_25,",")."]},";
+        $pass_30 = "{name:'过30关',data:[".trim($pass_30,",")."]},";
+        $pass_35 = "{name:'过35关',data:[".trim($pass_35,",")."]},";
+        $pass_40 = "{name:'过40关',data:[".trim($pass_40,",")."]},";
+        $pass_45 = "{name:'过45关',data:[".trim($pass_45,",")."]},";
+        $pass_50 = "{name:'过50关',data:[".trim($pass_50,",")."]},";
+        $pass_other = "{name:'过50关以上',data:[".trim($pass_other,",")."]},";
+        
+        $series = $view_times.$open_num.$open_times.$first_open.$second_open.$third_open.$fourth_open.$fifth_open.$sixth_open.$seventh_open.$eighth_open.$ninth_open.$tenth_open.$pass_5.$pass_10.$pass_15.$pass_20.$pass_25.$pass_30.$pass_35.$pass_40.$pass_45.$pass_50.$pass_other;
+        
+        $data['xAxis'] = $xAxis;
+        $data['series'] = $series;
+        die(json_encode($data));
+    }
+
+    /**
+    *
+    * @do ajax 获取月浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return json
+    *
+    */
+    public function ajaxMonthlyuserJsonAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        
+        $PSys_signModel = new PSys_PageviewModel();               
+        $where["month_>="] = $start;
+        $where["month_<="] = $end;
+        $order = "month ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_monthly");
+        $xAxis = $series = $open_num = $share_times = $share_ok = $new_num = $new_reg = "";
+        foreach($result["allrow"] as $k=>$v){
+            $xAxis .= '"'.$v["month"].'",';
+            $open_num .= $v["open_num"].',';
+            $share_times .= $v["share_times"].',';
+            $share_ok .= $v["share_ok"].',';
+            
+            $new_num .= $v["new_num"].',';
+            $new_reg .= $v["new_reg"].',';
+        }
+        $xAxis = trim($xAxis,",");
+        $open_num = "{name:'开启抽奖页人数',data:[".trim($open_num,",")."]},";
+        $new_reg = "{name:'注册用户数',data:[".trim($new_reg,",")."]},";
+        $new_num = "{name:'新开始游戏人数',data:[".trim($new_num,",")."]},";
+        $share_times = "{name:'分享活动',data:[".trim($share_times,",")."]},";
+        $share_ok = "{name:'分享成功',data:[".trim($share_ok,",")."]},";
+        
+        $series = $open_num.$new_reg.$new_num.$share_times.$share_ok;
+        $data['xAxis'] = $xAxis;
+        $data['series'] = $series;
+        die(json_encode($data));
+    }
+    
+    /**
+    *
+    * @do ajax 获取月浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return html
+    *
+    */
+    public function ajaxMonthlycompetHtmlAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        
+        $PSys_signModel = new PSys_PageviewModel();
+        $where["month_>="] = $start;
+        $where["month_<="] = $end;
+        $order = "month ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_monthly");
+        $view_times = $open_num = $open_times = $first_open = $second_open = $third_open = $fourth_open = $fifth_open = $sixth_open = $seventh_open = $eighth_open = $ninth_open = $tenth_open = $pass_5 = $pass_10 = $pass_15 = $pass_20 = $pass_25 = $pass_30 = $pass_35 = $pass_40 = $pass_45 = $pass_50 = $pass_other = "";
+        
+        foreach($result["allrow"] as $k=>$v){
+            $view_times += intval($v["view_times"]);
+            $open_num += intval($v["open_num"]);
+            $open_times += intval($v["open_times"]);
+            $first_open += intval($v["first_open"]);
+            $second_open += intval($v["second_open"]);
+            $third_open += intval($v["third_open"]);
+            $fourth_open += intval($v["fourth_open"]);
+            $fifth_open += intval($v["fifth_open"]);
+            $sixth_open += intval($v["sixth_open"]);
+            $seventh_open += intval($v["seventh_open"]);
+            $eighth_open += intval($v["eighth_open"]);
+            $ninth_open += intval($v["ninth_open"]);
+            $tenth_open += intval($v["tenth_open"]);
+            $pass_5 += intval($v["pass_5"]);
+            $pass_10 += intval($v["pass_10"]);
+            $pass_15 += intval($v["pass_15"]);
+            $pass_20 += intval($v["pass_20"]);
+            $pass_25 += intval($v["pass_25"]);
+            $pass_30 += intval($v["pass_30"]);
+            $pass_35 += intval($v["pass_35"]);
+            $pass_40 += intval($v["pass_40"]);
+            $pass_45 += intval($v["pass_45"]);
+            $pass_50 += intval($v["pass_50"]);
+            $pass_other += intval($v["pass_other"]);
+        }
+        $this->smarty->assign("data",$result["allrow"]);
+        $this->smarty->assign("view_times",$view_times);
+        $this->smarty->assign("open_num",$open_num);
+        $this->smarty->assign("open_times",$open_times);
+        $this->smarty->assign("first_open",$first_open);
+        $this->smarty->assign("second_open",$second_open);
+        $this->smarty->assign("third_open",$third_open);
+        $this->smarty->assign("fourth_open",$fourth_open);
+        $this->smarty->assign("fifth_open",$fifth_open);
+        $this->smarty->assign("sixth_open",$sixth_open);
+        $this->smarty->assign("seventh_open",$seventh_open);
+        $this->smarty->assign("eighth_open",$eighth_open);
+        $this->smarty->assign("ninth_open",$ninth_open);
+        $this->smarty->assign("tenth_open",$tenth_open);
+        $this->smarty->assign("pass_5",$pass_5);
+        $this->smarty->assign("pass_10",$pass_10);
+        $this->smarty->assign("pass_15",$pass_15);
+        $this->smarty->assign("pass_20",$pass_20);
+        $this->smarty->assign("pass_25",$pass_25);
+        $this->smarty->assign("pass_30",$pass_30);
+        $this->smarty->assign("pass_35",$pass_35);
+        $this->smarty->assign("pass_40",$pass_40);
+        $this->smarty->assign("pass_45",$pass_45);
+        $this->smarty->assign("pass_50",$pass_50);
+        $this->smarty->assign("pass_other",$pass_other);
+		$this->forward = "ajaxMonthlyCompet";
+    }
+
+    /**
+    *
+    * @do ajax 获取月浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return html
+    *
+    */
+    public function ajaxMonthlyuserHtmlAction(){
+        $start = reqstr("start","");
+        $end = reqstr("end","");
+        
+        $PSys_signModel = new PSys_PageviewModel();
+        $where["month_>="] = $start;
+        $where["month_<="] = $end;
+        $order = "month ASC";
+        $result = $PSys_signModel->GetList($where, $order, 0, 0, "*","rhc_compet_monthly");
+        $open_num = $share_times = $share_ok = $new_num = $new_reg = "";
+        
+        foreach($result["allrow"] as $k=>$v){
+            $open_num += intval($v["open_num"]);
+            $new_reg += intval($v["new_reg"]);
+            $new_num += intval($v["new_num"]);
+            $share_times += intval($v["share_times"]);
+            $share_ok += intval($v["share_ok"]);
+        }
+        $this->smarty->assign("data",$result["allrow"]);
+        $this->smarty->assign("open_num",$open_num);
+        $this->smarty->assign("new_reg",$new_reg);
+        $this->smarty->assign("new_num",$new_num);
+        $this->smarty->assign("share_times",$share_times);
+        $this->smarty->assign("share_ok",$share_ok);
+        $this->forward = "ajaxMonthlyUser";
+    }
+
+    /**
+     *
+     * @do 展示浏览数据
+     *
+     * @sign public 
+     * @author jerry
+     * @copyright rockhippo
+     * @param -
+     * @return -
+     *
+     */
+    public function otherAction(){
+        $this->smarty->assign("active","compet/other");
+        $this->smarty->assign("active_menu","compet");
+        $this->smarty->assign("sdate",date('Y-m-d',strtotime("-6 days")));
+        $this->smarty->assign("edate",date('Y-m-d'));
+        $this->forward = "other";
+        
+    }
+
+    /**
+    *
+    * @do ajax 获取日浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return json
+    *
+    */
+    public function ajaxOtherJsonAction(){
+        $start = reqstr("start","");
+        $micstart = strtotime($start);
+        $end = reqstr("end","");
+        $micend = strtotime($end);
+        $PSys_PageviewRule = new PSys_PageviewRule();
+        $qzupdate_num = $ljupdate_num = $yhupdate_num = 0;
+        $i = 0;
+        $xAxis = $series = "";
+        for($x=$micstart; $x<=$micend; $x += 86400) {
+            $xAxis .= '"'.date('Y-m-d',$x).'",';
+    
+            $sql_fh = 'select sum(total) as total from rhc_game_platform_collect where type=301 and pid = 0 and cday = '.date('Ymd',$x);
+            $fhRs = $PSys_PageviewRule->collectQuery($sql_fh);
+            $share_fh_num .= intval($fhRs[0]["total"]).',';
+
+            $sql_xy = 'select sum(total) as total from rhc_game_platform_collect where type=302 and pid = 0 and cday = '.date('Ymd',$x);
+            $xyRs = $PSys_PageviewRule->collectQuery($sql_xy);
+            $xy_num .= intval($xyRs[0]["total"]).',';
+    
+            $sql_qxshare = 'select sum(total) as total from rhc_game_platform_collect where type=303 and pid = 0 and cday = '.date('Ymd',$x);
+            $qxRs = $PSys_PageviewRule->collectQuery($sql_qxshare);
+            $qxshare_num .= intval($qxRs[0]["total"]).',';
+
+            $sql_restart = 'select sum(total) as total from rhc_game_platform_collect where type=304 and pid = 0 and cday = '.date('Ymd',$x);
+            $reRs = $PSys_PageviewRule->collectQuery($sql_restart);
+            $restart_num .= intval($reRs[0]["total"]).',';
+
+            $sql_startad = 'select sum(total) as total from rhc_game_platform_collect where type=305 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_startad);
+            $startad_num .= intval($adRs[0]["total"]).',';
+
+            $sql_adfinish = 'select sum(total) as total from rhc_game_platform_collect where type=306 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_adfinish);
+            $adfinish_num .= intval($adRs[0]["total"]).',';
+
+            $sql_aderror = 'select sum(total) as total from rhc_game_platform_collect where type=307 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_aderror);
+            $aderror_num .= intval($adRs[0]["total"]).',';
+
+            $sql_addown = 'select sum(total) as total from rhc_game_platform_collect where type=308 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_addown);
+            $addown_num .= intval($adRs[0]["total"]).',';
+
+            $sql_addownok = 'select sum(total) as total from rhc_game_platform_collect where type=309 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_addownok);
+            $addownok_num .= intval($adRs[0]["total"]).','; 
+
+            $sql_payfh = 'select sum(total) as total from rhc_game_platform_collect where type=310 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_payfh);
+            $payfh_num .= intval($adRs[0]["total"]).',';
+        }
+        $xAxis = trim($xAxis,",");
+        $share_fh_num = "{name:'成功分享复活',data:[".trim($share_fh_num,",")."]},";
+        $xy_num = "{name:'成功炫耀',data:[".trim($xy_num,",")."]},";
+        $qxshare_num = "{name:'取消分享',data:[".trim($qxshare_num,",")."]},";
+        $restart_num = "{name:'重新开始',data:[".trim($restart_num,",")."]},";
+        $startad_num = "{name:'广告开启',data:[".trim($startad_num,",")."]},";
+        $adfinish_num = "{name:'广告播完',data:[".trim($adfinish_num,",")."]},";
+        $aderror_num = "{name:'广告播放失败',data:[".trim($aderror_num,",")."]},";
+        $addown_num = "{name:'广告中点击下载',data:[".trim($addown_num,",")."]},";
+        $addownok_num = "{name:'广告中下载完成',data:[".trim($addownok_num,",")."]},";
+        $payfh_num = "{name:'支付复活',data:[".trim($payfh_num,",")."]},";
+        $series = $share_fh_num.$xy_num.$qxshare_num.$restart_num.$startad_num.$adfinish_num.$aderror_num.$addown_num.$addownok_num.$payfh_num;
+        $data['xAxis'] = $xAxis;
+        $data['series'] = $series;
+        die(json_encode($data));
+    }
+
+    /**
+    *
+    * @do ajax 获取浏览数据
+    *
+    * @sign public 
+    * @author jerry
+    * @copyright rockhippo
+    * @param -
+    * @return html
+    *
+    */
+    public function ajaxOtherHtmlAction(){
+        $start = reqstr("start","");
+        $micstart = strtotime($start);
+        $end = reqstr("end","");
+        $micend = strtotime($end);
+        $PSys_PageviewRule = new PSys_PageviewRule();
+        $qzupdate_num = $ljupdate_num = $yhupdate_num = 0;
+        $i = 0;
+        $xAxis = $series = "";
+
+        for($x=$micstart; $x<=$micend; $x += 86400) {
+            $xAxis = date('Y-m-d',$x);
+            $result["allrow"][$i]['day'] = $xAxis;
+            $sql_fh = 'select sum(total) as total from rhc_game_platform_collect where type=301 and pid = 0 and cday = '.date('Ymd',$x);
+            $fhRs = $PSys_PageviewRule->collectQuery($sql_fh);
+            $share_fh_num += intval($fhRs[0]["total"]);
+            $result["allrow"][$i]['share_fh_num'] = intval($fhRs[0]["total"]);
+
+            $sql_xy = 'select sum(total) as total from rhc_game_platform_collect where type=302 and pid = 0 and cday = '.date('Ymd',$x);
+            $xyRs = $PSys_PageviewRule->collectQuery($sql_xy);
+            $xy_num += intval($xyRs[0]["total"]);
+            $result["allrow"][$i]['xy_num'] = intval($xyRs[0]["total"]);
+
+            $sql_qxshare = 'select sum(total) as total from rhc_game_platform_collect where type=303 and pid = 0 and cday = '.date('Ymd',$x);
+            $qxRs = $PSys_PageviewRule->collectQuery($sql_qxshare);
+            $qxshare_num += intval($qxRs[0]["total"]);
+            $result["allrow"][$i]['qxshare_num'] = intval($qxRs[0]["total"]);
+
+            $sql_restart = 'select sum(total) as total from rhc_game_platform_collect where type=304 and pid = 0 and cday = '.date('Ymd',$x);
+            $reRs = $PSys_PageviewRule->collectQuery($sql_restart);
+            $restart_num += intval($reRs[0]["total"]);
+            $result["allrow"][$i]['restart_num'] = intval($reRs[0]["total"]);
+
+            $sql_startad = 'select sum(total) as total from rhc_game_platform_collect where type=305 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_startad);
+            $startad_num += intval($adRs[0]["total"]);
+            $result["allrow"][$i]['startad_num'] = intval($adRs[0]["total"]);
+
+            $sql_adfinish = 'select sum(total) as total from rhc_game_platform_collect where type=306 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_adfinish);
+            $adfinish_num += intval($adRs[0]["total"]);
+            $result["allrow"][$i]['adfinish_num'] = intval($adRs[0]["total"]);
+
+            $sql_aderror = 'select sum(total) as total from rhc_game_platform_collect where type=307 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_aderror);
+            $aderror_num += intval($adRs[0]["total"]);
+            $result["allrow"][$i]['aderror_num'] = intval($adRs[0]["total"]);
+
+            $sql_addown = 'select sum(total) as total from rhc_game_platform_collect where type=308 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_addown);
+            $addown_num += intval($adRs[0]["total"]);
+            $result["allrow"][$i]['addown_num'] = intval($adRs[0]["total"]);
+
+            $sql_addownok = 'select sum(total) as total from rhc_game_platform_collect where type=309 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_addownok);
+            $addownok_num += intval($adRs[0]["total"]);
+            $result["allrow"][$i]['addownok_num'] = intval($adRs[0]["total"]);
+
+            $sql_payfh = 'select sum(total) as total from rhc_game_platform_collect where type=310 and pid = 0 and cday = '.date('Ymd',$x);
+            $adRs = $PSys_PageviewRule->collectQuery($sql_payfh);
+            $payfh_num += intval($adRs[0]["total"]);
+            $result["allrow"][$i]['payfh_num'] = intval($adRs[0]["total"]);
+            $i++;
+        }
+        $this->smarty->assign("data",$result["allrow"]);
+        $this->smarty->assign("share_fh_num",$share_fh_num);
+        $this->smarty->assign("xy_num",$xy_num);
+        $this->smarty->assign("qxshare_num",$qxshare_num);
+        $this->smarty->assign("restart_num",$restart_num);
+        $this->smarty->assign("startad_num",$startad_num);
+        $this->smarty->assign("adfinish_num",$adfinish_num);
+        $this->smarty->assign("aderror_num",$aderror_num);
+        $this->smarty->assign("addown_num",$addown_num);
+        $this->smarty->assign("addownok_num",$addownok_num);
+        $this->smarty->assign("payfh_num",$payfh_num);
+        $this->forward = "ajaxOther";
+    }
+
+}

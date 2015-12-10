@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>新流程2</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+{literal}
+<style type="text/css">
+*{margin:0;padding:0;font-size:14px;text-decoration:none}
+td{width:50px;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#pointer{
+  cursor:pointer;
+}
+</style>
+{/literal}
+
+{literal}
+<script>
+function show(date)
+{
+
+  var $title = '<caption>'
+          + '<h3>每日详情</h3>'
+        +'</caption>'
+        +'<tr  bgcolor="#417eb7">'
+          +   '<th>操作</th>'
+          +   '<th>Android</th>'
+          +   '<th>Ios</th>'
+          +   '<th>Else</th>'
+        +'</tr>'; 
+  $("#detailcon").html($title);
+  
+  $.ajax({
+        type: "POST",
+        data: { date: date, ajax:1,stationid:{/literal}{$stationid}{literal}},
+        url: '/station/webCountND',
+        dataType:"json",
+        success: function (data) {  
+        
+            if (data.code == 1 ) {
+             
+              
+              $.each(data.allrow, function (index, item) {
+            	  
+                 $('#detailcon').append(
+                  '<tr bgcolor="#FFFFFF"> '   
+            +   ' <td>'+item.name+'</td>'
+            +   ' <td>'+item.android+'</td>'
+            +   ' <td>'+item.ios+'</td>'
+            +   ' <td>'+item.Else+'</td>'
+            +  '</tr>'   
+                 );     
+                
+              });
+              
+                return;
+            } else  {
+            	
+                alert('未知错误！');
+            }
+        }
+    });
+              
+  popWin("detail");
+}
+
+$(function()
+{
+  $('.close').click(function(){
+    $('#maskLayer').hide();
+  });
+  
+});
+</script>
+{/literal}
+</head>
+
+<body>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  	<h3>WEB流程</h3>
+  </caption>
+  
+  <tr>
+    <form method="post" action="/station/webCountNew" enctype="multipart/form-data">
+	   	{include file="station/station.html"}
+    </form>
+   
+  </tr>
+
+  <tr  bgcolor="#417eb7">
+  	<td style="width:80px">日 &nbsp; 期</td>
+  	<td>WIFI连接</td>
+  	<td>广告页1</td>
+  	<td>注册页</td>
+  	<td>广告页2</td>
+  	<td>sindex</td>
+  	<td>新注册</td>
+  	<td>train下载</td>
+  	<td>详情</td>
+  </tr>
+  {foreach $totallist as $v}
+  <tr bgcolor="#FFF">
+  	<td>{$v.date}</td>
+  	<td>{$v.link}</td>
+  	<td>{$v.ad}</td>
+  	<td>{$v.register}</td>
+  	<td>{$v.welcome}</td>
+  	<td>{$v.sindex}</td>
+  	<td>{$v.login}</td>
+  	<td>{$v.down}</td>
+  	<td><a href="javascript:;" onclick="show('{$v.date}')">查看</a></td>
+  </tr>
+  {/foreach}
+</table>
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:365px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>	
+
+		</table>
+	</div>
+</div>
+</body>
+</html>

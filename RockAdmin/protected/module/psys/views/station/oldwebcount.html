@@ -1,0 +1,96 @@
+{include file="include/header.html"}
+{literal}
+<script type="text/javascript">
+
+//function sortAlpha(com)p.onChangePage(p.newp)
+//{ 
+//jQuery('#flex1').flexOptions({newp:1, params:[{name:'letter_pressed', value: com},{name:'qtype',value:$('select[name=qtype]').val()}]});
+//jQuery("#flex1").flexReload(); 
+//}
+</script>
+{/literal}
+</head>
+<body>
+<form action="/station/oldwebcount" method="post">
+    <div class="search" >
+        搜索:
+        <select class="select2" id="station" name="station">
+            <option value="">-选择车站-</option>
+            <option value="1"  >青岛南</option>
+            <option value="2"  >青岛北</option>
+            <option value="3"  >济南</option>
+        </select>
+       
+        {literal}
+        <input id="date" class="Wdate" type="text" onFocus="WdatePicker()" name="date"/>
+        {/literal}
+        <input type="submit" class="button2" value="搜索" id="search"/>
+    </div>
+</form>
+<table id="checklogerror" style="display:none"></table>
+
+<div>
+    <div class="flexigrid" style="width: 1649px;">
+        <div class="mDiv">
+            <div title="Minimize/Maximize Table" class="ptogtitle">
+                <span>
+                </span>
+            </div>
+        </div>
+        <div class="mDiv">
+            <div class="ftitle" style="color:red;font-size: 18px;">{$title}</div>
+            
+        </div>
+        <div class="tDiv">
+            <span style="color:green;font-size: 22px;">&nbsp;{$date}{$curstation}前置流程统计</span>
+            <div class="tDiv2">
+                <div class="btnseparator">
+                </div>
+            </div>
+            <div style="clear:both">
+            </div>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0">
+                    <thead>
+                        <tr>
+                            <th align="center" abbr="station" axis="col1" class=""><div style="text-align: center; width: 250px;" class="">模块</div></th>
+                            <th align="center" abbr="station" axis="col1" class=""><div style="text-align: center; width: 250px;" class="">安卓</div></th>
+                            <th align="center" abbr="station" axis="col1" class=""><div style="text-align: center; width: 250px;" class="">ios</div></th>
+                            <th align="center" abbr="state" axis="col2" class=""><div style="text-align: center; width: 250px;" class="">其他</div></th>
+                        </tr>
+                    </thead>
+                    </table>
+                </div>
+        </div>
+
+        <div class="cDrag" style="top: 55px;">
+            <div style="height: 149px; display: block; left: 309px;">
+            </div>
+            <div style="height: 149px; display: block; left: 720px;">
+            </div>
+            <div style="height: 149px; display: block; left: 1031px;">
+            </div>
+        </div>
+
+        <div class="bDiv">
+            <table cellspacing="0" cellpadding="0" border="0" style="" id="flex1">
+                <tbody>
+                    {foreach $totallist as $k=>$v}
+                    <tr {if ($k+1)%2 eq 0}class="erow"{/if}>
+                        <td align="center"><div style="text-align: center; width: 250px;">{$v.name}</div></td>
+                        <td align="center"><div style="text-align: center; width: 250px;">{$v.android}</div></td>
+                        <td align="center"><div style="text-align: center; width: 250px;">{$v.ios}</div></td>
+                        <td align="center"><div style="text-align: center; width: 250px;">{$v.else}</div></td>
+                    </tr>
+                   {/foreach}
+                </tbody>
+            </table>
+            <div class="iDiv" style="display: none;"></div></div>
+
+        <div class="vGrip"><span></span></div>
+    </div>
+</div>
+</body>
+</html>

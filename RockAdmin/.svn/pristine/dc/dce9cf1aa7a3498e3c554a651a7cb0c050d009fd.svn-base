@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>站点-城市简介列表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}lightbox.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}lightbox.min.js"></script>
+{literal}
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".toggle").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var obj = $(this);
+			var id = $(this).attr('spot_id');
+			$.ajax({
+	            type: "POST",
+	            url: "/trip/spottoggle",
+	            data: {'ajax':1,'id':id},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						if(obj.text() == '禁用')
+						{
+							obj.text('启用');
+						}
+						else
+						{
+							obj.text('禁用');
+						}
+					}
+					else
+					{
+						alert(data.msg);				
+					}
+	            }       
+	        });	
+		}
+		});
+	$(".imgview").click(function(){
+		var id = $(this).attr('spot_id');
+		$("#imgs_section").html('');
+		$.ajax({
+            type: "POST",
+            url: "/trip/imgview",
+            data: {'ajax':1,'id':id,'type':2},
+            dataType: "json",
+            success: function(data){
+				if(data.result == 'SUCCESS')
+				{
+					for(var i=0;i<data.msg.length;i++)
+					{
+						var a = $("<a href='"+data.msg[i]+"' data-lightbox='roadtrip' class='lightbox' title='"+i+"'></a>");
+						$("#imgs_section").append(a);
+					}
+				}
+				$(".lightbox:first").trigger("click");
+            }       
+        });	
+		});
+});
+</script>
+<style type="text/css">
+#imgs_section{
+	display:none;
+}
+</style>
+{/literal}
+</head>
+<body>
+<div id="imgs_section">
+</div>
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h1>站点-景点列表</h1></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>站点ID</th>
+	<th>景点名称</th>
+    <th>对应城市</th>
+    <th>景点封面</th>
+    <th>星级</th>
+    <th>标签</th>
+   	<th>景点地址</th>
+   	<th>是否热门</th>
+    <th>运营时间</th>
+    <th>票价</th>
+    <th>景点简介</th>
+    <th>图片集</th>
+    <th>操作</th>
+    
+</tr>
+{foreach $spot_list as $spot}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td>{$spot.id}</td>
+    <td>{$spot.name}</td>
+    <td>{$spot.city.name}</td>
+    <td>{$spot.headimg}</td>    
+    <td>{$spot.star}</td>
+    <td>{$spot.label}</td>
+    <td>{$spot.adress}</td>    
+    <td>{$spot.hot}</td>
+    <td>{$spot.bustime}</td>
+    <td>{$spot.ticket}</td>
+    <td>{$spot.remark}</td>
+    <td>{$spot.imgs}</td>    
+    <td><a href="/trip/spotedit/{$spot.id}">编辑</a> <a href="javascript:;" spot_id="{$spot.id}" class="toggle">{if $spot.flag}禁用{else}启用{/if}</a> <a href="javascript:;" spot_id="{$spot.id}" class="imgview">图片预览</a></td>
+</tr>
+{/foreach}
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+       
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-10 16:55:45
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//ipc/add.html" */ ?>
+<?php /*%%SmartyHeaderCode:41069233454880a91377a29-42017136%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '75a960a43530229a7ad7ea23f3b9545f63ed6437' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//ipc/add.html',
+      1 => 1407393769,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '41069233454880a91377a29-42017136',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+datepicker.css" rel="stylesheet" />
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".datepicker").datePicker({
+		inline:true,
+		selectMultiple:false
+	});
+	
+	$("#datepicker").datePicker({
+		clickInput:true
+	});	
+	
+	var $isadd = $('#isadd').html();
+	if($isadd == 1){
+		alert('新增成功');
+	}else if($isadd == -1){
+		alert('参数不正确！');
+	}else if ($isadd == -2){
+		alert('新增失败');
+	}else if ($isadd == -3){
+		alert('卡号重复');
+	}
+});
+</script>
+</head>
+<body>
+<div style="display: none;" id="isadd"><?php echo $_smarty_tpl->getVariable('isadd')->value;?>
+</div>
+<form method="post">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>新增信息</h3>
+  </caption>
+  <tr>
+    <td width="30%" align="right">编&nbsp;&nbsp;号：</td>
+    <td width="70%" align="left"><input type="text" name="ipcno" /></td>
+  </tr>
+  <tr>
+    <td align="right">车次/车站：</td>
+    <td align="left"><input type="text" name="train"/></td>
+  </tr>
+  <tr>
+    <td align="right">车厢/位置：</td>
+    <td align="left"><input type="text" name="car"/></td>
+  </tr>
+  <tr>
+    <td align="right">楼&nbsp;&nbsp;层：</td>
+    <td align="left"><input type="text" name="floor"/></td>
+  </tr>
+  <tr>
+    <td  align="right">车站/车上：</td>
+    <td  align="left">
+    	<input id="train-state" class="check-box" name="trainflag" type="radio" value="1" checked><label>车上</label>
+        <input id="train-state" class="check-box" name="trainflag" type="radio" value="2"><label>车站</label>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">sim卡号：</td>
+    <td align="left"><input type="text" name="simno" /></td>
+  </tr>
+  <tr>
+    <td  align="right">上线时间：</td>
+    <td  align="left">
+    	<input type="text" name="onlinetime" value="" id="datepicker" />
+    </td>
+  </tr>
+   <tr>
+    <td  align="right">下线时间：</td>
+    <td  align="left">
+    	<input type="text" name="offlinetime" value="" />
+    </td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">硬&nbsp;&nbsp;件：</td>
+    <td width="70%" align="left">
+    	<textarea rows="3" cols="27" name="hardware"></textarea>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">负责人：</td>
+    <td align="left"><input type="text" name="leader" /></td>
+  </tr>
+  <tr>
+    <td  align="right">备&nbsp;&nbsp;注：</td>
+    <td  align="left">
+    	<input type="text" name="remark" value="" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><input type="submit" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

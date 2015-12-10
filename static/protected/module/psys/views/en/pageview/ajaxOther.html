@@ -1,0 +1,39 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr><th>日 期</th><th>启动平台次数</th><th>WiFi启动次数</th><th>非WiFi启动次数</th><th>页面浏览次数</th><th>注册用户数</th><th>游戏下载总数</th></tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                            <td style="text-align:center;">{{$v.day}}</td>
+                            <td style="text-align:center;">{{$v.start_times}}</td>
+                            <td style="text-align:center;">{{$v.wifi}}</td>
+                            <td style="text-align:center;">{{$v.nowifi}}</td>
+                            <td style="text-align:center;">{{$v.page_views}}</td>
+                            <td style="text-align:center;">{{$v.reg}}</td>
+                            <td style="text-align:center;">{{$v.download}}</td>
+                            </tr>
+                        {{/foreach}}
+                        <tr>
+                            <td style="text-align:center;"><b>总 计</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_start_times}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_wifi}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_nowifi}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_page_views}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_reg}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_download}}</b></td>
+                            </tr>
+                            <tr><td colspan="7"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

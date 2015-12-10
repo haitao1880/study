@@ -1,0 +1,52 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr>
+                            <th>日 期</th><th>开启抽奖页人数</th><th>注册用户数</th><th>新开启人数</th><th>分享活动</th><th>分享成功</th><th>点击下载</th>
+                            <th>点击兑奖</th><th>点击安卓下载</th><th>点击IOS下载</th><th>分享后开启APP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                                <td style="text-align:center;">{{$v.startday}} / {{$v.endday}}</td>
+                                <td style="text-align:center;">{{$v.open_num}}</td>
+                                <td style="text-align:center;">{{$v.new_reg}}</td>
+                                <td style="text-align:center;">{{$v.new_num}}</td>
+                                <td style="text-align:center;">{{$v.share_times}}</td>
+                                <td style="text-align:center;">{{$v.share_ok}}</td>
+                                <td style="text-align:center;">{{$v.dl_click}}</td>
+                                <td style="text-align:center;">{{$v.dj_click}}</td>
+                                <td style="text-align:center;">{{$v.dl_ad_click}}</td>
+                                <td style="text-align:center;">{{$v.dl_ios_click}}</td>
+                                <td style="text-align:center;">{{$v.start_dl_times}}</td>
+                                
+                            </tr>
+                        {{/foreach}}
+                        <tr>
+                            <td style="text-align:center;"><b>总 计</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$open_num}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$new_reg}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$new_num}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$share_times}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$share_ok}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$dl_click}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$dj_click}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$dl_ad_click}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$dl_ios_click}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$start_dl_times}}</b></td>
+                            
+                        </tr>
+                        <tr><td colspan="11"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

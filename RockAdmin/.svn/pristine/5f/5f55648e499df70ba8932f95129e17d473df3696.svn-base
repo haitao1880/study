@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset="/>
+<link rel="stylesheet" type="text/css" href="{$psys_css}paiting/public.css"/>
+<link rel="stylesheet" type="text/css" href="{$psys_css}paiting/flexigrid.css" />
+<link rel="stylesheet" type="text/css" href="{$psys_css}paiting/tinybox.css" />
+<link href="{$psys_css}paiting/flexigrid-extent.css" media="all" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="{$psys_js}paiting/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/flexigrid.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/tinybox.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/WdatePicker.js"></script>
+
+
+<script type="text/javascript" src="{$psys_js}paiting/highcharts.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/exporting.js"></script>
+<script type="text/javascript" src="{$psys_js}paiting/function.js"></script>

@@ -1,0 +1,78 @@
+{include file="include/header_pagerecord.html"}
+   </head>
+<body>
+
+ <div class="center">
+        <div class="search" >
+             <form method="post" action="/pagerecord/compare" enctype="multipart/form-data">
+搜索:
+  
+
+{literal}
+<input id="sdate" class="Wdate" type="text" onFocus="WdatePicker()" name="sdate"/>-
+
+{/literal}
+<input type="submit" class="button2" value="搜索" id="search"/>
+             </form>
+</div>
+     
+     
+     
+     
+     
+        <div class="data-table">
+                    <table class="">
+                       <thead>
+                            <tr>
+                             <th class="">站名</th>
+                             {foreach $list.xaxis.data as $v}
+                              <th class="">{$v}uv</th>
+                             {/foreach}
+                            </tr>
+                      </thead>
+                   <tbody>
+                        {foreach $list.series as $v}
+                        <tr>
+                                <td>{$v.name}</td>
+                                {foreach $v.data as $v22}
+                                   <td>{$v22}</td>
+                                {/foreach}
+                        </tr>
+                    {/foreach}
+                   </tbody>
+                </table> 
+        </div>
+     
+     <div id="sitecompareuv" class="sitecompare"></div>
+     <div id="sitecomparepv" class="sitecompare"></div>
+</div>   
+
+    
+ {literal}
+    <style>
+        .center{ padding:14px;}
+        .data-table {margin: 10px 0;}
+        .data-table table { border-collapse: collapse; width: 100%;}
+        .data-table thead th {background-color: #353535;color: #fff;}
+        .data-table thead th, .data-table tbody td { border-bottom-color: #f4f4f4;}
+        .data-table thead th {background-color: #353535; color: #fff; text-align: left;}
+        .data-table thead th, .data-table tbody td { font-weight: 400; height: 19px;line-height: 19px;  padding: 8px;}
+        .data-table tbody tr {background-color: #ffffff; color: #686868;}
+        .data-table thead th, .data-table tbody td { font-weight: 400;line-height: 19px;}
+     
+         tbody tr:nth-child(2n) { background-color: #f2f2f2;}
+        .row-selected {width: 15px;}
+        .row-selected {width: 15px;}
+        
+        
+        .sitecompare{width:100%;height:600px;}
+    </style>
+{/literal}
+
+ <script type="text/javascript">
+      Trend("sitecompareuv",{$sitecompareuv});
+      Trend("sitecomparepv",{$sitecomparepv});
+    </script>
+   
+</body>
+</html>

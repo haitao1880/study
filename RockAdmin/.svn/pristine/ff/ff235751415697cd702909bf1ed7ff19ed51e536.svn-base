@@ -1,0 +1,141 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-21 22:59:38
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//train/add.html" */ ?>
+<?php /*%%SmartyHeaderCode:1419639605496e05ab21d68-96358235%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'c101b237bfbe61344d6f3d7c53e8a61fd84d9f70' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//train/add.html',
+      1 => 1407132458,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '1419639605496e05ab21d68-96358235',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php if (!is_callable('smarty_function_html_options')) include '/home/data/www/rockadmin/protected/publib/smarty/plugins/function.html_options.php';
+?><?php $bbb='http';?><?php $_template = new Smarty_Internal_Template("shared/header.html", $_smarty_tpl->smarty, $_smarty_tpl, $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null);
+$_template->assign('pagetitle',"车次添加/修改"); echo $_template->getRenderedTemplate(); $_template->rendered_content = null;?><?php unset($_template);?>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<form class="add">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>车次添加/修改</h3>
+  </caption>
+  <tr>
+    <td width="30%" align="right">车次：</td>
+    <td width="70%" align="left">
+    <input type="text" name="checi" id="checi" value="<?php echo $_smarty_tpl->getVariable('one')->value['trainno'];?>
+"/>
+             类型：<select name="leixin" id="leixin">
+         <?php echo smarty_function_html_options(array('options'=>$_smarty_tpl->getVariable('traintype')->value,'selected'=>$_smarty_tpl->getVariable('one')->value['traintype']),$_smarty_tpl);?>
+
+       </select></td>
+  </tr>
+  <tr>
+    <td align="right">始发站：</td>
+    <td align="left">
+    	<input type="text" name="b_station" id="b_station" value="<?php echo $_smarty_tpl->getVariable('one')->value['bstation'];?>
+"/>
+    	时间：<input type="text" name="btime_station" id="btime_station" value="<?php echo $_smarty_tpl->getVariable('one')->value['btime'];?>
+"/>
+    	(15:30)
+    	</td>
+  </tr>
+  <tr>
+    <td align="right">终到站：</td>
+    <td align="left">
+    	<input type="text" name="e_station" id="e_station" value="<?php echo $_smarty_tpl->getVariable('one')->value['estation'];?>
+"/>
+    	时间：<input type="text" name="etime_station" id="etime_station" value="<?php echo $_smarty_tpl->getVariable('one')->value['etime'];?>
+"/></td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">区间时间：</td>
+    <td width="70%" align="left">
+    <input type="text" id="runtime" name="runtime" value="<?php echo $_smarty_tpl->getVariable('one')->value['runtime'];?>
+"/>
+    (39:50)
+	</td>
+  </tr>
+  <tr>
+    <td align="right">参考票价：</td>
+    <td align="left"><textarea name="price" id="price" rows="3" cols="65"><?php echo $_smarty_tpl->getVariable('one')->value['price'];?>
+</textarea>
+    <br />(硬座|24.5;硬卧下|70.5)</td>
+  </tr>
+  <tr>
+    <td width="30%" align="right">区间里程：</td>
+    <td width="70%" align="left"><input type="text" id="mileage" name="mileage" value="<?php echo $_smarty_tpl->getVariable('one')->value['mileage'];?>
+"/>公里</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+    <input type="hidden" name="id" id="id" value="<?php echo $_smarty_tpl->getVariable('id')->value;?>
+" />
+    <input type="button" id="btnSave" value="保 存"/>
+    </td>
+  </tr>
+</table>
+</form>
+
+<script type="text/javascript">
+
+$(function(){
+	$('#btnSave').click(function(){
+		var checi = $.trim($("#checi").val());
+		var leixin = $.trim($("#leixin").val());
+		var b_station = $.trim($("#b_station").val());
+		var btime_station = $.trim($("#btime_station").val());
+		var e_station = $.trim($("#e_station").val());
+		var etime_station = $.trim($("#etime_station").val());		
+		var runtime = $.trim($("#runtime").val());
+		var price = $.trim($("#price").val());
+		var mileage = $.trim($("#mileage").val());
+		var id = $.trim($("#id").val());
+		
+		if(checi == '')
+		{
+			alert('请输入车次');
+			return;
+		}
+		
+		//其他验证
+		$.post(
+			'/train/add',
+			{'ispost':1,'ajax':1,'checi':checi,'leixin':leixin,
+			'b_station':b_station,'btime_station':btime_station,
+			'e_station':e_station,'etime_station':etime_station,
+			'runtime':runtime,'price':price,'mileage':mileage,
+			'id':id},
+			function(res){
+				if(res.result == 'SUCCESS')
+				{
+					if(confirm('添加成功，点击确定继续添加，点击取消返回列表'))
+					{
+						$("#checi").val('');
+						$("#b_station").val('');
+					}else{
+						document.location.href = '/train/index';
+					}
+				}
+				else
+				{
+					alert(res.msg+'('+res.msgcode+')');
+				}
+			},
+			'json'
+		);
+		
+	});
+});
+</script>
+
+
+<?php $_template = new Smarty_Internal_Template("shared/footer.html", $_smarty_tpl->smarty, $_smarty_tpl, $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null);
+ echo $_template->getRenderedTemplate(); $_template->rendered_content = null;?><?php unset($_template);?>

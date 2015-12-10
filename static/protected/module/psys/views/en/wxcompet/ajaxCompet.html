@@ -1,0 +1,74 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr>
+                            <th>日 期</th>
+                            <th>开启竞技页面次数</th><th>开启竞技页面人数</th><th>竞技总次数</th><th>竞技总人数</th>
+                            <th>首次竞技次数</th><th>2次竞技次数</th><th>3次竞技次数</th><th>4次竞技次数</th><th>5次竞技次数</th>
+                            <th>6次竞技次数</th><th>7次竞技次数</th><th>8次竞技次数</th><th>9次竞技次数</th><th>10次竞技次数</th>
+                            <th>过5关</th><th>过10关</th><th>过15关</th><th>过20关</th><th>过25关</th><th>过30关</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                                <td style="text-align:center;">{{$v.day}}</td>
+                                <td style="text-align:center;">{{$v.view_times}}</td>
+                                <td style="text-align:center;">{{$v.open_num}}</td>
+                                <td style="text-align:center;">{{$v.open_times}}</td>
+                                <td style="text-align:center;">{{$v.open_person}}</td>
+                                <td style="text-align:center;">{{$v.first_open}}</td>
+                                <td style="text-align:center;">{{$v.second_open}}</td>
+                                <td style="text-align:center;">{{$v.third_open}}</td>
+                                <td style="text-align:center;">{{$v.fourth_open}}</td>
+                                <td style="text-align:center;">{{$v.fifth_open}}</td>
+                                <td style="text-align:center;">{{$v.sixth_open}}</td>
+                                <td style="text-align:center;">{{$v.seventh_open}}</td>
+                                <td style="text-align:center;">{{$v.eighth_open}}</td>
+                                <td style="text-align:center;">{{$v.ninth_open}}</td>
+                                <td style="text-align:center;">{{$v.tenth_open}}</td>
+                                <td style="text-align:center;">{{$v.pass_5}}</td>
+                                <td style="text-align:center;">{{$v.pass_10}}</td>
+                                <td style="text-align:center;">{{$v.pass_15}}</td>
+                                <td style="text-align:center;">{{$v.pass_20}}</td>
+                                <td style="text-align:center;">{{$v.pass_25}}</td>
+                                <td style="text-align:center;">{{$v.pass_30}}</td>
+                            </tr>
+                        {{/foreach}}
+                        <tr>
+                            <td style="text-align:center;"><b>总 计</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$view_times}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$open_num}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$open_times}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$open_person}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$first_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$second_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$third_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$fourth_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$fifth_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$sixth_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$seventh_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$eighth_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$ninth_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$tenth_open}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$pass_5}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$pass_10}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$pass_15}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$pass_20}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$pass_25}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$pass_30}}</b></td>
+                        </tr>
+                        <tr><td colspan="21"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

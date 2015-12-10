@@ -1,0 +1,100 @@
+{include file="include/header.html"}
+{literal}
+<script type="text/javascript">
+
+//function sortAlpha(com)p.onChangePage(p.newp)
+//{ 
+//jQuery('#flex1').flexOptions({newp:1, params:[{name:'letter_pressed', value: com},{name:'qtype',value:$('select[name=qtype]').val()}]});
+//jQuery("#flex1").flexReload(); 
+//}
+</script>
+{/literal}
+</head>
+<body>
+<form action="/station/totalstation" method="post">
+    <div class="search" >
+        搜索:
+        {literal}
+        <input id="date" class="Wdate" type="text" onFocus="WdatePicker()" name="date"/>
+        {/literal}
+        <input type="submit" class="button2" value="搜索" id="search"/>
+    </div>
+</form>
+<table id="checklogerror" style="display:none"></table>
+
+<div>
+    <div class="flexigrid" style="width: 1649px;">
+        <div class="mDiv">
+            <div title="Minimize/Maximize Table" class="ptogtitle">
+                <span>
+                </span>
+            </div>
+        </div>
+        <div class="mDiv" style="height:25px;">
+            <div class="ftitle" style="color:red;font-size: 18px;"></div>
+            
+        </div>
+        <div class="tDiv" style="height:40px;margin:0 auto;">
+            
+            <div class="tDiv2">
+                <div class="btnseparator">
+                    <span style="color:blue;font-size: 18px;">&nbsp;{$date}流程对比</span>
+                </div>
+            </div>
+    
+            <div style="clear:both">
+            </div>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0">
+                    <thead>
+                        <tr>
+                            <th align="center" abbr="station" axis="col1" class=""><div style="text-align: center; width: 150px;" class="">站名</div></th>
+                            <th align="center" abbr="station" axis="col1" class=""><div style="text-align: center; width: 150px;" class="">连接数</div></th>
+                            <th align="center" abbr="station" axis="col1" class=""><div style="text-align: center; width: 150px;" class="">广告1</div></th>
+                            <th align="center" abbr="station" axis="col1" class=""><div style="text-align: center; width: 150px;" class="">注册页</div></th>
+                            <th align="center" abbr="state" axis="col2" class=""><div style="text-align: center; width: 150px;" class="">注册数</div></th>
+                            <th align="center" abbr="state" axis="col2" class=""><div style="text-align: center; width: 150px;" class="">广告2</div></th>
+                            <th align="center" abbr="state" axis="col2" class=""><div style="text-align: center; width: 150px;" class="">首页</div></th>
+                            <th align="center" abbr="state" axis="col2" class=""><div style="text-align: center; width: 150px;" class="">下载</div></th>
+                        </tr>
+                    </thead>
+                    </table>
+                </div>
+        </div>
+
+        <div class="cDrag" style="top: 55px;">
+            <div style="height: 149px; display: block; left: 309px;">
+            </div>
+            <div style="height: 149px; display: block; left: 720px;">
+            </div>
+            <div style="height: 149px; display: block; left: 1031px;">
+            </div>
+        </div>
+
+        <div class="bDiv">
+            <table cellspacing="0" cellpadding="0" border="0" style="" id="flex1">
+                <tbody>
+                   {foreach $singerstation as $k=>$v}
+                    <tr {if ($k+1)%2 neq 0}class="erow"{/if}>
+                        <td align="center"><div style="text-align: center; width: 150px;">{$v.station}</div></td>
+                        <td align="center"><div style="text-align: center; width: 150px;">{$v.conn}</div></td>
+                        <td align="center"><div style="text-align: center; width: 150px;">{$v.ad1}</div></td>
+                        <td align="center"><div style="text-align: center; width: 150px;">{$v.regpage}</div></td>
+                        <td align="center"><div style="text-align: center; width: 150px;">{$v.regnum}</div></td>
+                        <td align="center"><div style="text-align: center; width: 150px;">{$v.ad2}</div></td>
+                        <td align="center"><div style="text-align: center; width: 150px;">{$v.indexnum}</div></td>
+                        <td align="center"><div style="text-align: center; width: 150px;">{$v.down}</div></td>
+
+                    </tr>
+                   {/foreach}
+                </tbody>
+            </table>
+            <div class="iDiv" style="display: none;"></div></div>
+
+        <div class="vGrip"><span></span></div>
+    </div>
+</div>
+</body>
+</html>

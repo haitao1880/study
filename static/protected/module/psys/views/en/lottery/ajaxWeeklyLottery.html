@@ -1,0 +1,53 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr>
+                            <th>日 期</th><th>开启抽奖页次数</th><th>开启抽奖页人数</th><th>当日抽奖总数</th>
+                            <th>首次抽奖</th><th>二次抽奖</th><th>三次抽奖</th><th>四次抽奖</th><th>五次抽奖</th>
+                            <th>分享活动次数</th><th>分享成功次数</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                                <td style="text-align:center;">{{$v.startday}} / {{$v.endday}}</td>
+                                <td style="text-align:center;">{{$v.view_times}}</td>
+                                <td style="text-align:center;">{{$v.start_num}}</td>
+                                <td style="text-align:center;">{{$v.do_times}}</td>
+                                <td style="text-align:center;">{{$v.first_join}}</td>
+                                <td style="text-align:center;">{{$v.second_join}}</td>
+                                <td style="text-align:center;">{{$v.third_join}}</td>
+                                <td style="text-align:center;">{{$v.fourth_join}}</td>
+                                <td style="text-align:center;">{{$v.fifth_join}}</td>
+                                <td style="text-align:center;">{{$v.sharetimes}}</td>
+                                <td style="text-align:center;">{{$v.shareok}}</td>
+                                
+                            </tr>
+                        {{/foreach}}
+                        <tr>
+                            <td style="text-align:center;"><b>总 计</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$view_times}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$start_num}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$do_times}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$first_join}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$second_join}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$third_join}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$fourth_join}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$fifth_join}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$sharetimes}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$shareok}}</b></td>
+                            
+                        </tr>
+                        <tr><td colspan="11"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

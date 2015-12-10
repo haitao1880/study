@@ -1,0 +1,49 @@
+{include file="include/header_pagerecord.html"}
+
+</head>
+<body>
+<div class="search" >
+     <form method="post" action="/pagerecord/allchart" enctype="multipart/form-data">
+搜索:
+    <select class="select2" id="station" name="appkey">
+        <option value="">-选择车站-</option>
+                {foreach $stations as $key=> $v}
+	          <option value="{$key}" {if $stationid eq $key}selected{/if}>{$v}</option>
+	        {/foreach}
+     
+    </select>
+
+{literal}
+<input id="sdate" class="Wdate" type="text" onFocus="WdatePicker()" name="sdate"/>-
+<input id="edate" class="Wdate" type="text" onFocus="WdatePicker()" name="edate"/>
+{/literal}
+<input type="submit" class="button2" value="搜索" id="search"/>
+     </form>
+</div>
+<label style="color:red;margin-left: 10px;" id="errormsg"></label>
+<div id="container" style="height:1500px;width:1300px;margin:10px auto;border:1px solid #ccc;background:white;">
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="listaduv1"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="listadpv1"><img style="margin-top:195;" src="{$psys_img}load.gif"></div> 
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="getcodeuv"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="getcodepv"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: right;width:648px;" id="listdownappuv"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="listregokuv"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: left;width:648px;" id="lossuv1"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+    <div style="text-align:center;margin:0 auto;border:1px solid #ccc;height:290px;float: right;width:648px;" id="losspv1"><img style="margin-top:195;" src="{$psys_img}load.gif"></div>
+
+   
+
+</div>
+  <script type="text/javascript">
+      Trend("listaduv1",{$listaduv1});
+      Trend("listadpv1",{$listadpv1});
+      Trend("listregokuv",{$listregokuv});
+      Trend("listdownappuv",{$listdownappuv});
+      Trend("getcodeuv",{$getcodeuv});
+      Trend("getcodepv",{$getcodepv});
+      Trend("lossuv1",{$lossuv1});
+      Trend("losspv1",{$losspv1});
+   </script>
+   
+</body>
+</html>

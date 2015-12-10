@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>站点-城市简介列表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}lightbox.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}lightbox.min.js"></script>
+{literal}
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".toggle").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var obj = $(this);
+			var id = $(this).attr('food_id');
+			$.ajax({
+	            type: "POST",
+	            url: "/trip/foodtoggle",
+	            data: {'ajax':1,'id':id},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						if(obj.text() == '禁用')
+						{
+							obj.text('启用');
+						}
+						else
+						{
+							obj.text('禁用');
+						}
+					}
+					else
+					{
+						alert(data.msg);				
+					}
+	            }       
+	        });	
+		}
+		});
+	$(".imgview").click(function(){
+		var id = $(this).attr('food_id');
+		$("#imgs_section").html('');
+		$.ajax({
+            type: "POST",
+            url: "/trip/imgview",
+            data: {'ajax':1,'id':id,'type':3},
+            dataType: "json",
+            success: function(data){
+				if(data.result == 'SUCCESS')
+				{
+					for(var i=0;i<data.msg.length;i++)
+					{
+						var a = $("<a href='"+data.msg[i]['path']+"' data-lightbox='roadtrip' class='lightbox' title='"+data.msg[i]['name']+"'></a>");
+						$("#imgs_section").append(a);
+					}
+				}
+				$(".lightbox:first").trigger("click");
+            }       
+        });	
+		});
+});
+</script>
+<style type="text/css">
+#imgs_section{
+	display:none;
+}
+</style>
+{/literal}
+</head>
+<body>
+<div id="imgs_section">
+</div>
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h1>美食天地列表</h1></caption>
+<tr bgcolor="#a8cbec">
+	<td colspan="15" style="text-align:left;padding-left:15px">
+		<form action="/trip/foodlist" method="post">
+		美食查询：<input type="text" name="food_name" value="{$food_name}" style="width:150px;padding:3px;" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="btn_submit" value="查询" style="margin-lfet:10px;"/>
+		</form>
+	</td>
+</tr>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>ID</th>
+	<th>餐馆名称</th>
+    <th>对应城市</th>
+    <th>美食封面</th>
+    
+    <th>特色菜品</th>
+    <th>推荐指数</th>
+    <th>标签</th>
+   	<th>人均消费</th>
+   	<th>是否热门</th>   	
+    <th>营业时间</th>
+    <th>联系电话</th>
+    <th>餐馆地址</th>
+    <th>美食图集</th>
+    <th>商家简介</th>
+    <th>操作</th>
+    
+</tr>
+{foreach $food_list as $food}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td>{$food.id}</td>
+    <td>{$food.name}</td>
+    <td>{$food.cityname}</td>
+    <td>{$food.headimg}</td> 
+    <td>{$food.feature}</td>
+    <td>{$food.star}</td>
+    <td>{$food.label}</td>
+    <td>{$food.share}元</td>
+    <td>{$food.hot}</td>
+    <td>{$food.bustime}</td>
+    <td>{$food.tel}</td>
+    <td>{$food.adress}</td>
+    <td>...</td>   
+    <td>...</td>    
+    <td><a href="/trip/foodedit/{$food.id}">编辑</a> <a href="javascript:;" food_id="{$food.id}" class="toggle">{if $food.flag}禁用{else}启用{/if}</a> <a href="javascript:;" food_id="{$food.id}" class="imgview">图片预览</a></td>
+</tr>
+{/foreach}
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>   
+  </ul>
+</div>
+</body>
+</html>

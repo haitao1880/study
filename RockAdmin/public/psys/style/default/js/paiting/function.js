@@ -1,0 +1,450 @@
+
+/**
+ * 统计图
+ * @param  string thm_title 主标题
+ * @param  number title_x   标题相对位置
+ * @param  string sub_title 副标题
+ * @param  number  sub_x     副标题相对位置
+ * @param  array x_cat      x轴栏目名称
+ * @param  string y_cat     y轴栏说明
+ * @param  array res      生成统计图所需的数据
+ * @param  string id        放置图片的容器id
+ * @param  string drowtype   图的类型
+ */
+function PaiTing(thm_title,title_x,sub_title,sub_x,x_cat,y_cat,res,id,drowtype){
+	var chart;
+    chart = new Highcharts.Chart({ 
+        chart: {  //整体控制
+            renderTo: id,  //图表容器的DIVbar:横向条形图
+            defaultSeriesType: drowtype, //可选，默认为line【line:折线;spline:平滑的线;area:区域图;bar:曲线图;pie:饼图;scatter:点状图;column:柱状图等等;
+            marginRight: 130, //外边距控制 (上下左右空隙)
+            marginBottom: 25  //外边距控制
+        }, 
+        title: { 
+            text: thm_title, //主标题
+            x: title_x           //标题相对位置  默认居中
+        },
+
+        plotOptions: {//设置线上各点显示数据
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+            },
+            column:{
+                dataLabels:{
+                    enabled:true //是否显示数据标签
+                }
+            },
+            spline: {
+                dataLabels: {
+                    enabled: true
+                },
+            },
+            area:{
+                dataLabels:{
+                    enabled:true //是否显示数据标签
+                }
+            }
+        },
+        credits: {
+             text: 'RockHippo.cn',
+             href: 'http://www.rockhippo.cn'
+        },
+        subtitle: {
+        text: sub_title,//副标题
+        x: sub_x           //标题相对位置 60
+        },
+        xAxis: {          //x轴数据
+            categories: x_cat
+        }, 
+        yAxis: {          //y轴数据
+            title: { 
+                text: y_cat 
+            }, 
+            plotLines: [{  //标线
+                value: 0, 
+                width: 1, 
+                color: '#808080' 
+            }] 
+        },
+        tooltip: {
+            valueSuffix: ''
+        }, 
+        // tooltip: {        //数据点的提示框
+        //     valueSuffix: '%',
+        //     formatter: function () { 
+        //         return '<b>' + this.series.name + '</b><br/>' + this.x + ': ' + this.y; 
+        //     }  //formatter需要一个回调函数，可以通过this关键字打点得到当前一些图表信息
+        // }, 
+        legend: { 
+            layout: 'vertical', 
+            align: 'right', 
+            verticalAlign: 'top', 
+            x: -10, 
+            y: 100, 
+            borderWidth: 0 
+        }, 
+       
+        series:res 
+    }); 
+}
+
+/**
+ * 统计图
+ * @param  string thm_title 主标题
+ * @param  number title_x   标题相对位置
+ * @param  string sub_title 副标题
+ * @param  number  sub_x     副标题相对位置
+ * @param  array x_cat      x轴栏目名称
+ * @param  string y_cat     y轴栏说明
+ * @param  array res      生成统计图所需的数据
+ * @param  string id        放置图片的容器id
+ * @param  string drowtype   图的类型
+ */
+function PaiTingShow(thm_title,title_x,sub_title,sub_x,x_cat,y_cat,res,id,drowtype){
+    var chart;
+    chart = new Highcharts.Chart({ 
+        chart: {  //整体控制
+            renderTo: id,  //图表容器的DIVbar:横向条形图
+            defaultSeriesType: drowtype, //可选，默认为line【line:折线;spline:平滑的线;area:区域图;bar:曲线图;pie:饼图;scatter:点状图;column:柱状图等等;
+            marginRight: 130, //外边距控制 (上下左右空隙)
+            marginBottom: 25, //外边距控制
+            width:arguments[9]
+        }, 
+        title: { 
+            text: thm_title, //主标题
+            x: title_x           //标题相对位置  默认居中
+        },
+
+        plotOptions: {//设置线上各点显示数据
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+            },
+            column:{
+                dataLabels:{
+                    enabled:true //是否显示数据标签
+                }
+            },
+            spline: {
+                dataLabels: {
+                    enabled: true
+                },
+            },
+            area:{
+                dataLabels:{
+                    enabled:true //是否显示数据标签
+                }
+            }
+        },
+        credits: {
+             text: 'RockHippo.cn',
+             href: 'http://www.rockhippo.cn'
+        },
+        subtitle: {
+        text: sub_title,//副标题
+        x: sub_x           //标题相对位置 60
+        },
+        xAxis: {          //x轴数据
+            categories: x_cat
+        }, 
+        yAxis: {          //y轴数据
+            title: { 
+                text: y_cat 
+            }, 
+            plotLines: [{  //标线
+                value: 0, 
+                width: 1, 
+                color: '#808080' 
+            }] 
+        },
+      
+        tooltip: {        //数据点的提示框
+            formatter: function () { 
+            // console.info(this.series.userOptions.infos);                
+                return ShowMsg(this.x,this.series.userOptions.infos,this.series.name,this.y); 
+            }  //formatter需要一个回调函数，可以通过this关键字打点得到当前一些图表信息
+        }, 
+        legend: { 
+            layout: 'vertical', 
+            align: 'right', 
+            verticalAlign: 'top', 
+            x: -10, 
+            y: 100, 
+            borderWidth: 0 
+        }, 
+       
+        series:res 
+    }); 
+}
+
+//提示信息
+function ShowMsg(key,data,name,y,x){
+    keys = 'date'+key;
+    var msg = '';
+    if (data[keys]['title'] || data[keys]['descript']) {
+        msg = '<b>' + data[keys]['title'] + '</b><br/>' + data[keys]['descript'];
+    }else{
+        msg = '<b>' + key + '</b><br/>' + name + ': ' + y;
+
+    }
+    return msg;
+}
+
+function totalpaiting(data,pictype,station){
+    $.ajax({
+        type : "POST",
+        url : '/station/paitingdata',
+        data : data,
+        success : function(res) {
+            PaiTingShow(station+'用户连接走势',-20,'',60,res.connect.x_cat,'连接数量',res.connect.y_data,'connect',pictype); 
+            PaiTingShow(station+'用户注册走势',-20,'',60,res.reg.x_cat,'注册数量',res.reg.y_data,'reg',pictype);
+            PaiTingShow(station+'用户下载走势',-20,'',60,res.down.x_cat,'下载数量',res.down.y_data,'down',pictype);
+            PaiTingShow(station+'转化率走势',-20,'',60,res.rate.x_cat,'转化率(%)',res.rate.y_data,'rate',pictype); 
+            PaiTing(station+res.rose.date+'流程步骤流失率',-20,'',60,res.rose.x_cat,'流失率(%)',res.rose.y_data,'rose','column');  
+            PaiTing(station+res.prose.date+'流程数据概况',-20,'',60,res.prose.x_cat,'数量',res.prose.y_data,'prose',pictype);
+
+            PaiTingShow(station+'上周用户连接数，注册数、下载数',-20,'',60,res.prevconnect.x_cat,'数量',res.prevconnect.y_data,'prevconnect',pictype); 
+            PaiTingShow(station+'本周用户连接数，注册数、下载数',-20,'',60,res.curconnect.x_cat,'数量',res.curconnect.y_data,'curconnect',pictype); 
+            PaiTingShow(station+'上周注册、下载流失率',-20,'',60,res.prevweekrose.x_cat,'流失率(%)',res.prevweekrose.y_data,'prevweekrose',pictype);  
+            PaiTingShow(station+'本周注册、下载流失率',-20,'',60,res.curweekrose.x_cat,'流失率(%)',res.curweekrose.y_data,'curweekrose',pictype); 
+        }
+    },'json');
+}
+
+//细分统计图
+function graph(data,station,msg,pictype,xtitle){
+     $.ajax({
+        type : "POST",
+        url : '/station/paitingdata',
+        data : data,
+        success : function(res) {
+            PaiTing(station+msg,-20,'',60,res.x_cat,xtitle,res.y_data,'container',pictype);  
+        }
+    },'json');
+}
+
+//车站
+function stations(stationid){
+    var stations = ['','青岛南','青岛北','济南','济南西','曲阜东','潍坊','淄博','泰安','滕州','枣庄','四方','青岛北汽','青岛东汽','姜山站','烟台','大庆东','齐齐哈尔','胶南(汽车)','黄岛(汽车)','平度(汽车)','即墨(汽车)','莱西(汽车)','安达','肇东','海泊河(汽车)','利津路(汽车)','旅游汽车站(汽车)','绥化站','沧口(汽车)','高密'];
+    return stations[stationid];
+}
+
+//日志监控表格点击事件
+function checklogerror(){
+    $.each($('tbody tr'),function(){
+         $(this).click(function (){
+            //获取日期
+            var cdate = $(this).find('td').eq(0).text();
+            var station = $(this).find('td').eq(1).text();
+            var state = $(this).find('td img').attr('src');
+            var reg = /success.png$/i;
+            if (!reg.exec(state)) {
+                window.location.href = '/station/getchecklogerror?station='+station+'&cdate='+cdate;
+            }else{
+               return; 
+            }
+           
+         });
+    });
+}
+
+//单个统计图
+function SingleGraph(data,msg,pictype,ytitle,uri,id){
+     $.ajax({
+        type : "POST",
+        url : uri,
+        data : data,
+        success : function(res) {
+            // PaiTing(msg,-20,'',60,res.x_cat,ytitle,res.y_data,id,pictype); 
+
+            PaiTingShow('wifi连接趋势图',-20,'',60,res.x_cat,ytitle,res.y_data,id,pictype); 
+        }
+    },'json');
+}
+
+function PaiTingScroll(thm_title,title_x,sub_title,sub_x,x_cat,y_cat,res,id,drowtype){
+    var chart;
+    chart = new Highcharts.Chart({ 
+        chart: {  //整体控制
+            renderTo: id,  //图表容器的DIVbar:横向条形图
+            defaultSeriesType: drowtype, //可选，默认为line【line:折线;spline:平滑的线;area:区域图;bar:曲线图;pie:饼图;scatter:点状图;column:柱状图等等;
+            marginRight: 130, //外边距控制 (上下左右空隙)
+            marginBottom: 25,  //外边距控制
+            width:arguments[9]
+        }, 
+        title: { 
+            text: thm_title, //主标题
+            x: title_x           //标题相对位置  默认居中
+        },
+
+        plotOptions: {//设置线上各点显示数据
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+            },
+            column:{
+                dataLabels:{
+                    enabled:true //是否显示数据标签
+                }
+            },
+            spline: {
+                dataLabels: {
+                    enabled: true
+                },
+            },
+            area:{
+                dataLabels:{
+                    enabled:true //是否显示数据标签
+                }
+            }
+        },
+        credits: {
+             text: 'RockHippo.cn',
+             href: 'http://www.rockhiipo.cn'
+        },
+        subtitle: {
+        text: sub_title,//副标题
+        x: sub_x           //标题相对位置 60
+        },
+        xAxis: {          //x轴数据
+            categories: x_cat,
+            min: 0,
+            max:7
+        }, 
+        scrollbar: {
+            enabled: true
+        },
+        yAxis: {          //y轴数据
+            title: { 
+                text: y_cat 
+            }, 
+            plotLines: [{  //标线
+                value: 0, 
+                width: 1, 
+                color: '#808080' 
+            }] 
+        },
+        tooltip: {
+            valueSuffix: ''
+        }, 
+        // tooltip: {        //数据点的提示框
+        //     valueSuffix: '%',
+        //     formatter: function () { 
+        //         return '<b>' + this.series.name + '</b><br/>' + this.x + ': ' + this.y; 
+        //     }  //formatter需要一个回调函数，可以通过this关键字打点得到当前一些图表信息
+        // }, 
+        legend: { 
+            layout: 'vertical', 
+            align: 'right', 
+            verticalAlign: 'top', 
+            x: -10, 
+            y: 100, 
+            borderWidth: 0 
+        }, 
+       
+        series:res 
+    }); 
+}
+
+
+function graphpie(id,title,data){
+    $("#"+id).highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            width:arguments[3]
+        },
+        title: {
+            text: title
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: data
+    });
+}
+
+//初始化弹窗
+function reset() {
+    alertify.set({
+        labels : {
+            ok     : "确认",
+            cancel : "取消"
+        },
+        delay : 5000,
+        buttonReverse : false,
+        buttonFocus   : "ok"
+    });
+};
+
+//提示框
+function alertmsg(msg){
+    reset();
+    alertify.alert(msg);
+    return false;
+}
+
+
+/*function graphpie(){
+    $('#graph').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: {
+            text: 'Browser market shares at a specific website, 2014'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Browser share',
+            data: [
+                ['Firefox',   45.0],
+                ['IE',       26.8],
+                {
+                    name: 'Chrome',
+                    y: 12.8,
+                    sliced: true,
+                    selected: true
+                },
+                ['Safari',    8.5],
+                ['Opera',     6.2],
+                ['Others',   0.7]
+            ]
+        }]
+    });
+}*/

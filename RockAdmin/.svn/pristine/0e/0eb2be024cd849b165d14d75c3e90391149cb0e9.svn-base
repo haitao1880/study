@@ -1,0 +1,80 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-10 16:54:20
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//train/index.html" */ ?>
+<?php /*%%SmartyHeaderCode:89864485054880a3cba6f62-51110877%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'c2125faa6120d8ee11272819b5cc4ea35f0aec6f' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//train/index.html',
+      1 => 1407132458,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '89864485054880a3cba6f62-51110877',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><?php $_template = new Smarty_Internal_Template("shared/header.html", $_smarty_tpl->smarty, $_smarty_tpl, $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null);
+$_template->assign('pagetitle',"车次列表"); echo $_template->getRenderedTemplate(); $_template->rendered_content = null;?><?php unset($_template);?>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+public.css" />
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<form action="/account/del" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>车次列表</h4></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>ID</th>
+    <th>车次</th>
+    <th>类型</th>
+    <th>始发站</th>
+    <th>终到站</th>
+    <th>始发时间</th>
+    <th>终到时间</th>
+    <th>运行时间</th>
+    <th>参考票价</th>
+    <th>操作</th> 
+</tr>
+<?php  $_smarty_tpl->tpl_vars['vv'] = new Smarty_Variable;
+ $_smarty_tpl->tpl_vars['kv'] = new Smarty_Variable;
+ $_From = $_smarty_tpl->getVariable('list')->value; if (!is_array($_From) && !is_object($_From)) { settype($_From, 'array');}
+if ($_smarty_tpl->_count($_From) > 0){
+    foreach ($_From as $_smarty_tpl->tpl_vars['vv']->key => $_smarty_tpl->tpl_vars['vv']->value){
+ $_smarty_tpl->tpl_vars['kv']->value = $_smarty_tpl->tpl_vars['vv']->key;
+?>
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><?php echo $_smarty_tpl->tpl_vars['vv']->value['id'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['vv']->value['trainno'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['vv']->value['traintypestr'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['vv']->value['bstation'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['vv']->value['estation'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['vv']->value['btime'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['vv']->value['etime'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['vv']->value['runtime'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['vv']->value['price'];?>
+</td>
+    <td><a href="/train/add?id=<?php echo $_smarty_tpl->tpl_vars['vv']->value['id'];?>
+" target="_blank">编辑</a>&nbsp;&nbsp;<a href="/train/station?tid=<?php echo $_smarty_tpl->tpl_vars['vv']->value['id'];?>
+">途经站</a></td>
+</tr>
+<?php }} ?>
+</table>
+<div class="pages">
+  <?php echo $_smarty_tpl->getVariable('pagestr')->value;?>
+
+</div>
+</form>
+
+<?php $_template = new Smarty_Internal_Template("shared/footer.html", $_smarty_tpl->smarty, $_smarty_tpl, $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null);
+ echo $_template->getRenderedTemplate(); $_template->rendered_content = null;?><?php unset($_template);?>

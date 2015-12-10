@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-用户信息统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="{{$psys_css}}uniform.css" />
+        <link rel="stylesheet" href="{{$psys_css}}select2.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-style.css" />
+        <link rel="stylesheet" href="{{$psys_css}}matrix-media.css" />
+        <link rel="stylesheet" href="{{$psys_css}}font-awesome/css/font-awesome.css" />
+    </head>
+    <body>
+
+    <div id="content2">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a class="tip-bottom" href="/index/index" data-original-title="到首页"><i class="icon-home"></i> 首页</a>
+                <a class="tip-bottom" href="javascript:;"><i class="icon-user"></i> 用户信息统计</a>
+                <a class="current" href="javascript:;" data-original-title=""><i class="icon-bar-chart"></i> 用户列表</a>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <p><b>说 明: </b></p>
+            <p>请选择注册起始和结束时间，注册来源，或者填写用户手机号码进行信息查询。</p>  
+                <div class="span" style="width:95px">
+                    <select name="dateSearch">
+                      <option value="-">注册时间</option>
+                    </select>
+                </div>
+                <div class="span" style="float:left;">
+                <span>
+                    <input id="d5221" name="start" class="Wdate" type="text" onFocus="var d5222=$dp.$('d5222');WdatePicker({onpicked:function(){d5222.focus();},dateFmt:'yyyy-MM-dd 00:00:00',firstDayOfWeek:1,maxDate:'%y-%M-%d'})"/> -
+                    <input id="d5222" name="end" class="Wdate" type="text" onFocus="WdatePicker({minDate:'#F{$dp.$D(\'d5221\',{d:0})}',dateFmt:'yyyy-MM-dd 23:59:59',firstDayOfWeek:1,firstDayOfWeek:1,maxDate:'%y-%M-%d'})"/>
+                </span>
+                </div>
+                <div class="span" style="width:95px; float:left;">
+                    <select name="dateSearch">
+                      <option value="-">手机号码</option>
+                    </select>
+                </div>
+                <div class="span" style="float:left;">
+                    <span><input id="call" name="call" type="text" /></span>
+                </div>
+                <div style="float:left;">
+                    <span>&nbsp;&nbsp;<input type="button" onclick="searchMember(1)" value="查 询" /></span>
+                </div>
+                <div style="clear:both;"></div>
+            <p></p>   
+            <hr/>
+            <div id="containerTable">
+                
+            </div>
+            
+            <a id="loading" href="#myModal" data-toggle="modal" class="hide"></a> 
+            <div id="myModal" class="modal hide">
+              <div class="modal-body">
+                <p style="text-align:center;"><img src="{{$psys_img}}loading.gif" /></p>
+                <p style="text-align:center;">加载中...</p>
+                <a id="loading_c" data-dismiss="modal" class="hide"></a>
+              </div>
+            </div>
+        </div>
+    </div>
+    
+<!--Footer-part-->
+{{include file="footer.html"}}
+<!--end-Footer-part--> 
+    <script src="{{$psys_js}}jquery.min.js"></script> 
+    <script src="{{$psys_js}}jquery.ui.custom.js"></script> 
+    <script src="{{$psys_js}}bootstrap.min.js"></script> 
+    <script src="{{$psys_js}}jquery.uniform.js"></script> 
+    <script src="{{$psys_js}}select2.min.js"></script> 
+    <script src="{{$psys_js}}jquery.dataTables.min.js"></script> 
+    <script src="{{$psys_js}}DatePicker/datePicker.js"></script>
+    <script src="{{$psys_js}}matrix.js"></script> 
+    <script src="{{$psys_js}}matrix.tables.js"></script>
+    <script src="{{$psys_js}}highcharts.js"></script>
+    <script src="{{$psys_js}}exporting.js"></script>  
+    <script type="text/javascript">
+        $(function(){
+            searchMember(1);
+        })
+        function searchMember(page){
+            var start = $("#d5221").attr("value");
+            var end = $("#d5222").attr("value");
+            var call = $("#call").attr("value");
+            $.ajax({
+                type: "POST",
+                url: "/member/ajaxMemberHtml",
+                data: {
+                    start:start,
+                    end:end,
+                    call:call, 
+                    page:page
+                },
+                dataType: "html",
+                beforeSend:function(XMLHttpRequest){
+                    loading_func(1);
+                },
+                success: function(data){
+                    loading_func();
+                    $("#containerTable").html(data);
+                    $("#currentpage").html(page + "　");
+                }
+            });
+            
+        }        
+        function loading_func(s){
+            s == 1 ? $("#loading").click() : $("#loading_c").click();
+        }
+    </script>
+    </body>
+</html>
+  

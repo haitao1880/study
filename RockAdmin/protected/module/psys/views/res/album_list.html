@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>专辑列表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+</head>
+<body>
+<form action="/res/albumdel" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7">
+<caption><h4>专辑列表</h4></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>ID</th>
+    <th>专辑名</th>
+    <th>小图</th>
+    <th>大图</th>
+    <th>添加时间</th>
+    <th>更新时间</th>
+    <th>点击</th>
+    <th>显示</th>
+    <th>合作商</th>
+    <th>排序</th>
+    <th>操作</th>    
+</tr>
+{foreach $list as $v}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><input name="id[]" type="checkbox"  value="{$v.id}">{$v.id}</td>
+    <td>{$v.aname}</td>
+    <td>{$v.smallpic}</td>
+    <td>{$v.bigpic}</td>
+    <td>{$v.ctime}</td>
+    <td>{$v.utime}</td>
+    <td>{$v.hits}</td>
+    <td>{$v.flag}</td>
+    <td>{$v.partner}</td>
+    <td>{$v.sortid}</td>
+    <td><a href="/res/albumedit?id={$v.id}">编辑</a> <a href="/res/albumdel?id={$v.id}">删除</a></td>
+</tr>
+{/foreach}
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>   
+  </ul>
+</div>
+</form>
+</body>
+</html>

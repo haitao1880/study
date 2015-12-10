@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>操作结果</title>
+</head>
+<body>
+<div id="nav_top" style="padding:3px 0px 3px 14px;text-align:left;height:14px;">首页&nbsp;&raquo;&nbsp;操作结果</div>
+<h3 style="text-align:left;padding:8px 0px 0px 24px; margin-top:0px;">操作结果</h3>
+<div id="Layer1" style=" text-align:left;margin:0px 0px 0px 20px; padding-top:4px; border-top:4px solid #DEEFFA;">
+   <div style="padding:50px 0px 0px 0px; text-align:center;font-size:14px; line-height:150%;">
+   {$msg}
+   </div>
+</div>
+
+</body>
+</html>

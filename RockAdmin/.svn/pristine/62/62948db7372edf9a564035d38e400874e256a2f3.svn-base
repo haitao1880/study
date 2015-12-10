@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>城市管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+{literal}
+	<style type="text/css">
+	/* detail */
+	#detail{position:absolute;width:670px;height:570px;border:1px solid #ccc;background:#efefef;display:none; }
+	#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+	#detail .tit #cityName{float:left;line-height:33px;padding:0 8px;cursor:pointer;}
+	#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+	#ipcno{width: 150px;height: 20px;margin-left: 0;}
+
+		#allmap{width:670px;height:500px;}
+		p{margin-left:5px; font-size:14px;}
+	</style>
+	{/literal}
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=XMmxRkB0gXsBFyyzbWlozFiB"></script>
+</head>
+
+<body>
+
+<form action="/trip/cityList" method="post" id="news_select">
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  <h3>城市管理</h3>
+  </caption>
+  <tr>
+	<td colspan="8" align="left" style="color:#FFF">&nbsp;&nbsp;&nbsp;&nbsp;		
+     	拼音简码：<input type="text" value="{$citykey}" name="citykey" id="citykey" onblur="this.style.color = '#666';if ( this.value =='' ) this.value = '请输入拼音简码！'; " onfocus="this.style.color='black';if (this.value == '请输入拼音简码！' )  this.value=''; " >&nbsp;&nbsp;&nbsp;&nbsp;
+     	<input type="submit"  id="btnSave" name="btnSave" value="查询"/>
+	</td>
+</tr>
+  <tr  bgcolor="#417eb7">
+    
+    <th>编号</th>
+    <th>车站</th>
+    <th>拼音</th>
+    <th>简码</th>
+    <th>X座标</th>
+    <th>Y座标</th>
+    <th>经度座标</th>
+    <th>纬度座标</th>
+    <th>是否启用</th>   
+    <th>操作</th>
+  </tr>
+  {foreach $list as $v}
+  <tr bgcolor="#FFFFFF">    
+   
+    <td>{$v.id}</td>
+    <td>{$v.cityname}</td>
+    <td>{$v.pinyin}</td>
+    <td>{$v.szm}</td>
+    <td>{$v.x}</td>
+    <td>{$v.y}</td>
+    <td id="lng_{$v.id}">{$v.longitude}</td>
+    <td id="lat_{$v.id}">{$v.latitude}</td>
+    <td>{if $v.flag eq 0}否{else}是{/if}</td>
+    <td><a href="/trip/cityEdit?id={$v.id}">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="trainedit('{$v.cityname}','{$v.id}')">获取经纬度座标</a></td>
+  </tr>
+  {/foreach}
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+    <!--  
+    <li class="del">
+   		<button type="submit" name="submit" class="but">DELETE</button>
+    </li> 
+    -->   
+  </ul>
+</div>
+</form>
+<div id="detail">
+	<div class="tit"><h2 id="cityName"></h2><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:530px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#efefef" id='detailcon'>
+			<div style="width:500px;">
+				<div id="allmap"></div>
+				<p>添加点击地图监听事件，点击地图后显示当前经纬度</p>
+			</div>		 
+		</table>
+	</div>
+</div>
+
+{literal}
+<script type="text/javascript">
+	
+	function popWin(a){
+		function n(){var a=k?k:document.body,b=a.scrollHeight>a.clientHeight?a.scrollHeight:a.clientHeight,c=a.scrollWidth>a.clientWidth?a.scrollWidth:a.clientWidth;$("#maskLayer").css({height:b,width:c})}
+		var d,e,b=9e3,c=!1,f=$("#"+a),g=f.width(),h=f.height(),i=f.find(".tit"),j=f.find(".close"),k=document.documentElement,l=($(document).width()-f.width())/2,m=(k.clientHeight-f.height())/2;
+		f.css({left:l,top:m,display:"block","z-index":b- -1});
+		j.bind("click",function(){$(this).parent().parent().hide().siblings("#maskLayer").remove()});
+		$('<div id="maskLayer"></div>').appendTo("body").css({background:"#000",opacity:".4",top:0,left:0,position:"absolute",zIndex:"8000"}),n(),$(window).bind("resize",function(){n()});
+	}
+	var city = '成都';
+	var id = 0;
+	// 百度地图API功能
+	var map = new BMap.Map("allmap");
+	function trainedit(name,cid)
+	{	
+		id = cid;
+		city = name;
+		if(city != ""){
+			$("#cityName").html(id+'--'+city);
+			//alert(city);
+			map.centerAndZoom(city,11);      // 用城市名设置地图中心点
+		}
+		map.addControl(new BMap.NavigationControl()); //添加默认缩放平移控件
+		map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL})); //右上角，仅包含平移和缩放按钮
+		map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT, type: BMAP_NAVIGATION_CONTROL_PAN})); //左下角，仅包含平移按钮
+		map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_BOTTOM_RIGHT, type: BMAP_NAVIGATION_CONTROL_ZOOM})); //右下角，仅包含缩放按钮
+		map.enableScrollWheelZoom(); //启用滚轮放大缩小，默认禁用
+		map.enableContinuousZoom(); //启用地图惯性拖拽，默认禁用
+
+		// 创建地址解析器实例
+		var myGeo = new BMap.Geocoder();
+		// 将地址解析结果显示在地图上,并调整地图视野
+		myGeo.getPoint(city+"火车站", function(point){
+			if (point) {
+				map.centerAndZoom(point, 16);
+				map.addOverlay(new BMap.Marker(point));
+			}
+		}, city);
+		
+		map.addEventListener("click", showInfo);
+		popWin("detail");
+	}
+	
+	// 百度地图API功能
+	function showInfo(e){
+		 var str = "确定要修改("+city+")经纬度座标数据为("+e.point.lng + ", " + e.point.lat+")吗？";
+		 if(confirm(str))
+		 {
+				id = parseInt(id);        
+		        var url = '/trip/updateLng';
+		        $.ajax({
+		            type: "POST",
+		            url: url,          
+		            data: { id:id,ajax:1,lng:e.point.lng,lat:e.point.lat},                
+		            success: function (data) {
+		                if (data.Code == 1) {
+		                	 $("#lng_"+id).html(e.point.lng);             	
+		                	 $("#lat_"+id).html(e.point.lat);             	
+		                	 alert('修改成功');
+		                	 map.removeEventListener("click", showInfo); 
+		                	 return;
+		                }   
+		                else if (data.Code == -1) {
+		                	return;
+		                }                
+		            }
+		        });
+			// alert(e.point.lng + ", " + e.point.lat);
+			 map.removeEventListener("click", showInfo); 
+		 }
+	}
+</script>
+{/literal}
+</body>
+</html>

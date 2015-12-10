@@ -1,0 +1,214 @@
+<?php
+/**
+* Copyright(c) 2014
+* 日    期:2014年7月10日                                                 
+* 作　  者:Tony_Ren
+* E-mail  :Tony_Ren@rockhippo.net
+* 文 件 名:ipcController.php                                                
+* 创建时间:下午3:02:53                                                
+* 字符编码:UTF-8                                                   
+* 脚本语言:PHP                                            
+* 版本信息:$Id: ipcController.php 4042 2014-09-01 09:21:47Z neil $                                                 
+* 修改日期:$LastChangedDate: 2014-09-01 17:21:47 +0800 (周一, 2014-09-01) $                                     
+* 最后版本:$LastChangedRevision: 4042 $                                 
+* 修 改 者:$LastChangedBy: neil $                                      
+* 版本地址:$HeadURL: http://192.168.1.100:12000/svn/rocktrain/trunk/RockAdmin/protected/module/psys/controller/ipcController.php $                                            
+* 摘    要: 车上服务器管理                                                      
+*/
+
+class newsController extends Psys_AbstractController
+{
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	
+	/**
+	 * 设备列表
+	 */
+	public function indexAction()
+	{
+		$page = reqnum("page",1);
+		$pagesize = reqnum("pagesize",10);
+		$obj = new Psys_NewsModel();
+		$data = $obj -> GetList('', 'id DESC',$page, $pagesize,"*");
+		self::inidate($data['allnum'],$page,$pagesize,count($data['allrow']));
+		
+		$this->smarty->assign('list',$data['allrow']);
+		$this->forward = "index";
+	}
+	//新闻分类
+	public function getNewsType(){
+		$type = array('1'=>'今日头条','2'=>'财经','3'=>'娱乐','4'=>'体育','5'=>'科技','6'=>'社会','7'=>'军事');
+		return $type;
+	}
+	/**
+	 * 添加新闻
+	 */
+	public function addAction(){
+		$sub = reqstr('btnSave', '');
+		$cid = reqnum('cid', 1);
+		$am = new Psys_NewsModel();
+		if($sub){
+			$key = reqstr('key','');
+			$ntitle = reqstr('title', '');
+			$imgurl = reqstr('imgurl', '');
+			$author = reqstr('author', '');
+			$content = reqstr('ndetail', '');
+			$ctime = reqstr('ctime', '');
+			$nfrom = reqstr('nfrom', '');
+			$type = reqnum('news_type', 0);
+			$sort = reqnum('sort', 0);
+			$flag = reqnum('flag',0);
+			$ctime = $ctime.' '.date('H:i:s');
+			$data = array(
+				'appkey'=>$key,
+				'title'=>$ntitle,
+				'imgurl'=>$imgurl,
+				'author'=>$author,
+				'content'=>$content,
+				'nfrom'=>$nfrom,
+				'newstype'=>$type,
+				'sort'=>$sort,
+				'ctime'=>strtotime($ctime),
+				'flag'=>$flag
+			);			
+			
+			$inid = $am->AddOne($data,'rhi_appnews');
+			if($inid){
+				echo '<script>alert("添加成功！");window.location.href="/news/add?cid='.$type.'"</script>';
+				exit;
+			}else{
+				echo '<script>alert("添加失败！");</script>';
+			}
+		}
+		$types = $this->getNewsType();
+     	$this->smarty->assign('new_type',$types);
+		$this->smarty->assign('action','add');
+		$this->smarty->assign('cid',$cid);
+		$this -> forward = 'add';
+	}
+	/**
+	 * 删除新闻
+	 */
+	public function delAction(){
+		$am = new Psys_NewsModel();
+		$id = reqnum('id', 0);	
+		if($id > 0){
+			$where = array();
+			$where['id'] = $id;		
+			$pk_arr = array_filter($where);
+			$inid = $am->DeleteOne($pk_arr);
+			if($inid){
+				echo '<script>alert("删除成功！");window.location.href="/news/index"</script>';
+				exit;
+			}
+		}
+		echo '<script>alert("删除失败！");</script>';		
+	}
+	/**
+	 * 修改新闻
+	 */
+	public function editAction(){
+		$sub = reqstr('btnSave', '');
+		
+		if($sub){
+			$id = reqnum('news_id', 0);
+	        if($id > 0){
+				$data = array();
+				$key = reqstr('key','');
+				$ntitle = reqstr('title', '');
+				$imgurl = reqstr('imgurl', '');
+				$author = reqstr('author', '');
+				$content = reqstr('ndetail', '');
+				$ctime = reqstr('ctime', '');
+				$nfrom = reqstr('nfrom', '');
+				$type = reqnum('news_type', 0);
+				$sort = reqnum('sort', 0);
+				$flag = reqnum('flag',0);
+				$ctime = $ctime.' '.date('H:i:s');
+				$data = array(
+					'appkey'=>$key,
+					'title'=>$ntitle,
+					'imgurl'=>$imgurl,
+					'author'=>$author,
+					'content'=>$content,
+					'nfrom'=>$nfrom,
+					'newstype'=>$type,
+					'sort'=>$sort,
+					'ctime'=>strtotime($ctime),
+					'flag'=>$flag
+				);			
+				$am = new Psys_NewsModel();
+				$inid = $am->editNews($id, $data);
+				if($inid){
+					echo '<script type="text/javascript">alert("修改成功！");window.location.href="/news/index?cid='.$type.'"</script>';
+					exit;
+				}else{
+					echo '<script type="text/javascript">alert("修改失败！");window.location.href="/news/edit/'.$id.'"</script>';
+				}
+	        }
+		}
+		$id = reqnum('id', 0);
+		if($id > 0){
+			$am = new Psys_NewsModel();
+			$newInfo = $am->GetNewInfo($id);
+			$type = $this->getNewsType();
+     		$this->smarty->assign('new_type',$type);
+      
+			$this->smarty->assign('new',$newInfo);
+		}
+		$this->smarty->assign('action','edit');
+		$this -> forward = 'add';
+	}
+	
+		
+	/**
+	 * 分页数据显示
+	 * @param num $allcount 总条数
+	 * @param num $page
+	 * @param num $pagesize
+	 * @param num $cursize  当前页的数据条数
+	 */
+	private function inidate($allcount,$page,$pagesize,$cursize){
+		$this->smarty->assign('allcount',$allcount);   //总数
+		$allpage = ceil($allcount/$pagesize);
+		$this->smarty->assign('allpage',$allpage);  //总页数
+		$pagesize = ($pagesize%2)?$pagesize:$pagesize+1; //页码取偶数 = 步长
+		$pageoffset =($pagesize-1)/2; //当前页 左右偏移
+		$this->smarty->assign('cur_page',$page); //当前页
+		if($allcount>$pagesize)
+		{
+			//如果当前页小于等于左偏移
+			if($page<=$pageoffset)
+			{
+				$startNum=1;
+				$endNum = $pagesize;
+			}
+			else
+			{//如果当前页大于左偏移
+				//如果当前页码右偏移超出最大分页数
+				if($page+$pageoffset>=$allcount+1)
+				{
+					$startNum = $allcount-$pagesize+1;
+				}
+				else
+				{
+					//左右偏移都存在时的计算
+					$startNum = $page-$pageoffset;
+					$endNum = $page+$pageoffset;
+				}
+			}
+		}
+		else
+		{
+			$startNum=1;
+			$endNum = $allcount;
+		}
+	
+		$this->smarty->assign('startNum',$startNum);  //当前从几开始
+		$this->smarty->assign('endNum',$endNum);  //当前到几结束
+		$this->smarty->assign('sli',(($pagesize*($page-1)+1)));  //当前页的起始第多少条
+		$this->smarty->assign('eli',($pagesize*($page-1)+$cursize));  //当前页最后一条是第多少条
+	}
+}

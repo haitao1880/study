@@ -1,0 +1,348 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+{literal}
+<style type="text/css">
+body{margin:0;padding:0;font-size:12px;}
+dt{padding:10px;}
+i{ font-style:normal;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#ipcno{width: 150px;height: 20px;margin-left: 0;}
+#pointer{
+  cursor:pointer;
+}
+
+</style>
+{/literal}
+{literal}
+<script>
+
+function show(time,ipcno)
+{
+	var $title = '<caption>'
+		  		+	'<h3>注册详情</h3>'
+				+'</caption>'
+		 		+'<tr  bgcolor="#417eb7">'
+		  		+  	'<th>车厢</th>'
+		   		+ 	'<th>总访问量</th>'
+		   		+ 	'<th>注册成功次数</th>'
+          +   '<th>注册失败次数</th>'
+          +   '<th>注册成功率</th>'
+          +   '<th>注册时间</th>'
+		 		+'</tr>'; 
+	$("#detailcon").html($title);
+	$.ajax({
+        type: "POST",
+        data: { time: time, ajax:1,ishours:'hours',ipcno:ipcno},
+        url: '/count/regdetail',
+        success: function (data) {  
+                      	
+            if (data.code == 1) {
+            	
+            	
+            	$.each(data.allrow, function (index, item) {
+            		 $('#detailcon').append(
+            			'<tr bgcolor="#FFFFFF"> '   
+						+   ' <td>'+item.train+'</td>'
+						+   ' <td>'+item.rnum+'</td>'
+						+   ' <td>'+item.success+'</td>'
+            +   ' <td>'+item.fail+'</td>'
+            +   ' <td>'+item.sucrate+'</td>'
+            +   ' <td>'+item.time+'</td>'
+						+  '</tr>'	 
+            		 );
+            		
+            		
+            	});
+            	
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+            	
+	popWin("detail");
+}
+function totalshow(time)
+{
+  var $title = '<caption>'
+          + '<h3>注册详情</h3>'
+        +'</caption>'
+        +'<tr  bgcolor="#417eb7">'
+          +   '<th>总访问量</th>'
+          +   '<th>注册成功次数</th>'
+          +   '<th>注册失败次数</th>'
+          +   '<th>注册成功率</th>'
+          +   '<th>注册时间</th>'
+        +'</tr>'; 
+  $("#detailcon").html($title);
+  $.ajax({
+        type: "POST",
+        data: { time: time, ajax:1},
+        url: '/count/totalregdetail',
+        success: function (data) {  
+                        
+            if (data.code == 1) {
+              
+              
+              $.each(data.allrow, function (index, item) {
+                 $('#detailcon').append(
+                  '<tr bgcolor="#FFFFFF"> '  
+            +   ' <td>'+item.rnum+'</td>'
+            +   ' <td>'+item.success+'</td>'
+            +   ' <td>'+item.fail+'</td>'
+            +   ' <td>'+item.sucrate+'</td>'
+            +   ' <td>'+item.time+'</td>'
+            +  '</tr>'   
+                 );
+                
+                
+              });
+              
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+              
+  popWin("detail");
+}
+function showlogin(time,ipcno)
+{
+
+  var $title = '<caption>'
+          + '<h3>登录详情</h3>'
+        +'</caption>'
+        +'<tr  bgcolor="#417eb7">'
+          +   '<th>车厢</th>'
+          +   '<th>登录人次</th>'
+          +   '<th>时间</th>'
+        +'</tr>'; 
+  $("#detailcon").html($title);
+  
+  
+  $.ajax({
+        type: "POST",
+        data: { time: time, ajax:1,ishours:'hours',ipcno:ipcno},
+        url: '/count/logindetail',
+        success: function (data) {  
+                        
+            if (data.code == 1) {
+              
+              
+              $.each(data.allrow, function (index, item) {
+                 $('#detailcon').append(
+                  '<tr bgcolor="#FFFFFF"> '   
+            +   ' <td>'+item.train+'</td>'
+            +   ' <td>'+item.loginno+'</td>'
+            +   ' <td>'+item.time+'</td>'
+            +  '</tr>'   
+                 );
+                
+                
+              });
+              
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+              
+  popWin("detail");
+}
+function totalshowlogin(time)
+{
+
+  var $title = '<caption>'
+          + '<h3>登录详情</h3>'
+        +'</caption>'
+        +'<tr  bgcolor="#417eb7">'
+          +   '<th>登录人次</th>'
+          +   '<th>时间</th>'
+        +'</tr>'; 
+  $("#detailcon").html($title);
+  
+  
+  $.ajax({
+        type: "POST",
+        data: { time: time, ajax:1},
+        url: '/count/totallogindetail',
+        success: function (data) {  
+                        
+            if (data.code == 1) {
+              
+              
+              $.each(data.allrow, function (index, item) {
+                 $('#detailcon').append(
+                  '<tr bgcolor="#FFFFFF"> '  
+            +   ' <td>'+item.loginno+'</td>'
+            +   ' <td>'+item.time+'</td>'
+            +  '</tr>'   
+                 );
+                
+                
+              });
+              
+                return;
+            } else  {
+                alert('未知错误！');
+            }
+        }
+    });
+              
+  popWin("detail");
+}
+</script>
+{/literal}
+</head>
+
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption >
+  	<h3>{$counttitle}</h3>
+  </caption>
+  <tr>
+    <td>服务器选择：</td>
+    <form method="POST" action="/count/countreg" id="countreg">
+    <td colspan="1">
+      <select name="ipcno" id="ipcno">
+        {foreach $ipcno as $v}
+        <option value="{$v['ipcno']}">{$v['ipcno']}</option>
+        {/foreach}
+      </select>
+    </td>
+    <td>
+      <input type="submit" value="查询" id="pointer"/>
+    </td>
+    </form>
+  </tr>
+  {if isset($clist)}
+  <tr  bgcolor="#417eb7">
+    <th>日期</th>
+    <th>服务器</th>
+    <th>注册页访问次数</th>
+    <th>发送验证码次数</th>
+    <th>提交次数</th>
+    <th>注册成功次数</th>
+    <th>失败次数</th>
+    <th>注册详情</th>
+    <th>登录详情</th>
+  </tr>
+  
+  {foreach $clist as $v}
+  <tr bgcolor="#FFFFFF">    
+    <td>{$v.day}</td>
+    <td>{$v.train}</td>
+    <td>{$v.rnum}</td>
+    <td>{$v.sendsms}</td>
+    <td>{$v.submit}</td>
+    <td>{$v.success}</td>
+    <td>{$v.fail}</td>
+    <td><a href="#" name="{$v.day}" type="{$v.train}" onclick="show(this.name,this.type)">查看</a></td>
+    <td><a href="#" name="{$v.day}" type="{$v.train}" onclick="showlogin(this.name,this.type)">查看</a></td>
+  </tr>
+  {/foreach}
+  {else}
+  <tr  bgcolor="#417eb7">
+    <th>日期</th>
+    <th>注册页访问次数</th>
+    <th>发送验证码次数</th>
+    <th>提交次数</th>
+    <th>注册成功次数</th>
+    <th>失败次数</th>
+    <th>注册详情</th>
+    <th>登录详情</th>
+  </tr>
+  {foreach $totallist as $v}
+  <tr bgcolor="#FFFFFF">    
+    <td>{$v.day}</td>
+    <td>{$v.rnum}</td>
+    <td>{$v.sendsms}</td>
+    <td>{$v.submit}</td>
+    <td>{$v.success}</td>
+    <td>{$v.fail}</td>
+    <td><a href="#" name="{$v.day}" onclick="totalshow(this.name)">查看</a></td>
+    <td><a href="#" name="{$v.day}" onclick="totalshowlogin(this.name)">查看</a></td>
+  </tr>
+  {/foreach}
+  {/if}
+</table>
+
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1{$ipc}">&laquo;First</a></li> 
+
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}{$ipc}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}{$ipc}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}{$ipc}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}{$ipc}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}{$ipc}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+  </ul>
+</div>
+
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:365px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>
+		
+		 
+		</table>
+	</div>
+</div>
+
+
+
+</body>
+</html>

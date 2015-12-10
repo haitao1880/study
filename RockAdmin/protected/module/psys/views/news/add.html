@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+<link href="{$psys_js}lib/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="{$psys_js}lib/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" href="{$psys_js}/kindeditor/themes/default/default.css" />
+<script charset="utf-8" src="{$psys_js}/kindeditor/kindeditor-min.js"></script>
+<script charset="utf-8" src="{$psys_js}/kindeditor/lang/zh_CN.js"></script>
+
+{literal}
+<style>
+.add-table {width:90%;margin:0 auto;line-height:2.5;min-width:1200px;}
+.add-table caption {padding:25px;}
+.add-table h3 {font-size:16px;color:#333;}
+.add-table th {color:#bfeaf5;}
+.add-table tr {color:#333;text-align:center;}
+.add-table a:hover {color:#f00;}
+.tbody:hover {background:#d4eaff;color:#333;text-align:center;}
+.add-table input[type="text"] {border:1px solid #a9a9a9;width:210px;}
+.add-table input[type="password"] {border:1px solid #a9a9a9;width:210px;}
+
+.check-box {margin-top:-1px;}
+.check-box, label {vertical-align:middle;}
+button {padding:3px;margin-top:-1px;border:1px solid #900;}
+.add-table {line-height:1.8;min-width:30%;}
+.jCalendar{ min-width:0px;}
+.pages {margin-top:50px;width:100%;text-align:center;}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){	  
+	$("#datepicker").datepicker();	
+	$('#btnSave').click(function() {
+		var news_type = $("#news_type").val();
+		var title = $.trim($("input[name='title']").val());
+		var ctime = $.trim($("input[name='ctime']").val());
+		var content = $("#content").html();
+		if (news_type == 0) {
+			alert('请选择新闻类别！');
+			return false;
+		}
+		if(title == '')
+		{
+			alert('请输入文章标题');
+			return false;
+		}
+		
+		if(ctime == '')
+		{
+			alert('请选择新闻上传时间！');
+			return false;
+		}
+		/*if(content == '')
+		{
+			alert('文章内容不能为空！');
+			return false;
+		}*/
+	});
+});
+
+    var editor;
+	KindEditor.ready(function(K) {
+		editor = K.create('textarea[name="ndetail"]', {
+			uploadJson : '/news/uploadfile?ajax=1',
+			fileManagerJson : '/php/file_manager_json.php',
+			allowFileManager : true,
+			newlineTag :'br',
+			filterMode : true
+		});				
+		var uploadbutton = K.uploadbutton({
+			button : K('#image3')[0],
+			fieldName : 'imgFile',
+			url : '/news/uploadfile?dir=image&ajax=1&istmp=1',
+			afterUpload : function(data) {
+				alert(url);
+				if (data.error === 0) {
+					var url = K.formatUrl(data.url, 'absolute');
+					
+					K('#imgurl').val(url);
+				} else {
+					alert(data.message);
+				}
+			},
+			afterError : function(str) {
+				alert('自定义错误信息: ' + str);
+			}
+		});
+		uploadbutton.fileBox.change(function(e) {
+			uploadbutton.submit();
+		});
+	});
+</script>
+{/literal}
+</head>
+<body>
+<div style="display: none;" id="isadd">{$isadd}</div>
+<form method="post"  id="newsfrom" action="/news/{$action}">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <input type="hidden" name="news_id" value="{$new.id}">
+  <caption>
+  <h3>新增新闻</h3>
+  </caption>
+  <tr>
+  	<td colspan="2" >
+  		<table width="900" border="0" cellpadding="0" cellspacing="0" >
+		  <tr>
+		    <td align="right"  width="150" >类别：</td>
+		    <td align="left">
+		    	<select name="news_type" id='news_type'>
+		 			 <option value="0" {if $new.newstype eq 0}selected="selected"{/if}>请选择</option>
+		 			{foreach $new_type as $key=>$item}
+					  <option value="{$key}" {if $key eq $cid}selected="selected"{/if} {if $key eq $new.newstype}selected="selected"{/if}>{$item}</option>
+					{/foreach}
+		     	</select>
+		    </td>
+		   
+		  </tr>
+		   <td align="right">标题：</td>
+		    <td align="left">
+		    	<input name="title" type="text" value="{$new.title}" />
+		    </td>
+		    
+		  </tr>
+		  <tr>
+		  <td align="right">标题图片：</td>
+		    <td align="left">
+		    	<input name="imgurl" id="imgurl" type="text"  value="{$new.imgurl}"/>
+				<input type="button" id="image3" value="选择图片" style="clear:both;"/>
+		        <font color='red'>*标题图片请用180*120等比例图片上传。</font>
+		    </td>		   
+		  </tr>
+		  <tr>
+		   <td align="right">作者：</td>
+		    <td align="left">
+		    	<input name="author" type="text"  value="{$new.author}"/>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td align="right">来源：</td>
+		    <td align="left">
+		    	<input name="nfrom" type="text"  value="{$new.nfrom}"/>
+		    </td>
+		   
+		  </tr>
+		  <tr>
+		   <td align="right">发布日期：</td>
+		    <td align="left">
+		    	<input type="text" name="ctime" id="datepicker"  value="{$datetime}"/>
+		    </td>
+		  </tr>
+		  <tr>
+    <td align="right"  width="150" >是否启用：</td>
+    <td align="left">
+    	<input type="radio" name="flag" value="1" {if $new.flag eq 1}checked="checked"{/if} />是　　
+    	<input type="radio" name="flag" value="0" {if $new.flag eq 0}checked="checked"{/if} />否
+    </td>
+  </tr>
+  <tr>
+    <td  align="right">内容：</td>
+    <td  align="left">
+    	<textarea name="ndetail" id="content" style="width:800px;height:400px;visibility:hidden;">{$new.content}</textarea><font color='red'>*图片请从本地上传,图片规格见意640*400。</font>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+    	<input type="submit"  id="btnSave" name="btnSave" value="保 存" />
+    	<input type="button" style="margin-left:20px;" onclick="window.location.href = '/news/'" value="返回列表" />
+    </td>
+  </tr>
+		</table>
+  	</td>
+  </tr>
+  <!--  
+  <tr>
+    <td  align="right">排序：</td>
+    <td  align="left">
+    	<input type="text" name="sort" value="{$new.sort}"/>
+    </td>
+  </tr>
+   -->
+  
+  
+</table>
+</html>

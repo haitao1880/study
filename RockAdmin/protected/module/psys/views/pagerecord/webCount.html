@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>新流程3</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="{$psys_js}mytc.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+{literal}
+<style type="text/css">
+*{margin:0;padding:0;font-size:14px;text-decoration:none}
+td{width:190px;}
+
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#pointer{
+  cursor:pointer;
+}
+</style>
+{/literal}
+</head>
+
+<body>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  	<h3>WEB流程</h3>
+  </caption>
+  
+  <tr bgcolor="#ABCDEF">
+    <form method="post" action="/pagerecord/webCount" enctype="multipart/form-data">
+	   <td>车站选择：</td>
+	    <td colspan="1">
+	      <select name="stationid">
+	      	{foreach $stations as $key=> $v}
+	        <option value="{$key}" {if $stationid eq $key}selected{/if}>{$v}</option>
+	        {/foreach}
+	      </select>
+	    </td>
+	    <td>
+	      <input type="submit" value="查询" />
+	    </td>
+   </form>
+   
+  </tr>
+
+  <tr bgcolor="#417eb7">
+  	<td>日 &nbsp; 期</td>
+  	
+  	<td>广告页1/uv</td>
+  	<td>注册页/uv</td>
+  	<td>新注册/uv</td>
+  	<td>广告页2/uv</td>
+  	<td>sindex/uv</td>
+  	<td>train下载/uv</td>
+  	<td style="width:150px">详情</td>
+  </tr>
+  {foreach $totallist.all as $key=> $v}
+  <tr bgcolor="#FFF">
+  	<td>{$key}</td>
+  	<td>{$v.1.data.88.num}</td>
+  	<td>{$v.2.data.88.num}</td>
+  	<td>{$v.3.data.88.num}</td>
+  	<td>{$v.4.data.88.num}</td>
+  	<td>{$v.5.data.88.num}</td>
+  	<td>{$v.6.data.88.num}</td>
+  	<td><a href="javascript:;" onclick="show_detail('{$key}','{$v.1.appkey}')">查看</a></td>
+  </tr>
+  {/foreach}
+</table>
+<div class="pages">
+   <ul class="pagination-digg">
+   {$showpage}
+  </ul>
+</div>
+    
+    
+    
+<div id="detail">
+	<div class="tit"><i class="close">关闭</i></div>
+	<div class="showdetail" style="height:365px; overflow-y:auto;">
+		<table style="min-width: 600px;" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec" id='detailcon'>	
+                    
+                </table>
+	</div>
+</div>
+    {literal}
+    <script>
+
+function show_detail(date,appkey)
+{
+    $("#detailcon").empty();
+    $("#detailcon").load("/pagerecord/getOneDate?date="+date+"&appkey="+appkey);
+    popWin("detail");
+}
+$(function(){
+	    $('.close').click(function(){
+	     $('#maskLayer').hide();
+            });
+	 });
+
+</script>
+{/literal}
+
+{literal}
+<style type="text/css">
+*{margin:0;padding:0;font-size:14px;text-decoration:none}
+td{width:190px;}
+/* detail */
+#detail{position:absolute;width:800px;height:400px;border:1px solid #ccc;background:#efefef;display:none; }
+#detail .tit{background:#ddd;display:block;height:33px;cursor:move;}
+#detail .tit i{float:right;line-height:33px;padding:0 8px;cursor:pointer;}
+#pointer{
+  cursor:pointer;
+}
+</style>
+{/literal}
+
+</body>
+</html>

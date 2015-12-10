@@ -1,0 +1,24 @@
+<div id="tc_noLogin" style="display: none">
+    <div class="tc_mod_bg"></div>
+    <div class="tc_cont_mod">
+        <div class="tc_cont_up"></div>
+        <div class="tc_cont_mid">
+            <div class="tc_mid_up">
+                <div class="tc_up_left">温馨提示</div>
+                <div class="tc_up_right"><a href="javascript:;" id="tc_gb" title="关闭提示" onclick="colse();"></a></div>
+            </div>
+            <div class="ts_pul">
+                <div class="tc_dlts">当前操作需登录</div>
+                <div class="tc_dl_mod"><a class="tc_dl_a" href="/">登 录</a></div>
+            </div>
+        </div>
+        <div class="tc_cont_down"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    {literal}
+    function colse() {
+        $('#tc_noLogin').hide();
+    }
+    {/literal}
+</script>

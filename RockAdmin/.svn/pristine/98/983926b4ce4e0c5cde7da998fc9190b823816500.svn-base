@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>车站全屏广告列表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+{literal}
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".delads").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var id= $(this).attr('stationads_id');
+			$.ajax({
+	            type: "POST",
+	            url: "/fullads/delete",
+	            data: {'ajax':1,'ispost':1,'id':id},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('删除成功！');
+						window.location.href = '/fullads/index';
+					}
+					else
+					{
+						alert('删除失败！');				
+					}
+	            }       
+	        });	
+		}
+		});
+	$(".toggleads").click(function(){
+		if(confirm('确认执行此操作？'))
+		{
+			var id= $(this).attr('stationads_id');
+			var flag= $(this).attr('flag');
+			$.ajax({
+	            type: "POST",
+	            url: "/fullads/toggleads",
+	            data: {'ajax':1,'ispost':1,'id':id,'flag':flag},
+	            dataType: "json",
+	            success: function(data){
+					if(data.result == 'SUCCESS')
+					{
+						alert('审核状态切换成功！');
+						window.location.href = '/fullads/index';
+					}
+					else
+					{
+						alert('审核状态切换失败！');				
+					}
+	            }       
+	        });	
+		}
+		});
+});
+</script>
+{/literal}
+</head>
+<body>
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>车站全屏广告列表</h4></caption>
+<tr>
+    <form method="post" action="/fullads/index" enctype="multipart/form-data">
+	    <td>车站名</td>
+	    <td>
+	   		<select name="appkey">
+	   			<option value="" {if $appkey eq ''} selected {/if}>所有站</option>
+	   		 	{foreach $stations as $key=>$v}
+	   		 	<option value="{$v.appkey}" {if $appkey eq $key} selected {/if}>{$v.name}</option> 
+				{/foreach}
+    		</select> 
+	    </td>
+	    <td>
+	      <input type="submit" value="查询" />
+	    </td>
+    </form> 
+</tr>
+<tr class="table-head" bgcolor="#2d68a0">
+    <th>车站名</th>
+    <th>广告一</th>
+    <th>广告二</th>
+    <th>操作</th> 
+</tr>
+{foreach $list as $key=>$v}
+<tr class="tbody" bgcolor="#FFFFFF">
+    <td>{$key}:{$v.name}</td>
+    <td>{$v.adsone}</td>
+    <td>{$v.adstwo}</td>
+    <td><a href="/fullads/edit/{$v.id}">编辑</a> <a class='delads' stationads_id="{$v.id}">删除</a><a class='toggleads' stationads_id="{$v.id}" flag="{$v.flag}">{if $v.flag eq 1} 禁用{else} 通过{/if}</a></td>
+</tr>
+{/foreach}
+</table>
+</body>
+</html>

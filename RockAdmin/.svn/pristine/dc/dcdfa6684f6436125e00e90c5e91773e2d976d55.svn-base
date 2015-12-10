@@ -1,0 +1,110 @@
+<?php
+class Psys_ResourceRule extends Psys_DbAbstractRule
+{
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	/**
+	 * 游戏或app下载概况数据
+	 * @param [type] $sdate   起始时间
+	 * @param [type] $edate   结束时间
+	 * @param [type] $station 车站id
+	 * @param [type] $type    类型
+	 */
+	public function DownAppData($sdate,$edate,$station,$type,$page,$pagesize,$is_graph=0){
+		$parms = array($sdate,$edate,$type);
+		$offset = ($page-1)*$pagesize;
+		if ($station) {
+			array_push($parms,$station);
+			$sql = "SELECT	
+						appname,
+						stationid,
+						appid,
+						sum(num) as num
+					FROM
+						rha_downapp
+					WHERE
+						(date BETWEEN ? AND ? )
+					AND type = ?
+					AND stationid = ?
+					AND action = 'downapp'
+					GROUP BY
+						appid
+					ORDER BY sortid ASC";
+		}else{
+			$sql = "SELECT	
+						appname,
+						appid,
+						sum(num) as num
+					FROM
+						rha_downapp
+					WHERE
+						(date BETWEEN ? AND ? )
+					AND type = ?
+					AND action = 'downapp'
+					GROUP BY
+						appid
+					ORDER BY sortid ASC";
+		}
+		$sql_c = "SELECT count(*) FROM ($sql) as c";
+		
+		if (!$is_graph) {
+			$sql .= " LIMIT $offset,$pagesize";
+		}
+		
+		$allnum = $this->FetchColOne($sql_c,$parms);
+		$allrow = $this->Query($sql,$parms);
+		return array('allrow'=>$allrow,'allnum'=>$allnum);
+	}
+
+
+	/**
+	 * 游戏或app下载详情
+	 * @param [type] $appid   app或游戏的id
+	 * @param [type] $station 车站id
+	 * @param [type] $sdate   起始时间
+	 * @param [type] $edate   结束时间
+	 */
+	public function DwonAppInfo($appid,$station,$sdate,$edate)
+	{
+		$parms = array($sdate,$edate);
+		if ($station) {
+			array_push($parms,$station);
+			array_push($parms,$appid);
+			$sql = "SELECT
+						date,
+						num,
+						descript,
+						appname
+					FROM
+						rha_downapp
+					WHERE
+						(date BETWEEN ? AND ? )
+						AND stationid = ?
+						AND appid = ?
+					ORDER BY
+						date ASC";
+		}else{
+			array_push($parms,$appid);
+			$sql = "SELECT
+						date,
+						num,
+						descript,
+						appname
+					FROM
+						rha_downapp
+					WHERE
+						(date BETWEEN ? AND ? )
+						AND appid = ?
+					ORDER BY
+						date ASC";
+		}
+		$sql_c = "SELECT count(*) FROM ($sql) as c";
+		
+		$allnum = $this->FetchColOne($sql_c,$parms);
+		$allrow = $this->Query($sql,$parms);
+		return array('allrow'=>$allrow,'allnum'=>$allnum);
+	}
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>火伴平台-浏览数据统计</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/style/en/default/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/style/en/default/css/bootstrap-responsive.min.css" />
+        <link rel="stylesheet" href="/style/en/default/css/uniform.css" />
+        <link rel="stylesheet" href="/style/en/default/css/select2.css" />
+        <link rel="stylesheet" href="/style/en/default/css/matrix-style.css" />
+        <link rel="stylesheet" href="/style/en/default/css/matrix-media.css" />
+        <link rel="stylesheet" href="/style/en/default/css/font-awesome/css/font-awesome.css" />       
+
+    </head>
+    <body>
+{{include file="header.html"}}
+
+<!--sidebar-menu-->
+{{include file="menu.html"}}
+<!--close-left-menu-stats-sidebar-->
+
+    <iframe id="content" frameborder="0" src="" name="content"></iframe>
+
+    <script src="/style/en/default/js/jquery.min.js"></script> 
+    <script src="/style/en/default/js/jquery.ui.custom.js"></script> 
+    <script src="/style/en/default/js/bootstrap.min.js"></script> 
+    <script src="/style/en/default/js/jquery.uniform.js"></script> 
+    <script src="/style/en/default/js/select2.min.js"></script> 
+    <script src="/style/en/default/js/jquery.dataTables.min.js"></script> 
+    <script src="/style/en/default/js/DatePicker/datePicker.js"></script>
+    <script src="/style/en/default/js/matrix.js"></script> 
+    <script src="/style/en/default/js/matrix.tables.js"></script>
+    <script src="/style/en/default/js/highcharts.js"></script>
+    <script src="/style/en/default/js/exporting.js"></script>
+    <script src="/style/en/default/js/export-excel.js"></script>
+
+    <script src="/style/en/default/js/function.js"></script>
+    <script src="/style/en/default/js/icheck.min.js"></script>
+    <script>
+    
+        // JavaScript Document
+$(function(){
+	
+	var mainHeight = parseInt($("body").css("height")) - 76;
+	$("#main").css("height",mainHeight + "px");
+	var imgLink,
+	    history = $('#lifirst');
+	/*$("#top_nav").find("li").hover(function(){
+		imgLink = $(this).find("img").eq(0).attr('src');
+		imgLink = imgLink.slice(0,-4) + "_h.jpg";
+		$(this).find("img").eq(0).attr('src', imgLink);
+		$(this).find("h4").eq(0).css('color', '#5cccff');
+		$(this).find(".point").eq(0).css('visibility', 'visible');
+	},function(){
+		imgLink = $(this).find("img").eq(0).attr('src');
+		imgLink = imgLink.slice(0,-6) + ".jpg";
+		$(this).find("img").eq(0).attr('src', imgLink);
+		$(this).find("h4").eq(0).css('color', '#fff');
+		$(this).find(".point").eq(0).css('visibility', 'hidden');
+	});	*/
+	$("#top_nav").find("li").click(function(){		
+		if(history != this){
+			imgLink = $(this).find("img").eq(0).attr('src');
+			imgLink = imgLink.slice(0,-4) + "_h.jpg";
+			$(this).find("img").eq(0).attr('src', imgLink);
+			$(this).find("h4").eq(0).css('color', '#5cccff');
+			$(this).find(".point").eq(0).css('visibility', 'visible');
+			if(history != ""){	
+				imgLink = $(history).find("img").eq(0).attr('src');
+				imgLink = imgLink.slice(0,-6) + ".jpg";
+				$(history).find("img").eq(0).attr('src', imgLink);
+				$(history).find("h4").eq(0).css('color', '#fff');
+				$(history).find(".point").eq(0).css('visibility', 'hidden');
+			}
+			history = this;
+			
+			var cur = $(this).attr('data-value');
+			$('.aside').hide();
+			$('.aside').each(function(){
+				if($(this).attr('data-value') == cur)
+				{
+					$(this).show();
+					return;
+				}
+			});
+		}
+		
+	});
+	
+	var iframeWidth = parseInt($("body").css("width")) - 187 -5;
+	$("iframe").css("width", iframeWidth + "px");
+	window.onresize = function(){
+		iframeWidth = parseInt($("body").css("width")) - 187 -5;
+		$("iframe").css("width", iframeWidth + "px");
+	}
+});
+    
+    
+    </script>
+    
+    </body>
+</html>
+  

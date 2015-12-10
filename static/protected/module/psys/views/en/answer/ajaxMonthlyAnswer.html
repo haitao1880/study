@@ -1,0 +1,69 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div style="font-size:13px;color:green;"><b>游戏列表</b>：{{foreach $gamelist as $k=>$v}}{{$v.answer}}，{{/foreach}}</div>
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr>
+                            <th>月 份</th>
+                            <th>启动次数</th>
+                            <th>提交次数</th>
+                            <th><span style="cursor:pointer;" title="您的性别？">问题01</span></th>
+                            <th><span style="cursor:pointer;" title="您的年龄？">问题02</span></th>
+                            <th><span style="cursor:pointer;" title="您的学历？">问题03</span></th>
+                            <th><span style="cursor:pointer;" title="您的职业？">问题04</span></th>
+                            <th><span style="cursor:pointer;" title="您的收入？">问题05</span></th>
+                            <th><span style="cursor:pointer;" title="您对使用本游戏平台的感受？">问题06</span></th>
+                            <th><span style="cursor:pointer;" title="您是否喜欢玩手机游戏吗？">问题07</span></th>
+                            <th><span style="cursor:pointer;" title="您通常是通过什么平台下载手机游戏？">问题08</span></th>
+                            <th><span style="cursor:pointer;" title="在本游戏平台中是否有您感兴趣或喜欢的手机游戏？">问题09</span></th>
+                            <th><span style="cursor:pointer;" title="在本游戏平台中是否有搜索到您所需要的手机游戏？">问题10</span></th>
+                            <th><span style="cursor:pointer;" title="游戏是通过什么途径获得？">问题11</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                                <td style="text-align:center;">{{$v.month}}</td>
+                                <td style="text-align:center;">{{$v.start_times}}</td>
+                                <td style="text-align:center;">{{$v.submit_times}}</td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(1,'{{$v.answer_1}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的性别？">{{$v.answer_1}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(2,'{{$v.answer_2}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的年龄？">{{$v.answer_2}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(3,'{{$v.answer_3}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的学历？">{{$v.answer_3}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(4,'{{$v.answer_4}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的职业？">{{$v.answer_4}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(5,'{{$v.answer_5}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的收入？">{{$v.answer_5}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(6,'{{$v.answer_6}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您对使用本游戏平台的感受？">{{$v.answer_6}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(7,'{{$v.answer_7}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您是否喜欢玩手机游戏吗？">{{$v.answer_7}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(8,'{{$v.answer_8}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您通常是通过什么平台下载手机游戏？">{{$v.answer_8}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(9,'{{$v.answer_9}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="在本游戏平台中是否有您感兴趣或喜欢的手机游戏？">{{$v.answer_9}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(10,'{{$v.answer_10}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="在本游戏平台中是否有搜索到您所需要的手机游戏？">{{$v.answer_10}}</button></td>
+                                <td style="text-align:center;"><button style="width:100px;" type="button" onclick="getPie(11,'{{$v.answer_11}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="游戏是通过什么途径获得？">{{$v.answer_11}}</button></td>
+                            </tr>
+                        {{/foreach}}
+                        
+                        <tr>
+                            <td style="text-align:center;">总 计</td>
+                            <td style="text-align:center; color:red;">{{$total_start_times}}</td>
+                            <td style="text-align:center; color:red;">{{$total_submit_times}}</td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(1,'{{$total_01}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的性别？">{{$total_01}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(2,'{{$total_02}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的年龄？">{{$total_02}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(3,'{{$total_03}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的学历？">{{$total_03}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(4,'{{$total_04}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的职业？">{{$total_04}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(5,'{{$total_05}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您的收入？">{{$total_05}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(6,'{{$total_06}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您对使用本游戏平台的感受？">{{$total_06}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(7,'{{$total_07}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您是否喜欢玩手机游戏吗？">{{$total_07}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(8,'{{$total_08}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="您通常是通过什么平台下载手机游戏？">{{$total_08}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(9,'{{$total_09}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="在本游戏平台中是否有您感兴趣或喜欢的手机游戏？">{{$total_09}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(10,'{{$total_10}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="在本游戏平台中是否有搜索到您所需要的手机游戏？">{{$total_10}}</button></td>
+                            <td style="text-align:center; color:red;"><button style="width:100px;" type="button" onclick="getPie(11,'{{$total_11}}')" class="btn btn-default" data-toggle="modal" data-target="#myDataModal" title="游戏是通过什么途径获得？">{{$total_11}}</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

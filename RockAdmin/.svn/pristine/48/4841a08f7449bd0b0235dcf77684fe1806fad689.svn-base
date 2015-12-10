@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="{$psys_js}lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="{$psys_css}datepicker.css" rel="stylesheet" />
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".datepicker").datePicker({
+		inline:true,
+		selectMultiple:false
+	});
+	
+	$("#datepicker").datePicker({
+		clickInput:true
+	});	
+	
+});
+</script>
+</head>
+<body>
+
+<form method="post">
+<table class="add-table" width="100%" border="0" cellpadding="0"  >
+  <caption>
+  <h3>修改SIM卡信息</h3>
+  </caption>
+  <input type="hidden" name="id" value="{$id}">
+  <tr>
+    <td width="30%" align="right">卡&nbsp;&nbsp;号：</td>
+    <td width="70%" align="left"><input name="cardnum" type="text" value="{$cardnum}"/></td>
+  </tr>
+  <tr>
+    <td align="right">ICCID：</td>
+    <td align="left"><input name="iccid" type="text" value="{$iccid}"/></td>
+  </tr>
+  <tr>
+    <td align="right">PUK：</td>
+    <td align="left"><input name="puk" type="text" value="{$puk}"/></td>
+  </tr>
+  <tr>
+    <td align="right">服务器编号：</td>
+    <td align="left"><input name="" type="text" value="{$puk}"/></td>
+  </tr>
+  <tr>
+    <td  align="right">激活日期：</td>
+    <td  align="left">
+    	<input type="text" name="activation" value="{$activation}" id="datepicker" />
+    </td>
+  </tr>
+  <tr>
+    <td  align="right">下次续费时间：</td>
+    <td  align="left">
+    	<input type="text" name="renewaldate" value="{$renewaldate}" id="datepicker" />
+    </td>
+  </tr>
+  <tr>
+    <td  align="right">续费频率：</td>
+    <td  align="left">
+    	<input id="train-state" class="check-box" name="frequency" type="radio" value="1" {if $frequency eq 1}checked{/if}><label>月</label>
+        <input id="train-state" class="check-box" name="frequency" type="radio" value="2" {if $frequency eq 2}checked{/if}><label>季度</label>
+        <input id="train-state" class="check-box" name="frequency" type="radio" value="3" {if $frequency eq 3}checked{/if}><label>半年</label>
+        <input id="train-state" class="check-box" name="frequency" type="radio" value="4" {if $frequency eq 4}checked{/if}><label>一年</label>
+    </td>
+  </tr>
+  
+  <tr>
+    <td  align="right">备&nbsp;&nbsp;注：</td>
+    <td  align="left">
+    	<input type="text" name="remark" value="{$remark}" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><input type="submit" value="保 存"/></td>
+  </tr>
+</table>
+</form>
+
+</body>
+</html>

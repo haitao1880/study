@@ -1,0 +1,30 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-23 15:23:57
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//index/main.html" */ ?>
+<?php /*%%SmartyHeaderCode:15256966925499188da24263-61656229%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '168e04d0f2f5899f22dc4f3ec8cdae50d5f814d2' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//index/main.html',
+      1 => 1407132457,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '15256966925499188da24263-61656229',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>main-train admin's center</title>
+</head>
+<body><div style="text-align:center;margin:150px 0px 0px 0px;">
+welcome rockhippo train admin center.........
+</div>
+</body>
+</html>

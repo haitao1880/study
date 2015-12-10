@@ -1,0 +1,194 @@
+{include file="shared/theader.html" pagetitle="点卡服务"}
+
+ <!--cont start-->
+            <div class="cont_tab_mod">
+{literal}          
+<script type="text/javascript">
+    $(document).ready(function () {
+        pagechange(1);
+    });
+</script>
+{/literal}
+<!--cont start-->
+<div class="cont_tab_fist">
+    <div class="div">按面额查询</div>
+    <div class="div_select">
+        <select id="txtCardType" class="cont_select" data-value="0">
+        	<option value='0'>请选择</option>
+        	{section name=i loop=$c_list}
+			<option value ="{$c_list[i]['corn']}">{$c_list[i]['corn']}</option>
+			{/section}
+        </select>
+    </div>
+    <div class="div_btn">
+        <input class="cx_btn" type="button" value="查 询" onclick="pagechange(1)" />
+    </div>
+</div>
+<div class="cont_tab">
+    <table  width="100%" border="0" class="tab_czkgl" cellpadding="0" cellspacing="0"  id="data"  >
+        <tr class="tr" align="center" height="30">
+            <td width="24%">序列号</td>
+            <td width="24%">充值卡号</td>
+            <td width="24%">单价</td>
+            <td width="24%">状态 </td>
+        </tr>
+            <tr class="r" align="center" height="30">
+                <td>13</td>
+                <td>2111</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="2111" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+            <tr class="r" align="center" height="30">
+                <td>16</td>
+                <td>4256</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="4256" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+            <tr class="r" align="center" height="30">
+                <td>17</td>
+                <td>5779</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="5779" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+            <tr class="r" align="center" height="30">
+                <td>19</td>
+                <td>9207</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="9207" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+            <tr class="r" align="center" height="30">
+                <td>23</td>
+                <td>2114</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="2114" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+            <tr class="r" align="center" height="30">
+                <td>24</td>
+                <td>2526</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="2526" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+            <tr class="r" align="center" height="30">
+                <td>26</td>
+                <td>7821</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="7821" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+            <tr class="r" align="center" height="30">
+                <td>32</td>
+                <td>6156</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="6156" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+            <tr class="r" align="center" height="30">
+                <td>34</td>
+                <td>8019</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="8019" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+            <tr class="r" align="center" height="30">
+                <td>35</td>
+                <td>5653</td>
+                <td>10.00元</td>
+                <td align="center"><a class="editlink" onclick="isSale(this)"  title="5653" class="tab_cs" href="javascript:;">出售</a></td>
+            </tr>
+        <tr class="pager">
+            <td colspan="25" class="pager1" >
+                  <div class="page_numbers_container">共找到<span><b>1529</b></span>记录，每页<span>10</span>条记录&nbsp;&nbsp;</div>
+            </td>
+        </tr>
+
+    </table>
+    <table class="hidDiv" pageCount="1529" countPer="10">
+        <tr class="newRow" align="center">
+            <td column="id"></td>
+            <td column="serialNo"></td>
+            <td column="price"></td>
+            <td align="center"><a class="editlink" title="" onclick="isSale(this);" class="tab_cs" href="javascript:;">出售</a></td>
+        </tr>
+    </table>
+</div>
+<!--cont end-->
+{literal}
+<script type="text/javascript">
+    function SaleCard(obj) {
+        var tr = $(obj).parent('td').parent('tr');
+        alert($(obj).attr('title'));
+        $.ajax({
+            type: "POST",
+            data: { cardNo: $(obj).attr('title') ,ajax:1},
+            url: '/Card/Sale',
+            success: function (data) {
+				
+                if (data.Code == 0 && data.result == "true") {
+                    tr.remove();
+                    window.location.reload();
+                } else {
+                    alert(data.result);
+                }
+            }
+        });
+    }
+
+    function pagechange(page) {
+        var url = '/Card/CardList';
+        $('#data .r').remove();
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { corn: $("#txtCardType").val(),page:page,ajax:1 },
+            dataType: 'json',
+            cache: false,
+            success: function (data) {
+                
+                if (data.Code == -100) {
+                    window.location.href = "/Login.html";
+                }
+                //  $('#data .r').remove();
+                $('.pager1 .page_numbers_container').html('');
+                if (data.Code >= 0) {
+                    $.each(data.allrow, function (index, item) {
+                        var row = $('.newRow').clone().removeClass('newRow').addClass('r');
+                        $.each(item, function (key, value) {
+							
+                            var val = value ;
+                            if (key == "price") {
+                                val = value + "元";
+                            }
+                            
+                            $('td[column="' + key + '"]', row).html(val);
+                            if (key == "id") {
+                                $('a', row).attr('title', val);
+                            }
+                        });
+                       
+                        row.insertBefore($('.pager'));
+                    });
+					var total = data.allnum;
+					var count = data.pagesize;
+					$('.hidDiv').attr('pageCount',total);
+        			$('.hidDiv').attr('countPer',count);
+                    rockPaging(count, '.pager', '.pager1', total, page);
+
+                } else {
+                    //  alert(data.results);
+
+                }
+            }
+
+        });
+    }
+    function isSale(obj) {
+        var r = confirm("你确定要出售此条码吗？");
+        if (r == true) {
+            SaleCard(obj);
+        }
+    }
+</script>
+{/literal}
+
+            </div>
+            <!--cont end-->
+
+
+{include file="shared/footer.html"}

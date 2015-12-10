@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css"/>
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+<script type="text/javascript" src="{$psys_js}lib/jquery-1.11.1.js"></script>
+</head>
+
+<body>
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  <h3>设备管理</h3>
+  </caption>
+  <tr  bgcolor="#417eb7">
+    
+    <th>编号</th>
+    <th>车站</th>
+    <th>车厢</th>
+    <th>车上</th>
+    <th>sim卡号</th>
+    <th>上线时间</th>
+    <th>下线时间</th>
+    <th>录入时间</th>
+    <th>监控</th>
+    <th>负责人</th>
+    <th>操作</th>
+  </tr>
+  {foreach $list as $v}
+  <tr bgcolor="#FFFFFF">    
+   
+    <td>{$v.ipcno}</td>
+    <td>{$v.train}</td>
+    <td>{$v.car}</td>
+    <td>{$v.floor}</td>
+    <td>{$v.simno}</td>
+    <td>{$v.onlinetime}</td>
+    <td>{$v.offlinetime}</td>
+    <td>{$v.ctime|date_format:'%Y-%m-%d'}</td>
+    <td>{if $v.monitor eq 0}否{else}是{/if}</td>
+    <td>{$v.leader}</td>
+    <td><a href="#">硬件</a>&nbsp;&nbsp;<a href="#">权限</a>&nbsp;&nbsp;<a href="/ipc/edit?id={$v.ipcno}">编辑</a></td>
+  </tr>
+  {/foreach}
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+    <!--  
+    <li class="del">
+   		<button type="submit" name="submit" class="but">DELETE</button>
+    </li> 
+    -->   
+  </ul>
+</div>
+</body>
+</html>

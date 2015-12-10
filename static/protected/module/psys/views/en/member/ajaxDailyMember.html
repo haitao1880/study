@@ -1,0 +1,35 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <table class="table form-horizontal">
+                    <thead>
+                        <tr><th>日 期</th><th>开启平台新用户</th><th>开启平台老用户</th><th>开启平台用户数</th></tr>
+                    </thead>
+                    <tbody>
+                        {{foreach $data as $k=>$v}}
+                            <tr>
+                            <td style="text-align:center;">{{$v.day}}</td>
+                            <td style="text-align:center;">{{$v.new_user}}</td>
+                            
+                            <td style="text-align:center;">{{$v.old_user}}</td>
+                            <td style="text-align:center;">{{$v.active_user}}</td>
+                            </tr>
+                        {{/foreach}}
+                            <tr>
+                            <td style="text-align:center;"><b>总 计</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_new_user}}</b></td>
+                            
+                            <td style="text-align:center;"><b style="color:red;">{{$total_old_user}}</b></td>
+                            <td style="text-align:center;"><b style="color:red;">{{$total_active_user}}</b></td>
+                            </tr>
+                            <tr><td colspan="4"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+            

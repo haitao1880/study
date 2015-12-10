@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>地区列表</title>
+<link type="text/css" rel="stylesheet" href="{$psys_css}public.css" />
+<link type="text/css" rel="stylesheet" href="{$psys_css}table.css" />
+</head>
+<body>
+<form action="/region/del" method="get">
+<table class="hovertable" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#417eb7"  >
+<caption><h4>地区列表</h4></caption>
+<tr class="table-head" bgcolor="#2d68a0">
+	<th>ID</th>
+    <th>Parent ID</th>
+    <th>名称</th>
+    <th>等级</th>
+    <th>首字母</th>
+    <th>拼音</th>
+ 	<th>简拼</th>
+    <th>排序</th>
+ 	<th>热门</th>
+    <th>操作</th>  
+</tr>
+{foreach $list as $v}
+<tr class="tbody" bgcolor="#FFFFFF">
+	<td><input name="id[]" type="checkbox"  value="{$v.region_id}">{$v.region_id}</td>
+    <td>{$v.parent_id}</td>
+    <td>{if $v.top eq 0}{$v.region_name}{else}<font color="red">{$v.region_name}</font>{/if}</td>
+    <td>{$v.region_type}</td>
+    <td>{$v.initials}</td>
+    <td>{$v.pinyin}</td>
+	 <td>{$v.logogram}</td>
+     <td>{$v.order_id}</td>
+	 <td>{$v.top}</td>
+    <td>编辑 删除</td>
+</tr>
+{/foreach}
+</table>
+<div class="pages">
+  <ul class="pagination-digg">
+    
+   
+ <li class="previous"><a href="?page=1">&laquo;First</a></li>   
+{if $cur_page gt 1}
+  <li class="previous"><a href="?page={$cur_page-1}">&laquo;Previous</a></li>
+{else}
+  <li class="previous-off"> &laquo;Previous</li>
+{/if}
+	{if $endNum lt $allpage}	
+         {for $p=$startNum to $endNum}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for} 
+     {else}
+        {for $p=$startNum to $allpage}
+                
+                     {if $cur_page eq $p}
+                     <li class="active">{$p}</li>
+                     {else}
+                     <li><a href="?page={$p}">{$p}</a></li> 
+                     {/if}
+                   
+          {/for}     
+     {/if}     
+        
+{if $cur_page lt $allpage}
+    <li class="next">
+    <a href="?page={$cur_page+1}">Next &raquo;</a>
+    </li>
+{else}
+    <li class="next-off">
+    Next &raquo;
+    </li>
+{/if}
+   <li class="next">
+    <a href="?page={$allpage}">Last &raquo;</a>
+    </li>
+    <li class="next-off">
+   {$cur_page}/{$allpage} Page
+    </li>
+ 
+  </ul>
+</div>
+</form>
+</body>
+</html>

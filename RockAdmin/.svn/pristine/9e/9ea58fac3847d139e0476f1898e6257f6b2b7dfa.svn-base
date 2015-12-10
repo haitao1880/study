@@ -1,0 +1,169 @@
+<?php
+class Psys_PagerecordModel extends Psys_AbstractModel
+{
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	
+	function webCount()
+	{
+           $Psys_PagerecordRule = new Psys_PagerecordRule();
+           $max= $Psys_PagerecordRule->get_max_date(); 
+           $allnum= $this->get_allnum();
+        
+	}
+        /** 获取 日期列表数据 **/
+       function datelist($stationid,$page='1',$pagesize='0'){              
+            $Psys_PagerecordRule = new Psys_PagerecordRule();
+            $temp_max_date= $Psys_PagerecordRule->get_max_date(); //获取最大天数 date("Y-m-d",(strtotime($temp_max_date)))
+            $max_date=reqstr("date")?date("Y-m-d",(strtotime(reqstr("date"))+86400)):date("Y-m-d",(strtotime($temp_max_date)-($page-1)*$pagesize*86400));
+            
+            $min_date=reqstr("date")?reqstr("date"):date("Y-m-d",(strtotime($temp_max_date)-$page*$pagesize*86400));
+            $sql="select * from rha_pagerecord where date>='{$min_date}' and date <='{$max_date}' and appkey ='{$stationid}' order by date desc;";
+       
+            $query_data= $Psys_PagerecordRule->list_query($sql);
+            
+            $td_column=array(
+             //all($value['mos']=='88')的拼凑原则  键名：pageurl +eventurl +pagestate   
+                 "/index/index,/index/index,1"=>"a1",// 广告1打开
+                 "/index/register,/index/register,1"=>"a2",//注册页 UV
+                 "/index/register,/member/register,1"=>"a3",//注册页成功 UV
+                 "index/welcome,index/welcome,1"=>"a4",//广告页2/uv
+                 "index/sindex,index/sindex,1"=>"a5",//sindex/uv 
+                 "index/sindex,downApp,1"=>"a6",//下载APP统计 
+                //else 拼凑原则  //Android 1  //iphone2 //windows3
+                
+                
+                 "/index/index,/index/index,1,1"=>"a1a",// 广告1打开 -Android  1
+                 "/index/index,/index/index,1,2"=>"a1i",// 广告1打开 -iphone  2
+                 "/index/index,/index/index,1,3"=>"a1w",// 广告1打开 -windows  3
+                
+                 "/index/register,/index/register,1,1"=>"a2a",//注册页 UV -Android  1
+                 "/index/register,/index/register,1,2"=>"a2i",//注册页 UV -iphone  2
+                 "/index/register,/index/register,1,3"=>"a2w",//注册页 UV -windows  3
+                
+                
+                  "/index/register,/member/register,1,1"=>"a3a",//注册页成功 UV -Android  1
+                  "/index/register,/member/register,1,2"=>"a3i",//注册页成功 UV-iphone  2
+                  "/index/register,/member/register,1,3"=>"a3w",//注册页成功 UV -windows  3
+                
+                 "index/welcome,index/welcome,1,1"=>"a4a",//广告页2/uv -Android  1
+                 "index/welcome,index/welcome,1,2"=>"a4i",//广告页2/uv -iphone  2
+                 "index/welcome,index/welcome,1,3"=>"a4w",//广告页2/uv -windows  3
+                
+                 "index/sindex,index/sindex,1,1"=>"a5a",//sindex/uv 
+                 "index/sindex,index/sindex,1,2"=>"a5i",//sindex/uv 
+                 "index/sindex,index/sindex,1,3"=>"a5w",//sindex/uv 
+                
+                 "index/sindex,downApp,1,1"=>"a6a",//下载APP统计 
+                 "index/sindex,downApp,1,2"=>"a6i",//下载APP统计 
+                 "index/sindex,downApp,1,3"=>"a6w",//下载APP统计 
+                
+                //点击获取验证码 UV  
+                 "/index/register,/member/againgetphonecode,1,1"=>"a7a",//点击获取验证码 
+                  "/index/register,/member/againgetphonecode,1,2"=>"a7i",//点击获取验证码 
+                  "/index/register,/member/againgetphonecode,1,3"=>"a7w",//点击获取验证码 
+                
+                //点击获取验证码 成功  UV  
+                 "/index/register,/member/againgetphonecode,2,1"=>"a8a",//点击获取验证码 
+                  "/index/register,/member/againgetphonecode,2,2"=>"a8i",//点击获取验证码 
+                  "/index/register,/member/againgetphonecode,2,3"=>"a8w",//点击获取验证码 
+                
+                 //点击获取验证码 失败  UV  
+                 "/index/register,/member/againgetphonecode,3,1"=>"a9a",//点击获取验证码 
+                  "/index/register,/member/againgetphonecode,3,2"=>"a9i",//点击获取验证码 
+                  "/index/register,/member/againgetphonecode,3,3"=>"a9w",//点击获取验证码 
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                  
+                
+                
+            );
+           $data=array();
+        //  print_r($query_data);
+          // exit();
+           foreach($query_data as $value){
+               if($value['mos']=='88'){
+                   $key=$value["pageurl"].",".$value["eventurl"].",".$value["pagestate"];
+                    $data['all'][$value["date"]][$td_column[$key]]=$value["num"];
+                }else{
+                   
+                    $key=$value["pageurl"].",".$value["eventurl"].",".$value["pagestate"].",".$value["mos"];
+                     if(!empty($td_column[$key])){
+                      $data['detail'][$value["date"]][$td_column[$key]]=$value["num"];
+                    }
+               }
+            }
+        return $data;
+        }
+        
+        
+        
+       //获取 总条数
+       function get_allnum(){
+             $Psys_PagerecordRule = new Psys_PagerecordRule();
+             $max_date= $Psys_PagerecordRule->get_max_date(); //获取最大天数
+             $min_date= $Psys_PagerecordRule->get_min_date(); //获取最小天数
+             $date1 = strtotime( $max_date);
+             $date2 = strtotime($min_date);
+             $allnum = ceil(abs($date1 - $date2)/86400); //计算出总天数 
+            return  $allnum;
+        }
+    function openpage($baseurl='',$num = 12, $allnum = 200, $thepage,$other='', $addpage=3)
+	{
+                //分页计算公式
+              $allpage = intval ( ($allnum + $num - 1) / $num );
+              $indexpage=1;
+              $thepage= $thepage> $allpage? $allpage:($thepage<0?1:$thepage);   //当前页 
+              
+              $uppage = ($thepage - 1)<=1?false:($thepage - 1);                      //上一页 
+              
+              $addfirstpage=($thepage - $addpage)<1?1:($thepage - $addpage); //循环第一页
+               
+              $addendpage = ($thepage + $addpage)>$allpage?$allpage:($thepage + $addpage); //循环最后一页
+                
+              $nextpage = ($thepage + 1)>=$allpage?false:($thepage + 1);   //下一页
+                
+              $endpage=($indexpage==$allpage)?false:$allpage;
+              $show="";   
+              //生成首页  
+         if($indexpage){
+                  $show.="<li class='previous'><a href='{$baseurl}?page={$uppage}{$other}'>&laquo;First</a></li> ";
+         }
+              //生成上一页  
+              if($uppage){
+                $show.=" <li class='previous'><a href='{$baseurl}?page={$uppage}{$other}'>&laquo;Previous</a></li>";
+              }
+             
+                    for($i=$addfirstpage;$i<=$addendpage;$i++){
+                             $b="<li><a href='{$baseurl}?page={$i}{$other}'>{$i}</a></li> ";  //数字页 
+                              if($i==$thepage){
+                                   $b=" <li class='active'>{$i}</li>"; //本页 
+                               }
+                               if($i==$indexpage||$i==$allpage){}else{ 
+                                   $show.= $b;
+                                 }
+                           }
+                   
+               //生成下一页
+              if($nextpage){
+                  $show.=" <li class='next'> <a href='{$baseurl}?page={$nextpage}{$other}'>Next &raquo;</a> </li>" ;
+               }
+                //生成尾页
+                if($endpage){
+                    $show.=" <a href='{$baseurl}?page={$endpage}'>Last &raquo;</a></li>";
+               }
+               //生成总页码
+                $show.=" <li class='next-off'> {$thepage}/{$allpage} Page</li>";
+              return    $show;
+  }     
+}
+?>

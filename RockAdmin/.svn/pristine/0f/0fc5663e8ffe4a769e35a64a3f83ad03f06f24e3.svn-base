@@ -1,0 +1,104 @@
+<?php /* Smarty version Smarty-3.0.8, created on 2014-12-23 12:28:27
+         compiled From "/home/data/www/rockadmin/protected/module/psys/views//station/reg.html" */ ?>
+<?php /*%%SmartyHeaderCode:4359907325498ef6b48a772-79911716%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '8a67d56448323554f9adef7c984f48835a098979' => 
+    array (
+      0 => '/home/data/www/rockadmin/protected/module/psys/views//station/reg.html',
+      1 => 1419144593,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '4359907325498ef6b48a772-79911716',
+  'function' => 
+  array (
+  ),
+  'has_nocache_code' => false,
+)); /*/%%SmartyHeaderCode%%*/?>
+<?php $bbb='http';?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>设备管理-RTAC</title>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+public.css"/>
+<link type="text/css" rel="stylesheet" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+table.css" />
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+mytc.js"></script>
+<script type="text/javascript" src="<?php echo $_smarty_tpl->getVariable('psys_js')->value;?>
+lib/jquery.datePicker-min.js"></script>
+<link type="text/css" href="<?php echo $_smarty_tpl->getVariable('psys_css')->value;?>
+datepicker.css" rel="stylesheet" />
+
+<style type="text/css">
+	body{
+		margin:0;
+		padding:0;
+		font-size:12px;
+	}
+
+</style>
+
+</head>
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8cbec">
+  <caption>
+  	<h3>注册统计</h3>
+  </caption>
+  <tr>
+    <form method="post" action="/station/reg" enctype="multipart/form-data">
+	    <td>车站选择：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	        <select	name="stationid">
+	        <?php if ($_smarty_tpl->getVariable('stationid')->value==1){?>
+				<option value="1" selected="selected">青岛南</option>
+				<option value="2" >青岛北</option>
+			<?php }elseif($_smarty_tpl->getVariable('stationid')->value==2){?>
+				<option value="1">青岛南</option>
+				<option value="2" selected="selected">青岛北</option>
+			<?php }?>
+			</select>
+	    </td>
+	    <td>
+	      <input type="submit" value="查询"/>
+	    </td>
+    </form>
+  </tr>
+  <tr  bgcolor="#417eb7">
+    <th>日期</th>
+    <th>发送验证码</th>
+    <th>提交注册</th>
+    <th>注册成功/IOS</th>
+    <th>注册成功/Android</th>
+    <th>注册成功/WP</th>
+    <th>注册成功/ELSE</th>  
+  </tr>
+  <?php  $_smarty_tpl->tpl_vars['v'] = new Smarty_Variable;
+ $_From = $_smarty_tpl->getVariable('data')->value; if (!is_array($_From) && !is_object($_From)) { settype($_From, 'array');}
+if ($_smarty_tpl->_count($_From) > 0){
+    foreach ($_From as $_smarty_tpl->tpl_vars['v']->key => $_smarty_tpl->tpl_vars['v']->value){
+?>
+  <tr bgcolor="#FFFFFF">
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['date'];?>
+</td> 
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['getphonecode'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['submitreg'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['regsuccessios'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['regsuccessandroid'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['regsuccesswp'];?>
+</td>
+    <td><?php echo $_smarty_tpl->tpl_vars['v']->value['regsuccesselse'];?>
+</td>
+  </tr>
+  <?php }} ?>
+</table>
+</body>
+</html>

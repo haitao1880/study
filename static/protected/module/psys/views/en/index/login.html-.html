@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>login</title>
+<link rel="stylesheet" type="text/css" href="{{$psys_css}}avaHt.css"/>
+<script type="text/javascript" src="{{$psys_js}}jquery-1.10.2.min.js"></script>
+
+</head>
+<body class="login_body"> 
+<form action="/index/login" method="post">
+<div class="login_w100">
+  <div class="login_mod">
+  	<div class="login_w745">
+    	<div class="login_fist">
+        	<div class="login_fist_one"><span class="LogL">Username：</span><span class="LogR"><input  class="text" type="text" id="username" name="username" value=""/></span></div>
+            <div class="login_fist_one"><span class="LogL">Password：</span><span class="LogR"><input  class="text" type="password" id="password" name="password" value=""/></span></div>
+            
+			<div class="login_fist_one"><span class="LogL">Code：</span><span class="LogC"><input type="text" name="code" id="code" class="yzm" /></span><span><img id="imgcode" src="#" style="cursor: pointer;" onclick="refreshcode();" /></span></div>
+			<div class="login_fist_btn">
+            	<div class="btn_login"><input type="submit" value="Login" name="ispost"/></div>
+                <div class="btn_rest"><input type="reset" value="Reset" /></div>
+            </div>
+            <div class="tsy" id="errmsg" style="display:none;">User name or password wrong!</div>
+        </div>
+        <div class="login_bottom">
+        	<div class="login_bottom_left">Copyright © 2014 rockhippo.com Co., Ltd. All Rights Reserved </div>
+            <div class="login_bottom_right">Powered by RockHippo Inc </div>
+        </div>
+    </div>
+  </div>
+</div>
+</form>
+</body>
+</html>
